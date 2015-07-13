@@ -1,0 +1,273 @@
+http://www.codeproject.com/Articles/692787/Best-fitting-line-circle-and-ellipse
+
+// Mean
+		pts.push_back(M::Vector(1,1,5)); pts.push_back(M::Vector(3,3,5)); pts.push_back(M::Vector(5,5,5));
+		M::Vector m = M::Mean(pts) ;
+		std::cout << m.ToString() << "\n"; 
+// SqSum
+std::vector<REAL> p; p.push_back(2); p.push_back(3); p.push_back(4);  // 29
+std::cout << M::SqSum(p) << "\n";
+
+
+// SVD
+	M::Matrix a(2	,	-2	,	1,	0	,
+			5	,	1,		4,	0,
+			6	,	2,		5,	0,
+			0,		0	,	0,	1);
+		M::Matrix v;
+		M::Vector w;
+		str=StrFormat( "Pre A=%s\n" , a.ToString().c_str()); 
+		M::svdcmp(a, w, v);
+		str+=StrFormat( "A=%s\n" , a.ToString().c_str()); 
+		str+=StrFormat( "w=%s\n" , w.ToString().c_str());
+		str+=StrFormat( "v=%s\n" , v.ToString().c_str());
+		fair.SaveReport(path+"\\Svd.txt", str);
+
+SVD: http://people.revoledu.com/kardi/tutorial/LinearAlgebra/SVD.html
+
+2,  -2,  1,0;
+5,  1,  4,0;
+6,2,5,0;
+0,0,0,1;
+
+Matrix U:
+-0.1724  	-0.9653 	0.0   	0.1961
+-0.6182		-0.0489		0.00	-0.78545
+-0.7668		0.2565		0.00	0.5883
+0.000		0.0000		1.000	0.00000
+
+Matrix: D
+10.4807		0.0000		0.000	0.0000	
+ 0.0000		2.4807		0.0000	0.0000	
+ 0.0000		0.0000		1.0000	0.0000
+ 0.0000		0.0000		0.0000	0.0000
+
+Matrix V
+-0.7668		-0.2565		0.0000	-0.5883
+-0.1724 	0.9653		0.0000	-0.1961
+-0.6182		0.0489		0.0000	0.7845
+ 0.0000		0.0000		-1.0000	0.00000
+
+Matrix A= U*D*V
+2		-2		1	0	
+5		1		4	0
+6		2		5	0
+0		0		0	1
+
+
+Pre A=
+2.000000 -2.000000 1.000000 0.000000 
+5.000000 1.000000 4.000000 0.000000 
+6.000000 2.000000 5.000000 0.000000 
+0.000000 0.000000 0.000000 1.000000 
+
+A=-0.172420 0.196116 0.965303 0.000000 
+-0.618239 -0.784465 0.048948 0.000000 
+-0.766845 0.588348 -0.256504 0.000000 
+0.000000 0.000000 0.000000 -1.000000 
+
+w=10.480741 0.000000 2.480741 1.000000
+
+v=-0.766845 -0.588348 0.256504 -0.000000 
+-0.172420 -0.196116 -0.965303 -0.000000 
+-0.618239 0.784465 -0.048948 -0.000000 
+0.000000 -0.000000 -0.000000 -1.000000 
+
+QR DECOMPOSITION
+http://qucs.sourceforge.net/tech/node99.html
+
+
+		// Doesnt work - divide by zero messes everything up
+		//Example: http://en.wikipedia.org/wiki/QR_decomposition
+		M::Matrix m(12	,	-51	,	4,	0	,
+			6	,	167,		-68,	0,
+			-4	,	24,		-41,	0,
+			0,		0	,	0,	1);
+		M::Matrix R;
+		M::Matrix Q;
+		str+=StrFormat( "Pre m=%s\n" , m.ToString().c_str()); 
+		M::householder(m, R, Q);
+		str+=StrFormat( "R=%s\n" , R.ToString().c_str()); 
+		str+=StrFormat( "Q=%s\n" , Q.ToString().c_str()); 
+		fair.SaveReport(path+"\\QR.txt", str);
+
+
+Q= 0.8571 -0.3943 0.3314
+   0.4286 0.9029  -0.0343
+   -0.2857 0.1714  0.9429
+
+R= 14   21   -14
+    0  175   -70
+    0    0   -35
+
+
+
+
+m=12.000000 -51.000000 4.000000 0.000000 
+6.000000 167.000000 -68.000000 0.000000 
+-4.000000 24.000000 -41.000000 0.000000 
+0.000000 0.000000 0.000000 1.000000 
+
+r=0.000000 0.000000 0.000000 1.000000
+
+Q=1.362770 -2.673126 0.209657 0.000000 
+6.000000 167.000000 -68.000000 0.000000 
+-4.000000 24.000000 -41.000000 0.000000 
+0.000000 0.000000 0.000000 1.000000 
+
+http://stackoverflow.com/questions/27734582/in-place-c-implementation-of-qr-decomposition-via-householder-transformation
+#include <iostream>
+#include <ostream>
+#include <valarray>
+#include <vector>
+#include <deque>
+#include <algorithm>
+#include <numeric>
+#include <utility>
+#include <functional>
+#include <limits>
+
+#include <cstdlib>
+#include <cassert>
+
+using value_type = long double;
+using vector = std::valarray< value_type >;
+using matrix = std::valarray< vector >;
+
+std::ostream &
+operator << (std::ostream & out, matrix const & matrix)
+{
+    for (vector const & point : matrix) {
+        for (value_type const & x : point) {
+            out << x << ' ';
+        }
+        out << std::endl;
+    }
+    return out;
+}
+
+value_type const eps = std::numeric_limits< value_type >::epsilon();
+value_type const zero = value_type(0);
+value_type const one = value_type(1);
+
+int
+main()
+{
+    matrix qr{{12, 6, -4},
+              {-51, 167, 24},
+              {4, -68, -41}};
+    std::cout << qr << std::endl;
+
+    std::size_t const m = qr[0].size();
+    std::size_t const n = qr.size();
+    vector rtrace(zero, n);
+    for (std::size_t j = 0; j < n; ++j) { // Householder itself
+        value_type norm = zero;
+        vector & qr_j = qr[j];
+        for (std::size_t i = j; i < m; ++i) {
+            value_type const & qrij = qr_j[i];
+            norm += qrij * qrij;
+        }
+        using std::sqrt;
+        norm = sqrt(norm);
+        value_type & qrjj = qr_j[j];
+        value_type & dj = rtrace[j];
+        dj = (zero < qrjj) ? -norm : norm;
+        using std::abs;
+        value_type f = norm * (norm + abs(qrjj));
+        assert(eps < f);
+        f = one / sqrt(std::move(f));
+        qrjj -= dj;
+        for (std::size_t k = j; k < m; ++k) {
+            qr_j[k] *= f;
+        }
+        for (std::size_t i = j + 1; i < n; ++i) {
+            vector & qr_i = qr[i];
+            value_type dot_product = zero;
+            for (std::size_t k = j; k < m; ++k) {
+                dot_product += qr_j[k] * qr_i[k];
+            }
+            for (std::size_t k = j; k < m; ++k) {
+                qr_i[k] -= qr_j[k] * dot_product;
+            }
+        }
+    }
+    std::cout << "output:\n" << qr << std::endl;
+    std::cout << "diagonal of R: " << std::endl;
+    for (value_type const & rd : rtrace) {
+        std::cout << rd << ' ';
+    }
+    std::cout << std::endl << std::endl;
+    matrix q{{1, 0, 0},
+             {0, 1, 0},
+             {0, 0, 1}};
+    for (std::size_t i = 0; i < n; ++i) {
+        vector & qi = q[i];
+        std::size_t j = n;
+        while (0 < j) {
+            --j;
+            vector & qr_j = qr[j];
+            value_type s_ = zero;
+            for (std::size_t k = j; k < m; ++k) {
+                s_ += qr_j[k] * qi[k];
+            }
+            for (std::size_t k = j; k < m; ++k) {
+                qi[k] += qr_j[k] * s_;
+            }
+        }
+    }
+    std::cout << "Q:\n" << q << std::endl << std::endl;
+    matrix r{{0, 0, 0},
+             {0, 0, 0},
+             {0, 0, 0}};
+    for (std::size_t i = 0; i < n; ++i) {
+        r[i][i] = rtrace[i];
+        for (std::size_t j = i + 1; j < n; ++j) {
+            r[j][i] = qr[j][i];
+        }
+    }
+    std::cout << "R:\n" << r << std::endl << std::endl;
+    matrix a{{0, 0, 0},
+             {0, 0, 0},
+             {0, 0, 0}};
+    for (std::size_t i = 0; i < n; ++i) {
+        for (std::size_t j = 0; j < n; ++j) {
+            a[j][i] += q[i][j] * r[i][j];
+        }
+    }
+    std::cout << "regenerated input:\n" << a << std::endl << std::endl;
+    return EXIT_SUCCESS;
+}
+====================================================
+		// Doesnt work - divide by zero messes everything up
+		//Example: http://en.wikipedia.org/wiki/QR_decomposition
+		M::Matrix m(12	,	-51	,	4,		0,
+					6	,	167,	-68,	0,
+					-4	,	24,		-41,	0,
+					0   ,	0,		0,		1);
+		M::Matrix R;
+		M::Matrix Q;
+		M::Vector r;
+		str+=StrFormat("m=%s\n" , m.ToString().c_str()); 
+		M::Householder2(m, r, Q);
+		str+=StrFormat( "r=%s\n" , r.ToString().c_str()); 
+		str+=StrFormat( "Q=%s\n" , Q.ToString().c_str()); 
+		int  n=4;
+		for (int i = 0; i < n; ++i) 
+		{
+			R[i][i] = r[i];
+			for (int j = i + 1; j < n; ++j) {
+				R[j][i] = m[j][i];
+			}
+		}
+		//std::cout << "R:\n" << r << std::endl << std::endl;
+		// Regenerate input:
+		M::Matrix B;
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				B[j][i] += Q[i][j] * R[i][j];
+			}
+		}
+		str+=StrFormat("B = %s\n" , B.ToString().c_str());
+		fair.SaveReport(path+"\\QR.txt", str);
+

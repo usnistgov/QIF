@@ -1,0 +1,597 @@
+
+#if 0
+	std::string rawname = innerelem->Name();  // elem and variable same definition
+
+	//if(rawname=="ArcFeatureActual"	)
+	//{
+	//	_asm int 3;
+	//}
+
+	// THIS IS ALL A COMPLETE MESSS
+
+	// We assume that this is non null only if sustitution allowed. 
+	// Substitution elements only allowed in global scope!!!
+	if(substitutionElem!=NULL) 
+		elem = _symbols.FindNamedEntity(rawname);
+
+	// This is so kludgy its beyond hope. Outer element name based on type name
+	if(elem==NULL) 
+		elem = _symbols.FindNamedEntity(rawname, SqlDemangleType(node->Name()));
+
+	// Find Element based on assuming its an global (outer) element, especially true if substitution
+	if(elem==NULL) 
+		elem = _symbols.FindNamedEntity(rawname);
+	// If this fails - its an derived type definition 
+	// How can this work without type ending?
+	if(elem==NULL)
+	{
+		elem = _symbols.FindType(rawname);
+	}
+	assert(elem!=NULL);
+
+	std::string name = DemangleName(elem->Name());
+	std::string stypename = elem->TypeName();
+#else
+
+		// MySql enum
+		//tmp="ENUM(";
+		//IXmlNode * s3 = FindTypeNode(symbol->TypeName()) ;
+		//if(s3)
+		//	for(size_t i=0; i< s3->Enumerations().size(); i++)
+		//	{
+		//		if(i>0) tmp+=",";
+		//		tmp+=StrFormat("'%s'", s3->Enumerations().at(i).c_str());
+		//	}
+		//tmp+=")";
+		
+						// In a SQL Table - no difference between sequence and choice
+				// Obviously one choice of n possibilities has to made unless null
+				// Whereas a sequence just lists out possibilities.
+				tmp+=StrFormat("\t%s %s, \n", 
+					sqlname.c_str(), 
+					s2->SqlType().c_str()
+					//(!s2->Optional())? " NOT NULL": ""
+					);
+
+#if 0
+						// This is so kludgy its beyond hope. Outer element name based on type name
+						subst = _symbols.FindNamedEntity(s2->Name(), SqlDemangleType(node->Name()));
+
+						// Find Element based on assuming its an global (outer) element, especially true if substitution
+						if(subst==NULL) 
+							subst = _symbols.FindNamedEntity(s2->Name());
+#endif
+	//bool bChoice=false;
+	//int compositor = node->Compositor();
+	//if(compositor == 1 ) // sequence
+	//{
+	//	_nChoice=0;
+	//}
+	//else if(compositor == 2 ) // choice
+	//{
+	//	bChoice=true;
+	//}
+					if(s3->IsSimpleType())
+				{
+					s2->SqlType()=ConvertXsd2SqlDataType(type, s2.get());
+					std::string sqlname = s2->Name();
+					tmp+=StrFormat("\t%s %s%s, \n", 
+						sqlname.c_str(), 
+						s2->SqlType().c_str(), 
+						(!s2->Optional())? " NOT NULL": "");
+				}
+				else if (s3->IsSimpleContent())
+				{
+					CreateSimpleContent( s3.get(), s2->Name(), tmp, keys,constraints);
+				}
+				
+				#if 0
+						ISymbolPtr elem;
+						if(super=="ArcFeatureActual"	)
+						{
+							_asm int 3;
+						}
+
+						// This is so kludgy its beyond hope. Outer element name based on type name
+						elem = _symbols.FindNamedEntity(super, SqlDemangleType(node->Name()));
+
+						// Find Element based on assuming its an global (outer) element, especially true if substitution
+						if(elem==NULL) 
+							elem = _symbols.FindNamedEntity(super);
+
+						// If this fails - its an derived type definition - should we recurse?
+						if(elem==NULL)
+						{
+							elem = _symbols.FindType(super);
+						}
+						assert(elem!=NULL);
+						if(elem->Abstract())
+							continue ; // been subsumed elsewhere - Yes?
+
+						std::string name = elem->Name();
+						std::string stypename = elem->TypeName();
+						std::string comment=StrFormat("-- index into table %s ", SqlDemangleType(stypename).c_str());
+						// if substitution list, need to add all of them now
+
+						std::string sqlname = "_" + elem->Name();
+						std::string sqltype = "integer";
+
+						// FIXME: substitution groups use the affiliation count not the curernt element
+						if(elem->IsArray())
+						{
+							//elem->Array() = true; // there can be multiple elements in QIF with same type
+							// where is bounds defined in type or in element definition of type
+							sqlname="_"+sqlname;
+							sqltype=sqltype+"[]";
+						}
+
+						tmp+=StrFormat("\t%s %s, %s\n", sqlname.c_str() , sqltype.c_str(), comment.c_str());
+
+						keys+=StrFormat("\tKEY _%s (_%s),\n", sqlname.c_str(), sqlname.c_str());
+						constraints+=StrFormat("\tCONSTRAINT xxxx%s FOREIGN KEY (_%s) REFERENCES %s(id),\n", sqlname.c_str(),sqlname.c_str(),sqlname.c_str());
+#endif
+
+			else if(s2->TypeName() == "ParticleType")
+			{
+				_asm int 3;
+				IXmlNodePtr elem2 = s2->GetXmlNodePtr();
+				std::string name2 = (elem2 !=NULL) ? elem2->Name() :"";
+
+				CreateSqlField(s2->GetXmlNodePtr().get(), tmp, keys, constraints);
+			}
+			else if(s2->TypeName() == "DerivedType")  // and if simple keep recursing to bottom type definition
+			{
+//				CVarDefPtr  var = s2->vars[0];
+				// We are pulling off a type definition, there is no name
+				_asm int 3;
+				std::string name = s2->Name();
+				std::string stypename = s2->TypeName();
+				IXmlNodePtr elem2 = s2->GetXmlNodePtr();
+				std::string name2 = elem2->Name();
+				std::string stypename2 = elem2->TypeName();
+				IXmlNodePtr typenode = _symbols.FindTypeNode(name);
+
+				if(!typenode->SimpleType() && !typenode->SimpleContent())
+				{
+					CreateSqlField(typenode.get(), tmp, keys, constraints);
+				}
+				else
+				{
+					if(typenode->SimpleType() || typenode->SimpleContent())
+					{
+						//The simpleContent element contains extensions or restrictions on a text-only complex type or on a simple type as content and contains no elements.
+						CreateSimpleContent( typenode.get(), name, tmp, keys,constraints);
+					}
+					else if(typenode->vars.size() == 0)
+					{
+						std::string fieldname = SqlDemangleType(name);
+						std::string sqltypename = name;
+						std::string comment = StrFormat("-- index into table %s ", sqltypename.c_str());
+						std::string sqlname = "_" + fieldname;
+						std::string sqltype = "integer";
+
+						tmp+=StrFormat("\t%s %s, %s\n", sqlname.c_str(), sqltype.c_str(),  comment.c_str());
+					}
+					else
+					{
+						CreateSqlField(typenode.get(), tmp, keys, constraints);
+
+					}
+				}
+
+
+#if 0
+			// Define this class variable each time with name (mixed model) 
+			// previous CVarDef ignored !!??
+			CVarDefPtr  var = _symbols.CreateVarDef("", type->Namespace(), special_);
+			var->Parent() = type;
+			var->Compositor() = compositorType;
+			var->TypeName() = "ParticleType";
+
+			// Define new class that will be embedded inside of outer class variable 
+			IXmlNodePtr elem2= _symbols.CreateXmlNode(); 
+			elem2->Compositor() = compositorType;
+			elem2->Parent()=type;
+			elem2->SimpleType()=false;
+			elem2->Variable()=var;
+			BuildParticle(elem2, xsParticleList->elementAt(i));
+			var->SetXmlNodePtr(elem2.get());
+			type->vars.push_back(var);
+#endif
+
+#if 0
+		if(attributes!=NULL)
+		{
+			for (XMLSize_t attrCount = 0; attrCount < attributes->size(); attrCount++) 
+			{
+				XSAttributeUse * attrUse = (XSAttributeUse *)attributes->elementAt(attrCount);
+				XSAttributeDeclaration * attr = attrUse->getAttrDeclaration() ;
+				XSSimpleTypeDefinition * simpletype=	attr->getTypeDefinition ();
+
+				ISymbolPtr symbol= new ISymbol;
+				symbol->Name() = StrX(attr->getName()).localForm();
+				symbol->Required() = attrUse->getRequired();
+				symbol->TypeName() = GetText(simpletype->getName());
+				typeSymbol->Attributes().push_back(symbol);
+
+				CVarDefPtr  var = _symbols.CreateVarDef(symbol->Name(), symbol->TypeName(), attribute_);
+				var->Parent()=typeSymbol;
+				var->Required() = attrUse->getRequired();
+				// FIXME: check for attribute reference
+				var->XercesType() = XercesAdditions::ATTRIBUTE_DECLARATION;
+				typeSymbol->vars.push_back(var);
+
+			}
+		}
+#endif
+
+#if 0
+			XSTypeDefinition *  basetype = 	xsTypeDef->getBaseType();
+		var->SimpleType() = (xsTypeDef->getTypeCategory() == XSTypeDefinition::SIMPLE_TYPE); 
+		var->Type()=element_;
+		var->TypeName()=StrX(xsTypeDef->getName()).localForm();
+		if(!var->SimpleType())
+		{
+			var->BaseTypeName()=StrX(basetype->getName()).localForm();
+			typeSymbol->Abstract() = xsComplexTypeDef->getAbstract ();
+			XSComplexTypeDefinition::CONTENT_TYPE contentType = xsComplexTypeDef->getContentType();
+		}
+		else
+		{
+			XSSimpleTypeDefinition * xsSimpleTypeDef= (XSSimpleTypeDefinition *) xsTypeDef;
+			GetFacets(xsSimpleTypeDef, typeSymbol);
+			if( xsSimpleTypeDef->getVariety() == XSSimpleTypeDefinition::VARIETY_LIST)
+			{
+				ParseList(xsSimpleTypeDef, typeSymbol);
+			}
+			else if( xsSimpleTypeDef->getVariety() == XSSimpleTypeDefinition::VARIETY_ATOMIC)
+			{
+				typeSymbol->Atomic() = true;
+				XSSimpleTypeDefinition * xsPrimType =  xsSimpleTypeDef->getPrimitiveType() ;
+				const XMLCh* sPrimitivetype;;
+				CLEANFETCH(sPrimitivetype,xsPrimType->getDatatypeValidator()->getTypeLocalName(),NULL);
+				typeSymbol->PrimitiveType()= (sPrimitivetype!=NULL) ? ToStr(sPrimitivetype) : "";
+			}
+			else
+			{
+				// FIXME: union type - not handled
+				assert(0);
+			}
+		}
+#endif
+
+#if 0
+		// If type is global cant ? have outer name
+		// fixme, what if size is 0?
+		IXmlNodePtr up = type->Parent();
+		while(up && !up->Global())
+		{
+			CVarDefPtr outerelem;
+			std::vector<CVarDefPtr> & vars = up->GetVarsReference() ;
+			if(vars.size()>0)
+				outerelem = vars.at(vars.size()-1);
+			std::cout << outerelem->Name() << "\n";
+			if(!outerelem->Name().empty())
+				break;
+			up=up->Parent();
+		}
+		CLEANFETCH(elem->OuterElementName() , up->Name(), "");
+#endif
+
+			minlistsize = xsListType-> getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MINLENGTH) ;
+			int n = (minlistsize!=NULL) ? atoi(ToStr(minlistsize).c_str()): 0;
+			if(n>1)
+			{
+				_asm int 3;
+			}
+			maxlistsize = xsListType-> getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MAXLENGTH) ;
+			int m = (maxlistsize!=NULL) ? atoi(ToStr(maxlistsize).c_str()): 0;
+			if(m>0)
+			{
+				_asm int 3;
+			}	
+			
+			#if 0
+					CVarDefPtr  var = _symbols.CreateVarDef("Inherited", tnamespace, special_);
+					var->TypeName() = "ParticleType";
+					var->Parent()=typeSymbol;
+					var->XercesType() = XercesAdditions::TYPE_DEFINITION;
+
+					// "Inherited node creation"
+					IXmlNodePtr elem2= _symbols.CreateXmlNode(); 
+					elem2->Name()=tbasetype;
+					elem2->TypeName()=tbasetype;
+					elem2->Parent()=typeSymbol;
+					elem2->SimpleType()=true;
+					elem2->DerivedType() = XercesAdditions:: DERIVATION_INSTANCE;
+					// we'll assume inherited means element, although really a type
+					elem2->XercesType() = XercesAdditions::ELEMENT_DECLARATION;  
+					var->SetXmlNodePtr(elem2.get()); // push inherited "class" as type definition variable
+					typeSymbol->vars.push_back(var);
+
+					// "Inherited node variable list - simple - only 1 derived item"
+					CVarDefPtr  var2 = _symbols.CreateVarDef(tbasetype, tnamespace, simplecontent_);
+					var2->TypeName() = tbasetype;
+					var2->DerivedType() = XercesAdditions:: DERIVATION_INSTANCE;
+					var2->SimpleType()=true;
+					var2->Parent()=typeSymbol;
+					elem2->vars.push_back(var2); // push inherited "class" as variable
+#endif
+
+void CXsdParser::printBasic(XSObject *xsObject, const char *type, iostream & io)
+{
+	io << "Name:\t\t\t";
+	const XMLCh *nameSpace = xsObject->getNamespace();
+	if (nameSpace && *nameSpace) {
+		io << StrX(nameSpace) << ", ";
+	}
+	io << StrX(xsObject->getName()) << "\n";
+	io << "Component Type:\t" << type << XERCES_STD_QUALIFIER endl;
+}
+
+void CXsdParser::processElements(XSNamedMap<XSObject> *xsElements, iostream & io)
+{
+	if (!xsElements || xsElements->getLength() == 0) {
+		io << "no elements\n\n"  << XERCES_STD_QUALIFIER endl;
+		return;
+	}
+	for (XMLSize_t i=0; i < xsElements->getLength(); i++) {
+		XSElementDeclaration *xsElement = (XSElementDeclaration *)xsElements->item(i);
+		printBasic(xsElement, "Element",io);
+
+		// Content Model
+		XSTypeDefinition *xsTypeDef = xsElement->getTypeDefinition();
+		io << "Content Model" << "\n";
+		io << "\tType:\t";
+		if (xsTypeDef->getTypeCategory() == XSTypeDefinition::SIMPLE_TYPE) {
+			io << "Simple\n";
+		} else {
+			io << "Complex\n";
+		}
+		io << "\tName:\t"
+			<< StrX(xsTypeDef->getName()) << "\n";
+
+		io << "\n--------------------------------------------" << XERCES_STD_QUALIFIER endl;
+	}
+}
+
+void CXsdParser::processSimpleTypeDefinition(XSSimpleTypeDefinition * xsSimpleTypeDef, iostream & io)
+{
+	XSTypeDefinition *xsBaseTypeDef = xsSimpleTypeDef->getBaseType();
+	io << "Base:\t\t\t";
+	io << StrX(xsBaseTypeDef->getName()) << XERCES_STD_QUALIFIER endl;
+
+	int facets = xsSimpleTypeDef->getDefinedFacets();
+	if (facets) {
+		io << "Facets:\n";
+
+		if (facets & XSSimpleTypeDefinition::FACET_LENGTH)
+			io << "\tLength:\t\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_LENGTH)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_MINLENGTH)
+			io << "\tMinLength:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MINLENGTH)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_MAXLENGTH)
+			io << "\tMaxLength:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MAXLENGTH)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_PATTERN) {
+			StringList *lexicalPatterns = xsSimpleTypeDef->getLexicalPattern();
+			if (lexicalPatterns && lexicalPatterns->size()) {
+				io << "\tPattern:\t\t";
+				for (unsigned i = 0; i < lexicalPatterns->size(); i++) {
+					io << StrX(lexicalPatterns->elementAt(i));
+				}
+				io << XERCES_STD_QUALIFIER endl;
+			}
+		}
+		if (facets & XSSimpleTypeDefinition::FACET_WHITESPACE)
+			io << "\tWhitespace:\t\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_WHITESPACE)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_MAXINCLUSIVE)
+			io << "\tMaxInclusive:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MAXINCLUSIVE)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_MAXEXCLUSIVE)
+			io << "\tMaxExclusive:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MAXEXCLUSIVE)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_MINEXCLUSIVE)
+			io << "\tMinExclusive:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MINEXCLUSIVE)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_MININCLUSIVE)
+			io << "\tMinInclusive:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_MININCLUSIVE)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_TOTALDIGITS)
+			io << "\tTotalDigits:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_TOTALDIGITS)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_FRACTIONDIGITS)
+			io << "\tFractionDigits:\t" << StrX(xsSimpleTypeDef->getLexicalFacetValue(XSSimpleTypeDefinition::FACET_FRACTIONDIGITS)) << XERCES_STD_QUALIFIER endl;
+		if (facets & XSSimpleTypeDefinition::FACET_ENUMERATION) {
+			StringList *lexicalEnums = xsSimpleTypeDef->getLexicalEnumeration();
+			if (lexicalEnums && lexicalEnums->size()) {
+				io << "\tEnumeration:\n";
+				for (unsigned i = 0; i < lexicalEnums->size(); i++) {
+					io << "\t\t\t" << StrX(lexicalEnums->elementAt(i)) << "\n";
+				}
+				io << XERCES_STD_QUALIFIER endl;
+			}
+		}
+	}
+}
+
+void CXsdParser::printCompositorTypeConnector(XSModelGroup::COMPOSITOR_TYPE type, iostream & io)
+{
+	switch (type) {
+	case XSModelGroup::COMPOSITOR_SEQUENCE :
+		io << ",";
+		break;
+	case XSModelGroup::COMPOSITOR_CHOICE :
+		io << "|";
+		break;
+	case XSModelGroup::COMPOSITOR_ALL :
+		io << "*";
+		break;
+	}
+}
+
+void CXsdParser::processParticle(XSParticle *xsParticle, iostream & io)
+{
+	if (!xsParticle) {
+		io << "xsParticle is NULL";
+		return;
+	}
+	XSParticle::TERM_TYPE termType = xsParticle->getTermType();
+	if (termType == XSParticle::TERM_ELEMENT) {
+		XSElementDeclaration *xsElement = xsParticle->getElementTerm();
+		io << StrX(xsElement->getName());
+	} else if (termType == XSParticle::TERM_MODELGROUP) {
+		io << "(";
+
+		XSModelGroup *xsModelGroup = xsParticle->getModelGroupTerm();
+		XSModelGroup::COMPOSITOR_TYPE compositorType = xsModelGroup->getCompositor();
+		XSParticleList *xsParticleList = xsModelGroup->getParticles();
+		for (unsigned i = 0; i < xsParticleList->size()-1; i++) {
+			processParticle(xsParticleList->elementAt(i), io);
+			printCompositorTypeConnector(compositorType, io);
+		}
+		processParticle(xsParticleList->elementAt(xsParticleList->size()-1), io);
+
+		io << ")";
+	} else if (termType == XSParticle::TERM_WILDCARD) {
+		io << "* (wildcard)";
+	}
+}
+
+void CXsdParser::processComplexTypeDefinition(XSComplexTypeDefinition *xsComplexTypeDef, iostream & io)
+{
+	XSTypeDefinition *xsBaseTypeDef = xsComplexTypeDef->getBaseType();
+	if (xsBaseTypeDef) {
+		io << "Base:\t\t\t";
+		io << StrX(xsBaseTypeDef->getName()) << "\n";
+	}
+
+	io << "Content Model:\t";
+	XSComplexTypeDefinition::CONTENT_TYPE contentType = xsComplexTypeDef->getContentType();
+	if (contentType == XSComplexTypeDefinition::CONTENTTYPE_ELEMENT ||
+		contentType == XSComplexTypeDefinition::CONTENTTYPE_MIXED) {
+			processParticle(xsComplexTypeDef->getParticle(),io);
+			io << XERCES_STD_QUALIFIER endl;
+	}
+}
+
+void CXsdParser::processTypeDefinitions(XSNamedMap<XSObject> *xsTypeDefs, iostream & io)
+{
+	if (!xsTypeDefs) return;
+
+	for (XMLSize_t i=0; i < xsTypeDefs->getLength(); i++) {
+		XSTypeDefinition *xsTypeDef = (XSTypeDefinition *)xsTypeDefs->item(i);
+
+		printBasic(xsTypeDef, "Type Definition", io);
+
+		// Content Model
+		io << "Category:\t";
+		if (xsTypeDef->getTypeCategory() == XSTypeDefinition::SIMPLE_TYPE) {
+			io << "\tSimple\n";
+			processSimpleTypeDefinition((XSSimpleTypeDefinition *)xsTypeDef, io);
+		} else {
+			io << "\tComplex\n";
+			processComplexTypeDefinition((XSComplexTypeDefinition *)xsTypeDef, io);
+		}
+
+		io << "\n--------------------------------------------" << XERCES_STD_QUALIFIER endl;
+	}
+}
+
+
+
+#if 0
+			if(!varentity->SubstitutionGroup().empty())
+			{
+				basename=varentity->SubstitutionGroup();  // assuming only 1 level of substitution group tree
+				// No enum  - just create array of each type of record, unless Not array ?
+				//// Add string here to indicate what table index goes to
+				//vals+=basename+"Enum,";
+				//cols+=basename + ",";
+			}
+			ISymbolPtr  var= _symbols.FindVarDefSymbol(localTypeDef,  basename);
+			if(childname=="Precedence")
+			{
+				std::cout << _symbols.DumpType(IXmlNodePtr(localTypeDef)) << std::endl;
+			}
+			//// Could be supertype of variable definition type
+			//if(var==NULL)
+			//{
+			//	var=_symbols.FindVarDefSymbolInclDerived(typeDef,  childname);
+			//}
+			if(var==NULL)
+			{
+				_asm int 3;
+			}
+			std::string type = var->TypeName();
+			IXmlNode * typeptr = _symbols.FindTypeNode(type).get();;
+			// Now we need the type that goes with this element
+			if(typeptr==NULL)
+			{
+				_asm int 3;
+			}
+#endif
+
+	//str+=parser._symbols.DumpNamedElements(StringVector (
+	//		std::string("MeasurementsResourcesType")  ,
+	//		std::string("")));
+
+	//		str=parser._symbols.DumpNamedTypes(StringVector (
+	//		std::string("MeasurementsResourcesType")  ,
+	//		std::string("MeasurementResourcesType")  ,
+	//		std::string("MeasurementResourceBaseType")  ,
+	//		std::string("MeasurementDevicesType")  ,  // this has as ref MeasurementDeviceType
+	//		std::string("MeasurementDeviceType")  ,
+	//		
+	//		std::string("")));
+	//	fair.SaveReport(CFairReports::ExeDirectory()+ "NamesTypes.sql", str);
+
+
+	#if 0
+	// "Inherited node variable list - simple - only 1 derived item"
+	CVarDefPtr  var2 = _symbols.CreateVarDef(tbasetype, tnamespace, simplecontent_);
+	var2->TypeName() = tbasetype;
+	var2->DerivedType() = XercesAdditions:: DERIVATION_INSTANCE;
+	var2->SimpleType()=true;
+	var2->Parent()=typeSymbol;
+	elem2->vars.push_back(var2); // push inherited "class" as variable
+#endif
+
+					//typeSymbol->SubTypes().push_back(typeSymbol->BaseTypeName());
+					//parent->SuperTypes().push_back(typeSymbol->Name());
+
+					// Fixme:  typeSymbol->BaseTypeName() supertype is typeSymbol->Name();
+					// Fixme: create or find type ...
+					// IXmlNodePtr parent=_symbols.CreateTypeNode(typeSymbol->BaseTypeName(),  tnamespace);
+					// std::vector<CVarDefPtr> & GetVarsReference()
+					// This parent should already have the vars list of the :identical" type vars
+					//parent->SuperTypes().push_back(typeSymbol->Name());
+
+
+					#if 0		
+			IXmlNodePtr substitutionGroupElement;
+			if(_symbols.IsSubstitutionGroupElement(childname))
+			{
+				// This is all here since you can have element name assigned to different types,
+				// So element naming is not 1:1. We added outer name (which is the type name)
+				// if childname.parent.name == childnode->outelem == nodename 
+				std::string alias = _symbols.SubstitutionGroup()[childname]; // alias is the "base" element name
+				if(!alias.empty()) // alias matches typedef name
+				{
+					substitutionGroupElement= _symbols.FindNamedEntity(alias,nodename); // assuming its outer element ...?
+				}
+			}
+#endif
+
+
+
+			// Facet extraction for simple type - more or less ignored
+			int facets = simpleType->getDefinedFacets();
+
+			XSFacetList * facetList	=	simpleType->getFacets ();
+			for (XMLSize_t facetCount = 0; facetCount < facetList->size(); facetCount++) 
+			{
+				XSFacet * facet = (XSFacet *)facetList->elementAt(facetCount);
+				XSSimpleTypeDefinition::FACET facetKind = 	facet->getFacetKind (); // length
+				std::string facetname = GetText( facet->getLexicalFacetValue () );
+				typeSymbol->Facets().push_back(facetname);
+
+				CVarDefPtr  var = _symbols.CreateVarDef(facetname, tnamespace, facet_);
+				var->TypeName() = "Facet";
+				var->Parent()=typeSymbol;
+				var->XercesType() = XercesAdditions::FACET;
+				var->FacetKinds() = static_cast<XercesAdditions::FACET_TYPE>(facetKind);
+			}

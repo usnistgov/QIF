@@ -1,0 +1,540 @@
+
+16)
+      <LinearCoordinateCharacteristicDefinition id="25">
+        <Tolerance>
+          <MaxValue>0.2</MaxValue>
+          <MinValue>-0.2</MinValue>
+          <DefinedAsLimit>false</DefinedAsLimit>
+        </Tolerance>
+      </LinearCoordinateCharacteristicDefinition>
+Tolerance is not a table.
+
+ <xs:complexType name="LinearCoordinateCharacteristicDefinitionType">
+    <xs:complexContent>
+      <xs:extension base="CoordinateCharacteristicDefinitionBaseType">
+        <xs:choice>
+          <xs:element name="Tolerance"    type="LinearToleranceType">
+          <xs:element name="NonTolerance"   type="NonToleranceEnumType"/>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+NOT CHILDNAME (which isnt unique) but Demangle Typename (which is unique)
+int index = odbc.SizeTable("QIF", SqlDemangleType(typeName));
+
+ 15)                                                             ^
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:87: ERROR:  column "_angularunit" of relation "primaryunits" does not exist
+LINE 1: INSERT INTO PrimaryUnits (_AngularUnit,_LinearUnit) values (...
+                                  ^
+INSERT INTO PrimaryUnits (_AngularUnit,_LinearUnit) values (1,1);
+
+<xs:complexType name="PrimaryUnitsType">
+    <xs:sequence>
+      <xs:element name="AreaUnit"    type="AreaUnitType"   minOccurs="0">
+      <xs:element name="AngularUnit"    type="AngularUnitType"     minOccurs="0">
+      <xs:element name="ForceUnit"    type="ForceUnitType"     minOccurs="0">
+      <xs:element name="LinearUnit"    type="LinearUnitType"     minOccurs="0">
+      <xs:element name="MassUnit"     type="MassUnitType"    minOccurs="0">
+      <xs:element name="PressureUnit"     type="PressureUnitType"     minOccurs="0">
+      <xs:element name="SpeedUnit"     type="SpeedUnitType"     minOccurs="0">
+      <xs:element name="TemperatureUnit"     type="TemperatureUnitType"     minOccurs="0">
+      <xs:element name="TimeUnit"    type="TimeUnitType"     minOccurs="0">
+    </xs:sequence>
+  </xs:complexType>
+ 
+ WHY ARRAYS? WHEN NOT ARRAY?
+
+CREATE TABLE PrimaryUnits (
+	_index_  SERIAL PRIMARY KEY,
+	__AreaUnit integer[], -- index into table AreaUnit 
+	__AngularUnit integer[], -- index into table AngularUnit 
+	__ForceUnit integer[], -- index into table ForceUnit 
+	__LinearUnit integer[], -- index into table LinearUnit 
+	__MassUnit integer[], -- index into table MassUnit 
+	__PressureUnit integer[], -- index into table PressureUnit 
+	__SpeedUnit integer[], -- index into table SpeedUnit 
+	__TemperatureUnit integer[], -- index into table TemperatureUnit 
+	__TimeUnit integer[]  -- index into table TimeUnit 
+) ;
+
+CONFUSING WITH:
+<xs:complexType name="OtherUnitsType">
+    <xs:annotation>
+      <xs:documentation>
+        The OtherUnitsType defines alternative units for various
+        quantities. All unit types are optional and may occur multiple
+        times so that many units of the same type (meters, inches, and
+        millimeters, for example) may co-exist in an instance file.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AreaUnit"
+        type="AreaUnitType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+
+===========================================================================================
+
+14)ADD SINGLE QUOTES AROUND TIME STAMP!
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:71: ERROR:  syntax error at or near "11"
+LINE 1: ...eparationDate,_ReportPreparer) values (2014-07-30 11:14:06,1...
+INSERT INTO InspectionTraceability (ReportPreparationDate,_ReportPreparer) values (2014-07-30 11:14:06,1);
+===========================================================================================
+
+
+13) .....
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:67: ERROR:  column "à½*" does not exist
+LINE 1: ...n,_FileSpec,URI) values ('Zeiss Umess CMM Results',1,"à½*");
+                                                               ^
+INSERT INTO ExternalFileReference (Description,_FileSpec,URI) values ('Zeiss Umess CMM Results',1,"à½*");
+
+<URI>C:\R19_parts\5802804.res</URI>
+
+ <xs:complexType name="ExternalFileReferenceType">
+    <xs:sequence>
+      <xs:element name="URI"   type="xs:anyURI">
+      <xs:element name="FileSpec"     type="FileSpecType">
+      <xs:element name="Description"     type="xs:string">
+    </xs:sequence>
+  </xs:complexType>
+
+  FIX: all messed up
+  	else if(_stricmp(type.c_str(), "anyURI") == 0) 
+	{  // If a URI has spaces, replace them with %20.
+		ReplaceAll(val," ", "%20");
+		return StrFormat("'%s'", val.c_str());
+	}
+===========================================================================================
+Date Problem:
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:71: ERROR:  syntax error at or near "T11"
+LINE 1: ...reparationDate,_ReportPreparer) values (2014-07-30T11:14:06,...
+                                                             ^
+INSERT INTO InspectionTraceability (ReportPreparationDate,_ReportPreparer) values (2014-07-30T11:14:06,1);
+===========================================================================================
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:79: ERROR:  column "__measurementdevice" of relation "measurementdevices" does not exist
+LINE 1: INSERT INTO MeasurementDevices (__MeasurementDevice) values ...
+                                        ^
+INSERT INTO MeasurementDevices (__MeasurementDevice) values ('{1,2,3}');
+  <xs:complexType name="MeasurementDevicesType">
+    <xs:sequence>
+      <xs:element ref="MeasurementDevice"     maxOccurs="unbounded">
+     </xs:sequence>
+  </xs:complexType>
+ <xs:element name="MeasurementDevice"  type="MeasurementDeviceType"/>
+ <xs:element name="CMM"  type="CMMType"  substitutionGroup="MeasurementDevice"/>
+
+ CREATE TABLE MeasurementDevices (
+	_index_  SERIAL PRIMARY KEY,
+	__CMM integer[], -- index into table CMM 
+	__Caliper integer[], -- index into table Caliper 
+	__Comparator integer[], -- index into table Comparator 
+	__GageDevice integer[]  -- index into table GageDevice 
+) ;
+NO MEASURMENT DEVICE
+===========================================================================================
+
+12) Postgress text arrays values in double quotes:
+INSERT INTO sal_emp
+    VALUES ('Bill',
+    '{10000, 10000, 10000, 10000}',
+    '{{"meeting", "lunch"}, {"training", "presentation"}}');
+
+
+11) Simple types  can be arrays too..  Id attribute or element?
++		ename	"Id"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		((*(ISymbol*)(&*((type).px))))._Name	"ArrayReferenceFullType"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		((*(ISymbol*)(&*((elem).px))))._UpperBounds	[1](-1)	std::vector<int,std::allocator<int> >
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:216: ERROR:  column "id" specified more than once
+LINE 1: INSERT INTO ArrayReferenceFull (N,Id,Id) values ('2',60,43);
+
+        <FeatureItemIds N="2">
+          <Id>60</Id>
+          <Id>43</Id>
+        </FeatureItemIds>
+
+  <xs:complexType name="MeasureSpecifiedFeaturesActionType">
+    <xs:complexContent>
+      <xs:extension base="ActionBaseType">
+        <xs:sequence>
+          <xs:element name="FeatureItemIds"  type="ArrayReferenceFullType">
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+ <xs:complexType name="ArrayReferenceFullType">
+    <xs:sequence>
+      <xs:element name="Id"   type="QIFReferenceFullType"    maxOccurs="unbounded">
+    </xs:sequence>
+    <xs:attribute name="N"   type="NaturalType"   use="required"/>
+  </xs:complexType>
+
+PART A: table indexed
+WAS:
+CREATE TABLE ArrayReferenceFull (
+	_index_  SERIAL PRIMARY KEY,
+	N text,-- attribute
+	Id text  
+) ;
+
+NOW:
+CREATE TABLE ArrayReferenceFull (
+	_index_  SERIAL PRIMARY KEY,
+	N text,-- attribute
+	Id text[]  
+) ;
+PART B:
+insert indexed, plus text insertion must be in double quotes
+
+
+10) INSERT INTO FeatureActuals (_CircleFeatureActual,_CircleFeatureActual,_CircleFeatureActual,_EdgePointFeatureActual,_PointFeatureActual,_PointFeatureActual) values (1,2,3,1,1,2);
+Bounds not correct ?? 
+should not repeat table entry
+SAVED BOUNDS IN TYPE PARTICLE 
+		elem->DeepCopy(var);
+		var->SetXmlNodePtr(elem);
+		SaveParticleDimensions(var, xsParticle);
+		SaveParticleDimensions(elem, xsParticle);
+
+
+Name=FeatureActual [-2,-2] TypeName=FeatureActualBaseType Type=entity_ Type=Complex Content=Complex Basetype=FeatureBaseType Global=False Parent=AverageFeatureType  OuterElementName= OuterElementTypeName=AverageFeatureType
+	SubstitutionList:ArcFeatureActual:GenericFeatureActual:CircleFeatureActual:CompoundFeatureActual:ConeFeatureActual:ConicalSegmentFeatureActual:CuboidFeatureActual:CylinderFeatureActual:CylindricalSegmentFeatureActual:EdgePointFeatureActual:EllipseFeatureActual:ElongatedCylinderFeatureActual:ExtrudedCrossSectionFeatureActual:LineFeatureActual:OppositeLinesFeatureActual:OppositePlanesFeatureActual:PatternFeatureActual:PlaneFeatureActual:PointDefinedCurveFeatureActual:PointDefinedSurfaceFeatureActual:PointFeatureActual:ProfileGroupFeatureActual:RunoutGroupFeatureActual:SphereFeatureActual:SphericalSegmentFeatureActual:SurfaceOfRevolutionFeatureActual:ThreadedFeatureActual:ToroidalSegmentFeatureActual:TorusFeatureActual
+Name=FeatureActual [1,1] TypeName=FeatureActualBaseType Type=entity_ Type=Complex Content=Complex Basetype=FeatureBaseType Global=True Parent=  OuterElementName= OuterElementTypeName=
+Name=FeatureActual [1,1] TypeName=FeatureActualBaseType Type=element_ Type=Complex Content=Complex Basetype=FeatureBaseType Global=False Parent=AverageFeature  OuterElementName=AverageFeature OuterElementTypeName=
+Name=FeatureActual [-2,-2] TypeName=FeatureActualBaseType Type=entity_ Type=Complex Content=Complex Basetype=FeatureBaseType Global=False Parent=FeatureActualsType  OuterElementName= OuterElementTypeName=FeatureActualsType
+
+  <xs:element name="FeatureActual" type="FeatureActualBaseType"/>
+  <xs:element name="ArcFeatureActual"  type="ArcFeatureActualType" />
+  <xs:element name="CircleFeatureActual"  type="CircleFeatureActualType" />
+
+ <xs:complexType name="FeatureActualsType">
+    <xs:sequence>
+      <xs:element ref="FeatureActual"     maxOccurs="unbounded">
+    </xs:sequence>
+  </xs:complexType>
+
+   <xs:complexType name="AverageFeatureType">
+    <xs:sequence>
+      <xs:element ref="FeatureActual">
+	  <xs:element name="ActualIds"     type="StatsArrayIdType">
+    </xs:sequence>
+  </xs:complexType>
+
+ 
+ +		childname	"DiameterCharacteristicDefinition"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		basename	"DiameterCharacteristicDefinition"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		typeName	"DiameterCharacteristicDefinitionType"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		nodetypename	"CharacteristicDefinitionsType"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		childname	"DiameterCharacteristicDefinition"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		nodename	"CharacteristicDefinitions"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		baseelement	"CharacteristicDefinition"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
+
+
+9) Choice minvalue used in choic min/max OR min - REMOVED DUPLICATE CHOICES, and MADE ALL SIMPLE TYPES OPTIONAL 
+(since some CHOICES can be optional and  the other CHOICE not optional)
+
+CREATE TABLE AngularToleranceDefinition (
+	_index_  SERIAL PRIMARY KEY,
+	id text,-- attribute
+	_Attributes integer, -- index into table Attributes 
+	MaxValue text, 
+	MinValue text, 
+	MinValue text  
+) ;
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:1168: NOTICE:  table "areatolerance" does not exist, skipping
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:1175: ERROR:  column "minvalue" specified more than once
+<xs:complexType name="AreaToleranceType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:sequence>
+          <xs:element name="MaxValue" type="AreaValueType">
+          <xs:element name="MinValue"   type="AreaValueType"   minOccurs="0">
+        </xs:sequence>
+        <xs:element name="MinValue"  type="AreaValueType">
+      </xs:choice>
+      <xs:element name="DefinedAsLimit"    type="xs:boolean">
+    </xs:sequence>
+  </xs:complexType>
+
+8) SubgroupStatsValuesEnumType missing : forgot to parse types is simple, only enum that is not used as embedded type
+Illegal postgres words: All, Offset, etc.
+index repeated changed to _index_
+
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:731: ERROR:  column "minvalue" specified more than once
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:6510: ERROR:  type "subgroupstatsvaluesenumtype" does not exist
+LINE 10:  StatsValuesPerSubgroup SubgroupStatsValuesEnumType, 
+                                 ^
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:7531: ERROR:  column "index" specified more than once
+
+7) 
+LINE 1: DROP TABLE IF EXISTS And;
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:1500: NOTICE:  table "basefeaturepointset" does not exist, skipping
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:1507: ERROR:  syntax error at or near ")"
+LINE 7: ) ;
+
+COMMA IN COMMENT
+	SequenceNumber DECIMAL(10,2), -- element of DECIMAL(10 2) 
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:1854: NOTICE:  table "capabilitystudyresults" does not exist, skipping
+sql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/QifSql.sql:1883: ERROR:  syntax error at or near ")"
+LINE 29: ) ;
+
+
+
+6) Added Parsed() flag so wont repeat attribute, derived type parsing of type
++		childname	"DefinedAsLimit"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
++		nodetypename	"LinearToleranceType"	std::basic_string<char,std::char_traits<char>,std::allocator<char> >
+Name=DefinedAsLimit [1,1] TypeName=boolean Type=element_ Type=Simple Content=Simple Basetype=anySimpleType Global=False Parent=  OuterElementName=UserDefinedUnitCharacteristicNominal
+
+=========================================================================
+
+5) no type names in element unnesting
+Name=Characteristics [1,1] TypeName=CharacteristicAspectsListsType Type=entity_ Type=Complex Content=Complex Basetype=anyType Global=True Parent=  OuterElementName=
+Name=Characteristics [0,1] TypeName=*****!!!! Type=entity_ Type=Complex Content=Complex Basetype=anyType Global=False Parent=QIFDocument  OuterElementName=QIFDocument
+Name=Characteristics [0,1] TypeName= Type=entity_ Type=Complex Content=Complex Basetype=anyType Global=False Parent=QIFDocumentType  OuterElementName=
+
+=========================================================================
+4)
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:25: ERROR:  column "_circlefeatureactual" of relation "featureactuals" does not exist
+LINE 1: INSERT INTO FeatureActuals (_CircleFeatureActual,_CircleFeat...
+                                    ^
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:52: ERROR:  column "id" specified more than once
+LINE 1: INSERT INTO ArrayReferenceFull (N,Id,Id) values ('2',61,44);
+
+INSERT INTO FeatureActuals (_CircleFeatureActual,_CircleFeatureActual,_CircleFeatureActual,_EdgePointFeatureActual,_PointFeatureActual,_PointFeatureActual) values (1,2,3,1,1,2);
+
+
+DROP TABLE IF EXISTS FeatureActualBase;
+CREATE TABLE FeatureActualBase (
+	index  SERIAL PRIMARY KEY,
+	id text,-- attribute
+	_Attributes integer, -- index into table AttributesType 
+	_PointList integer, -- index into table PointListNominalType 
+	FeatureItemId text, -- entity of text 
+	ActualComponentId text, -- entity of text 
+	ManufacturingProcessId text, -- entity of text 
+	_MeasurementDeviceIds integer, -- index into table ArrayReferenceFullType 
+	_NotedEventIds integer  -- index into table ArrayReferenceFullType 
+) ;
+
+DROP TABLE IF EXISTS FeatureActuals;
+CREATE TABLE FeatureActuals (
+	index  SERIAL PRIMARY KEY,
+	_FeatureActual integer  -- index into table FeatureActualBaseType 
+) ;
+
+     <MeasuredFeatures>
+        <FeatureActuals>
+          <EdgePointFeatureActual id="10">
+            <FeatureItemId>9</FeatureItemId>
+            <Location>2460.72 770.62 944.98</Location>
+            <Normal>-0.735465884156759 -0.307902932144912 0.603560864882807</Normal>
+          </EdgePointFeatureActual>
+          <PointFeatureActual id="20">
+            <FeatureItemId>19</FeatureItemId>
+            <Location>2466.9 774.31 944.84</Location>
+          </PointFeatureActual>
+          <PointFeatureActual id="36">
+            <FeatureItemId>35</FeatureItemId>
+            <Location>2537.17 783.38 920.02</Location>
+          </PointFeatureActual>
+          <CircleFeatureActual id="44">
+            <FeatureItemId>43</FeatureItemId>
+            <Location>2434.01 801.52505599193 889.98</Location>
+            <Normal>0.0558150216639657 -0.907624351305543 -0.416056150385791</Normal>
+            <Diameter>9.499476</Diameter>
+          </CircleFeatureActual>
+          <CircleFeatureActual id="61">
+            <FeatureItemId>60</FeatureItemId>
+            <Location>2496.39 781.751759542342 938.09</Location>
+            <Normal>0.0418550117439733 -0.909169210310978 -0.414318120547998</Normal>
+            <Diameter>10.199987999999999</Diameter>
+          </CircleFeatureActual>
+          <CircleFeatureActual id="77">
+            <FeatureItemId>76</FeatureItemId>
+            <Location>2506.63672251543 792.999124488284 912.644676969086</Location>
+            <Normal>0.0418467877611875 -0.909189553580246 -0.414274307693132</Normal>
+            <Diameter>30</Diameter>
+          </CircleFeatureActual>
+        </FeatureActuals>
+      </MeasuredFeatures>
+
+	<xs:complexType name="FeatureActualBaseType"  abstract="true">
+    <xs:complexContent>
+      <xs:extension base="FeatureBaseType">
+        <xs:sequence>
+          <xs:element name="PointList"     type="PointListActualType"     minOccurs="0">
+          <xs:element name="FeatureItemId"      type="QIFReferenceFullType">
+          <xs:element name="ActualComponentId"   type="QIFReferenceFullType"      minOccurs="0">
+          <xs:element name="ManufacturingProcessId" type="QIFReferenceFullType"     minOccurs="0">
+          <xs:element name="MeasurementDeviceIds"  type="ArrayReferenceFullType"    minOccurs="0">
+          <xs:element name="NotedEventIds"    type="ArrayReferenceFullType"    minOccurs="0">
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  Well there is no array of elements here.
+  <xs:element name="FeatureActual" type="FeatureActualBaseType"/>
+  <xs:element name="ArcFeatureActual" type="ArcFeatureActualType" substitutionGroup="FeatureActual"/>
+
+  <xs:complexType name="FeatureActualsType">
+    <xs:annotation>
+      <xs:documentation>
+        The FeatureActualsType defines a list of feature actuals.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="FeatureActual"  maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each FeatureActual element gives information about a feature
+            actual.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+=========================================================================
+3) vector comma problem
+
+INSERT INTO PointFeatureActual (id,FeatureItemId,Location) values ('36',35,2537.17 783.38 920.02);
+
+psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:19: ERROR:  syntax error at or near "783.38"
+LINE 1: ...d,FeatureItemId,Location) values ('36',35,2537.17 783.38 920...
+
+         <PointFeatureActual id="36">
+            <FeatureItemId>35</FeatureItemId>
+            <Location>2537.17 783.38 920.02</Location>
+          </PointFeatureActual>
+
+DROP TABLE IF EXISTS PointFeatureActual;
+CREATE TABLE PointFeatureActual (
+	index  SERIAL PRIMARY KEY,
+	id text,-- attribute
+	_Attributes integer, -- index into table AttributesType 
+	_PointList integer, -- index into table PointListNominalType 
+	_FeatureItemId integer, -- index into table QIFReferenceFullType 
+	_ActualComponentId integer, -- index into table QIFReferenceFullType 
+	_ManufacturingProcessId integer, -- index into table QIFReferenceFullType 
+	_MeasurementDeviceIds integer, -- index into table ArrayReferenceFullType 
+	_NotedEventIds integer, -- index into table ArrayReferenceFullType 
+	_Location integer, -- index into table LocationType 
+	_Normal integer  -- index into table UnitVectorSimpleType 
+) ;
+SO WRONG ITS FRUSTRATING:
+<xs:complexType name="PointFeatureActualType">
+    <xs:complexContent>
+      <xs:extension base="FeatureActualBaseType">
+        <xs:sequence>
+          <xs:element name="Location"    type="ActualPointType"       minOccurs="0">
+          <xs:element name="Normal"       type="ActualUnitVectorType"         minOccurs="0">
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="QIFReferenceFullType">
+    <xs:complexContent>
+      <xs:extension base="QIFReferenceType">
+        <xs:attribute name="asmPath" type="QIFIdType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="QIFReferenceType">
+    <xs:simpleContent>
+      <xs:extension base="QIFIdType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+
+   <xs:simpleType name="QIFIdType">
+    <xs:restriction base="xs:unsignedInt">
+      <xs:pattern value="[1-9][0-9]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+   <MeasurementsResults>
+    <MeasurementResults id="86">
+      <ThisResultsInstanceQPId>8521ff0f-4c05-4f13-a2be-1386190f75a6</ThisResultsInstanceQPId>
+      <MeasuredFeatures>
+        <FeatureActuals>
+          <EdgePointFeatureActual id="10">
+            <FeatureItemId>9</FeatureItemId>
+            <Location>2460.72 770.62 944.98</Location>
+            <Normal>-0.735465884156759 -0.307902932144912 0.603560864882807</Normal>
+          </EdgePointFeatureActual>
+          <PointFeatureActual id="20">
+            <FeatureItemId>19</FeatureItemId>
+            <Location>2466.9 774.31 944.84</Location>
+          </PointFeatureActual>
+
+  <xs:element name="PointFeatureActual"  type="PointFeatureActualType"   substitutionGroup="FeatureActual"/>
+
+   <xs:complexType name="FeatureActualBaseType"  abstract="true">
+    <xs:complexContent>
+      <xs:extension base="FeatureBaseType">
+        <xs:sequence>
+          <xs:element name="PointList"    type="PointListActualType"    minOccurs="0">
+          <xs:element name="FeatureItemId"      type="QIFReferenceFullType">
+          <xs:element name="ActualComponentId"        type="QIFReferenceFullType"      minOccurs="0">
+          <xs:element name="ManufacturingProcessId"    type="QIFReferenceFullType"   minOccurs="0">
+          <xs:element name="MeasurementDeviceIds"      type="ArrayReferenceFullType"    minOccurs="0">
+          <xs:element name="NotedEventIds"       type="ArrayReferenceFullType"         minOccurs="0">
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  Name=PointFeatureActualType TypeName=type_ Type=PointFeatureActualType SimpleType=F  BaseType=FeatureActualBaseType Abstract=0 [-2,-2]
+	Attributes: 0. id(1) 
+	Subtypes: FeatureActualBaseType->FeatureBaseType->
+	 VarName=id Type=attribute_ TypeName=  Basetype= [-2,-2]
+	 Group:
+		 Group:
+			 VarName=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+		 Group:
+			 VarName=PointList Type=element_ TypeName=PointListActualType  Basetype=anyType [0,1]
+			 VarName=FeatureItemId Type=element_ TypeName=QIFReferenceFullType  Basetype=QIFReferenceType [1,1]
+			 VarName=ActualComponentId Type=element_ TypeName=QIFReferenceFullType  Basetype=QIFReferenceType [0,1]
+			 VarName=ManufacturingProcessId Type=element_ TypeName=QIFReferenceFullType  Basetype=QIFReferenceType [0,1]
+			 VarName=MeasurementDeviceIds Type=element_ TypeName=ArrayReferenceFullType  Basetype=anyType [0,1]
+			 VarName=NotedEventIds Type=element_ TypeName=ArrayReferenceFullType  Basetype=anyType [0,1]
+	 Group:
+		 VarName=Location Type=element_ TypeName=ActualPointType  Basetype=PointType [0,1]
+		 VarName=Normal Type=element_ TypeName=ActualUnitVectorType  Basetype=UnitVectorType [0,1]
+
+FIX: Added IsSimpleContent() (only text) to table generation, if so, create simple column,  i.e.,:
+CREATE TABLE PointFeatureActual (
+	index  SERIAL PRIMARY KEY,
+	id text,-- attribute
+	_Attributes integer, -- index into table AttributesType 
+	_PointList integer, -- index into table PointListNominalType 
+	FeatureItemId text, -- entity of text 
+	ActualComponentId text, -- entity of text 
+	ManufacturingProcessId text, -- entity of text 
+	_MeasurementDeviceIds integer, -- index into table ArrayReferenceFullType 
+	_NotedEventIds integer, -- index into table ArrayReferenceFullType 
+	Location DOUBLE PRECISION[3], -- list of DOUBLE PRECISION 
+	Normal DOUBLE PRECISION[3]  -- list of DOUBLE PRECISION 
+) ;
+=========================================================================
+2) psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:3: ERROR:  column "printeddrawing" of relation "definitionexternal" does not exist
+LINE 1: INSERT INTO DefinitionExternal (id,PrintedDrawing) values ('...
+
+TABLE definitionexternal COLUMN _printeddrawing integer;
+=========================================================================
+1) psql:C:/Users/michalos/Documents/GitHub/QIF/src/MSVCQIF/MSVCQIF/Win32/Debug/insert.sql:1: ERROR:  syntax error at or near "f"
+LINE 1: ...TO Version (ThisInstanceQPId) values (b61e7786-891f-4883-8d5...
+
+std::string CXmlAndSql::ConvertXml2SqlValue(std::string type, std::string val)
+{
+ . . . 
+
+	else if(_stricmp(type.c_str(), "QPIdType") == 0)  return  StrFormat("'%s'", val.c_str()); // uuid now in quotes

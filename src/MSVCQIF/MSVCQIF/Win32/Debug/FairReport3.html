@@ -1,0 +1,117 @@
+<html>
+<header>
+<style type="text/css">
+<!--
+@page { size:8.5in 11in; margin: 2cm }
+http://css-discuss.incutio.com/wiki/Printing_Headers
+-->
+table { table-layout: fixed; }
+.breakhere {page-break-after: always}
+
+@media print {
+   #hearder{display:none;} 
+   #footer{display:none;} 
+  * {
+    background: #fff;
+    color: #000;
+  }
+  td{font-family: Arial; font-size: 9pt;}
+  th{font-family: Arial; font-size: 9pt;}
+  tr{ height=".120in"}
+  html {
+    font: 100%/1.5 georgia, serif;
+ }
+  @page { size:landscape ; margin: 0.25in; }
+body
+{
+  <!-- top, right, bottom, left --> 
+  margin: 0.5in 0.25in 2mm 0.25in;
+}
+}
+</style>
+</header>
+<body>
+<table width="100%" border=0> 
+<tr>
+<th width="70%" align="left"> AS9102 Rev A First Article Inspection </th>
+<th width="30" align="right"> Sheet 1 of <u>2</u></th>
+</tr>
+<tr> <td colspan=2><b> Form 3: Characteristic Accountability, Verification and Compatability Evaluation </b></tr></tr>
+</table>
+<table width="100%" border=1 style="border-collapse: collapse;">
+<tr style="border:solid 0px #060" height="1px" valign="top" align="center">
+<th style="border:solid 0px #060" width="0.375in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.625in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.75in">&nbsp;</th>
+<th style="border:solid 0px #060" width="1.0in">&nbsp;</th>
+<th style="border:solid 0px #060" width="1.25in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.875in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.875in">&nbsp;</th>
+<th style="border:solid 0px #060" width="3.125in">&nbsp;</th>
+</tr>
+<tr height="0.5in" valign="top" align="center">
+<td colspan=4  ><b> Characteristic Accountability </b></td>
+<td colspan=3><b> Inspection/Test Results</b></td>
+<td colspan=1><b> Optional Fields</b></td>
+</tr>
+<tr valign="top" align="center">
+<td ><b> 5. Char<br>No. </b></td>
+<td ><b> 6.<br> Reference<br>Location</b></td>
+<td ><b> 7.<br> Characteristic<br>Designator </b></td>
+<td ><b> 8. Requirement </b></td>
+<td ><b> 9. Results </b></td>
+<td ><b> 10. Designed <br> Tooling</b></td>
+<td ><b> 11. Non-<br>Conformance<br> Number</b></td>
+<td >14. [Insert columns, etc., as required by Organization or Customer]</td>
+</tr>
+<tr> <td> <CENTER>5</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>C2</CENTER> </td> <td> <CENTER>MINOR</CENTER> </td> <td> ToleranceValue=4<br> </td> <td> <CENTER>PASS</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>NA</CENTER> </td><td> <LEFT>PointProfile</LEFT> </td></tr>
+<tr> <td> <CENTER>1</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>D3</CENTER> </td> <td> <CENTER>REF</CENTER> </td> <td> NonTolerance=MEASURED<br>TargetValue=2466.729248046875<br>Direction=XAXIS<br> </td> <td> <CENTER>BASIC</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>NA</CENTER> </td><td> <LEFT>LinearCoordinate</LEFT> </td></tr>
+<tr> <td> <CENTER>2</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>D3</CENTER> </td> <td> <CENTER>MINOR</CENTER> </td> <td> MaxValue=0.2<br>MinValue=-0.2<br>DefinedAsLimit=false<br>TargetValue=774.26989746093795<br>Direction=YAXIS<br> </td> <td> <CENTER>PASS</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>NA</CENTER> </td><td> <LEFT>LinearCoordinate</LEFT> </td></tr>
+<tr> <td> <CENTER>3</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>D3</CENTER> </td> <td> <CENTER>MAJOR</CENTER> </td> <td> MaxValue=945.20274658203095<br>MinValue=944.80274658203086<br>DefinedAsLimit=true<br>Direction=ZAXIS<br> </td> <td> <CENTER>PASS</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>NA</CENTER> </td><td> <LEFT>LinearCoordinate</LEFT> </td></tr>
+<tr> <td> <CENTER>4</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>B3</CENTER> </td> <td> <CENTER>CRITICAL</CENTER> </td> <td> ToleranceValue=1.5<br>OuterDisposition=1<br> </td> <td> <CENTER>FAIL</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>1234</CENTER> </td><td> <LEFT>PointProfile</LEFT> </td></tr>
+<tr> <td> <CENTER>6</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>C1</CENTER> </td> <td> <CENTER>MINOR</CENTER> </td> <td> MaxValue=0.4<br>MinValue=-0.4<br>DefinedAsLimit=false<br>TargetValue=10<br> </td> <td> <CENTER>FAIL</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>1234</CENTER> </td><td> <LEFT>Diameter</LEFT> </td></tr>
+<tr> <td> <CENTER>7</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>C1</CENTER> </td> <td> <CENTER>CRITICAL</CENTER> </td> <td> MaterialModifier=NONE<br>ReferencedComponent=ACTUAL<br>PrecedenceEnum=PRIMARY<br>MaterialModifier=MAXIMUM<br>ReferencedComponent=ACTUAL<br>PrecedenceEnum=SECONDARY<br>MaterialModifier=MAXIMUM<br>ReferencedComponent=ACTUAL<br>PrecedenceEnum=TERTIARY<br>ToleranceValue=1<br>MaterialCondition=MAXIMUM<br>DiametricalZone=<br> </td> <td> <CENTER>PASS</CENTER> </td><td> <CENTER>GAGE PINS<br></CENTER> </td><td> <CENTER>NA</CENTER> </td><td> <LEFT>Position</LEFT> </td></tr>
+<tr> <td> <CENTER>8</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>C3</CENTER> </td> <td> <CENTER>CRITICAL</CENTER> </td> <td> MaxValue=10.4<br>MinValue=9.6<br>DefinedAsLimit=true<br> </td> <td> <CENTER>PASS</CENTER> </td><td> <CENTER>CALIPERS<br></CENTER> </td><td> <CENTER>NA</CENTER> </td><td> <LEFT>Diameter</LEFT> </td></tr>
+</table>
+<div style="page-break-before: always">&nbsp;</div><table width="100%" border=0> 
+<tr>
+<th width="70%" align="left"> AS9102 Rev A First Article Inspection </th>
+<th width="30" align="right"> Sheet 2 of <u>2</u></th>
+</tr>
+<tr> <td colspan=2><b> Form 3: Characteristic Accountability, Verification and Compatability Evaluation </b></tr></tr>
+</table>
+<table width="100%" border=1 style="border-collapse: collapse;">
+<tr style="border:solid 0px #060" height="1px" valign="top" align="center">
+<th style="border:solid 0px #060" width="0.375in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.625in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.75in">&nbsp;</th>
+<th style="border:solid 0px #060" width="1.0in">&nbsp;</th>
+<th style="border:solid 0px #060" width="1.25in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.875in">&nbsp;</th>
+<th style="border:solid 0px #060" width="0.875in">&nbsp;</th>
+<th style="border:solid 0px #060" width="3.125in">&nbsp;</th>
+</tr>
+<tr height="0.5in" valign="top" align="center">
+<td colspan=4  ><b> Characteristic Accountability </b></td>
+<td colspan=3><b> Inspection/Test Results</b></td>
+<td colspan=1><b> Optional Fields</b></td>
+</tr>
+<tr valign="top" align="center">
+<td ><b> 5. Char<br>No. </b></td>
+<td ><b> 6.<br> Reference<br>Location</b></td>
+<td ><b> 7.<br> Characteristic<br>Designator </b></td>
+<td ><b> 8. Requirement </b></td>
+<td ><b> 9. Results </b></td>
+<td ><b> 10. Designed <br> Tooling</b></td>
+<td ><b> 11. Non-<br>Conformance<br> Number</b></td>
+<td >14. [Insert columns, etc., as required by Organization or Customer]</td>
+</tr>
+<tr> <td> <CENTER>9</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>C3</CENTER> </td> <td> <CENTER>MINOR</CENTER> </td> <td> MaterialModifier=NONE<br>ReferencedComponent=ACTUAL<br>PrecedenceEnum=PRIMARY<br>MaterialModifier=LEAST<br>ReferencedComponent=ACTUAL<br>PrecedenceEnum=SECONDARY<br>MaterialModifier=LEAST<br>ReferencedComponent=ACTUAL<br>PrecedenceEnum=TERTIARY<br>ToleranceValue=1<br>MaterialCondition=REGARDLESS<br>DiametricalZone=<br> </td> <td> <CENTER>FAIL</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER>1234</CENTER> </td><td> <LEFT>Position</LEFT> </td></tr>
+<tr> <td> <CENTER>10</CENTER> </td> <td> <CENTER><br><br></CENTER> </td> <td> <CENTER>CRITICAL</CENTER> </td> <td> NonTolerance=SET<br>TargetValue=30<br> </td> <td> <CENTER>BASIC</CENTER> </td><td> <CENTER></CENTER> </td><td> <CENTER></CENTER> </td><td> <LEFT>Diameter</LEFT> </td></tr>
+<tr> <td> <CENTER>DIST1</CENTER> </td> <td> <CENTER>sheet2_solid4<br>SHEET1<br>B2</CENTER> </td> <td> <CENTER>CRITICAL</CENTER> </td> <td> MaxValue=0.5<br>MinValue=-0.5<br>DefinedAsLimit=false<br>TargetValue=81.208839738425993<br>AnalysisMode=THREEDIMENSIONAL<br> </td> <td> <CENTER>PASS</CENTER> </td><td> <CENTER>CMM<br></CENTER> </td><td> <CENTER></CENTER> </td><td> <LEFT>DistanceBetween</LEFT> </td></tr>
+<tr> <td align="center" colspan=8 style="border:solid 0px #060"><b> The signature indicates that all characteristics are accounted for; meeting requirements or are properly documented for disposition. </b></td></tr>
+<tr> <td align="center" colspan=7 style="border-top:solid 0px #060"><b> 12. Prepared By</b><br>John Doe</td> <td align="center"><b> 13. Date</b><br>2014-07-30T11:14:06 </td></tr>
+</table>
+</body>
+</html>
+

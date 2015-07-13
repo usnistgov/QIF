@@ -1,0 +1,20 @@
+<xsd xmlns='http://microsoft.com/dotnet/tools/xsd/'>
+    <generateClasses language='CS' namespace='MyNamespace'>
+        <schema>Auxiliary.xsd</schema>
+        <schema>Characteristics.xsd</schema>
+       <schema>Expressions.xsd</schema>
+       <schema>Features.xsd</schema>
+       <schema>GenericExpressions.xsd</schema>
+       <schema>Geometry.xsd</schema>
+       <schema>Primitives.xsd</schema>
+       <schema>PrimitivesPD.xsd</schema>
+       <schema>PrimitivesPMI.xsd</schema>
+       <schema>Statistics.xsd</schema>
+       <schema>Topology.xsd</schema>
+       <schema>Traceability.xsd</schema>
+       <schema>Units.xsd</schema>
+       <schema>Visualization.xsd</schema>
+
+        <schema>.\QIFLIbrary.xsd</schema>
+    </generateClasses>
+</xsd>

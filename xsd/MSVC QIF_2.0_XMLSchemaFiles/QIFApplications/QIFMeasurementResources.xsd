@@ -1,0 +1,2354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This document is part of QIF 2.0, an open, industry-wide standard -->
+<!-- established by the Dimensional Metrology Standards Consortium.    -->
+<!-- This document shall not be used in any manner to claim any        -->
+<!-- proprietary rights to such information, such as rights to a       -->
+<!-- patent, trademark, or copyright.                                  -->
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://qifstandards.org/xsd/qif2"
+  xmlns:t="http://qifstandards.org/xsd/qif2"
+  targetNamespace="http://qifstandards.org/xsd/qif2"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="2.0.0">
+  
+  <xs:include schemaLocation="../QIFLibrary/IntermediatesPMI.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      The MeasurementResources.xsd schema file defines the global
+      MeasurementResources element and specific types of
+      MeasurementResources.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="MeasurementResources"
+    type="MeasurementResourcesType">
+    <xs:annotation>
+      <xs:documentation>
+        The global MeasurementResources element gives information about one
+        or more measurement resources (fixtures, measurement devices).
+      </xs:documentation>
+    </xs:annotation>
+
+<!-- start key and one keyref for QIF ids of locations -->
+
+    <xs:key name="MeasurementResourceLocationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurementResourceLocationIdKey collects the QIF ids of all
+          Locations of MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./t:*/t:*/t:Location"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="MeasurementResourceLocationIdKeyref"
+      refer="MeasurementResourceLocationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurementResourceLocationIdKeyref requires that the
+          LocationId of a MeasurementResource be the QIF id of a Location in
+          MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./t:*/t:*"/>
+      <xs:field xpath="t:LocationId"/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of carriages -->
+
+    <xs:key name="CarriageIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CarriageIdKey collects the QIF ids of all carriages in
+          MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./t:Carriages/t:Carriage"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CarriageIdKeyref"
+      refer="CarriageIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CarriageIdKeyref requires that an Id in the CarriageIds
+          of a CMM be the QIF id of a Carriage.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./t:MeasurementDevices/t:CMM/t:CarriageIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of tools -->
+
+    <xs:key name="ToolIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ToolIdKey collects the QIF ids of all tools in
+          MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./t:Tools/t:Tool"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ToolIdKeyref"
+      refer="ToolIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ToolIdKeyref requires that an Id in a ToolIds located
+          anywhere in MeasurementResources be the QIF id of a Tool.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="./t:Carriages/t:Carriage/t:ToolIds/t:Id
+             | ./t:MeasurementDevices/t:CMM/t:ToolIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+  </xs:element>
+
+<!-- END KEYS AND KEYREFS FOR MEASUREMENTRESOURCES -->
+
+  <xs:complexType name="MeasurementResourcesType">
+    <xs:annotation>
+      <xs:documentation>
+        The MeasurementResourcesType defines a set of measurement
+        resources.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Version"
+        type="VersionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Version element gives version information about
+            the measurement resources.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Carriages"
+        type="CarriagesType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Carriages element is a list of carriages.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Fixtures"
+        type="FixturesType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Fixtures element is a list of fixtures.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MeasurementDevices"
+        type="MeasurementDevicesType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasurementDevices element is a list of
+            measurement devices.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Sensors"
+        type="SensorsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Sensors element is a list of sensors.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Tools"
+        type="ToolsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Tools element is a list of tools.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CarriagesType">
+    <xs:annotation>
+      <xs:documentation>
+        The CarriagesType defines a list of carriages (CMM carriages).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Carriage"
+        type="CarriageType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Carriage element gives information about a CMM carriage.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FixturesType">
+    <xs:annotation>
+      <xs:documentation>
+        The FixturesType defines a set of fixtures.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Fixture"
+        type="FixtureType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Fixture element gives information about a fixture.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SensorsType">
+    <xs:annotation>
+      <xs:documentation>
+        The SensorsType defines a list of CMM tips.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Sensor"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Sensor element gives information about a CMM tip.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ToolsType">
+    <xs:annotation>
+      <xs:documentation>
+        The ToolsType defines a list of tools (CMM tool bodies with
+        sensors).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Tool"
+        type="ToolType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Tool element gives information about a CMM tool.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MeasurementDevicesType">
+    <xs:annotation>
+      <xs:documentation>
+        The MeasurementDevicesType defines a list of measurement devices.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="MeasurementDevice"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each MeasurementDevice element gives information about a
+            general measurement device.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MeasurementResourceBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The abstract MeasurementResourceType is the base type for
+        measurement resources that may be required by an action, used by a
+        method, or referenced. Resource types can be a fixture, a carriage,
+        a measurement device, a tool, or a sensor.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Name"
+        type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            The Name element is the name of the measurement resource.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Description element is a description of the
+            measurement resource.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Manufacturer"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Manufacturer element is the manufacturer of the
+            measurement resource.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ModelNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ModelNumber element is the identifier of a
+            very specific type of measurement resource. There may be
+            many measurement resources with the same ModelNumber, but
+            they should all be identical (or nearly so).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SerialNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SerialNumber element is the serial number of
+            the measurement resource. Measurement resources with the
+            same ModelNumber have different SerialNumbers. The
+            combination of ModelNumber and SerialNumber should
+            differentiate a given measurement resource from all other
+            measurement resources in a QIF application instance file.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            This optional compositor selects either a location or a
+            reference to a location.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="LocationId"
+          type="QIFReferenceFullType">
+          <xs:annotation>
+            <xs:documentation>
+              The LocationId element is the QIF id of the location of the
+              measurement device. This element is in an optional choice.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Location"
+          type="LocationType">
+          <xs:annotation>
+            <xs:documentation>
+              The Location element gives information about the location of
+              the measurement resource. This element is in an optional
+              choice.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the measurement resource, used
+          for referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="FixtureType">
+    <xs:annotation>
+      <xs:documentation>
+        The FixtureType defines a fixture measurement resource.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementResourceBaseType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MeasurementDeviceAccuracyBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The MeasurementDeviceAccuracyBaseType is the abstract base type for
+        more specific types of measurement device accuracy.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="NumericalLengthAccuracyType">
+    <xs:annotation>
+      <xs:documentation>
+        The NumericalLengthAccuracyType defines the accuracy of a length or
+        point measurement device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementDeviceAccuracyBaseType">
+        <xs:sequence>
+          <xs:element name="AccuracyValue"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The AccuracyValue element is the accuracy.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MeasurementDeviceType">
+    <xs:annotation>
+      <xs:documentation>
+        The MeasurementDeviceType defines a measurement device. A
+        MeasurementDevice includes all components needed for making
+        measurements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementResourceBaseType">
+        <xs:sequence>
+          <xs:element name="Calibrations"
+            type="CalibrationsType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional Calibrations element is a list of calibrations
+                for a measurement device.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="InspectionTemperatures"
+            type="TemperaturesType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional InspectionTemperatures element is a list of
+                inspection temperatures for the measurement device. These
+                are temperatures at which the device may be used for
+                producing usable measurements.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CalibrationMasterType">
+    <xs:annotation>
+      <xs:documentation>
+        The CalibrationMasterType defines a calibration master.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="SerialNumber"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The SerialNumber element is the serial number of a calibration
+            master.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional description element is the description of a
+            calibration master.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CalibrationType">
+    <xs:annotation>
+      <xs:documentation>
+        The CalibrationType defines information about a calibration.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CalibrationMaster"
+        type="CalibrationMasterType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CalibrationMaster element gives information about
+            the calibration master.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Temperatures"
+        type="TemperaturesType">
+        <xs:annotation>
+          <xs:documentation>
+            The Temperatures element is a list of temperatures noted for
+            the calibration.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TimeStamp"
+        type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>
+            The TimeStamp element gives a date and time for the
+            calibration.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CalibrationsType">
+    <xs:annotation>
+      <xs:documentation>
+        The CalibrationsType defines a list of calibrations.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Calibration"
+        type="CalibrationType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Calibration element gives information about a calibration.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TemperaturesType">
+    <xs:annotation>
+      <xs:documentation>
+        The TemperaturesType defines a list of temperatures.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Temperature"
+        type="TemperatureType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Temperature element is a temperature noted for a machine.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TemperatureType">
+    <xs:annotation>
+      <xs:documentation>
+        The TemperatureType defines information about a temperature
+        measurement.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Temperature"
+        type="TemperatureValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Temperature element is the temperature value.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TimeStamp"
+        type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>
+            The TimeStamp element is a time and date associated with the
+            temperature value.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="QualificationsType">
+    <xs:annotation>
+      <xs:documentation>
+        The QualificationsType defines a list of sensor qualifications.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Qualification"
+        type="QualificationType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Qualification element gives information about a sensor
+            qualification.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="QualificationType">
+    <xs:annotation>
+      <xs:documentation>
+        The QualificationType defines how a measurement device has been
+        qualified.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The Description element is a description of the qualification.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TouchProbeType">
+    <xs:annotation>
+      <xs:documentation>
+        The TouchProbeType defines a CMM touch probe tip.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="TipDiameter"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The TipDiameter element is the nominal diameter of a CMM
+                touch probe tip.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SensorType">
+    <xs:annotation>
+      <xs:documentation>
+        The SensorType defines a CMM sensor. NOTE: Future release of the
+        QIF will extend types of sensors.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementResourceBaseType">
+        <xs:sequence>
+          <xs:element name="Qualifications"
+            type="QualificationsType">
+            <xs:annotation>
+              <xs:documentation>
+                The Qualifications element is a list of qualifications of a
+                CMM sensor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AAngle"
+            type="AngularValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The AAngle element is the nominal primary rotation angle of
+                the sensor axis for an indexable sensor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="BAngle"
+            type="AngularValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The BAngle element is the nominal primary rotation angle of
+                the sensor axis for an indexable sensor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ToolType">
+    <xs:annotation>
+      <xs:documentation>
+        The ToolType defines a CMM tool body having one or more sensors.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementResourceBaseType">
+        <xs:sequence>
+          <xs:element name="SensorIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional SensorIds element is a list of the QIF ids of
+                sensors mounted on the tool.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CarriageType">
+    <xs:annotation>
+      <xs:documentation>
+        The CarriageType defines a CMM carriage.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementResourceBaseType">
+        <xs:sequence>
+          <xs:element name="ToolIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ToolIds element is a list of the QIF ids of
+                CMM measurement tools associated with the carriage.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CMMType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMType defines a CMM with zero or one rotary table, zero
+        to many tools, and zero to many carriages. A CMM is assumed to
+        have a fixed native 3D Cartesian coordinate system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ProbingDeviceType">
+        <xs:sequence>
+          <xs:element name="HomeLocation"
+            type="PointType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional HomeLocation element gives the
+                HomeLocation of the tool mount point of the CMM in the
+                coordinate system of the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MachineGeometry"
+            type="CMMGeometryType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MachineGeometry element gives the type of
+                construction of the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AxisOrientation"
+            type="CMMAxisDirectionsType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional AxisOrientation element gives the
+                orientation of the axes of the coordinate system of
+                the CMM with respect to the machine.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CMMScales"
+            type="CMMScalesType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional CMMScales element describes the scales
+                used on the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MaxWorkpieceHeight"
+            type="LinearValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MaxWorkpieceHeight element gives the
+                maximum height (vertical extent) of an object to be
+                measured when the object is placed on the bed of the
+                CMM in the desired orientation.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MaxWorkpieceMass"
+            type="MassValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MaxWorkpieceMass element gives the
+                maximum mass of an object to be measured.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="JoystickSpeeds"
+            type="CMMSpeedsType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional JoystickSpeeds element describes the
+                maximum speed in joystick mode of each axis for
+                traversing and probing.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CNCSpeeds"
+            type="CMMSpeedsType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional CNCSpeeds element describes the maximum
+                speed in CNC mode of each axis for traversing and
+                probing.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RotaryTable"
+            type="RotaryTableType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional RotaryTable element describes a rotary
+                table attached to the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NominalAccuracy"
+            type="CMMAccuracyType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional NominalAccuracy element gives the accuracy
+                of the CMM ascribed to it by a CMM vendor.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ActualAccuracy"
+            type="CMMAccuracyType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ActualAccuracy element gives the accuracy
+                of the CMM as measured by the user of the CMM or by a
+                competent third party.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CarriageIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional CarriageIds element is a list of the QIF ids of
+                CMM carriages for the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ToolIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ToolIds element is a list of the QIF ids of CMM
+                measurement tools associated with the CMM but not
+                associated with a particular carriage.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CMMScalesType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMScalesType describes the scales on the CMM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="XScale"
+        type="CMMScaleType">
+        <xs:annotation>
+          <xs:documentation>
+            The XScale element describes the scale used for measuring
+            along the X axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="YScale"
+        type="CMMScaleType">
+        <xs:annotation>
+          <xs:documentation>
+            The YScale element describes the scale used for measuring
+            along the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZScale"
+        type="CMMScaleType">
+        <xs:annotation>
+          <xs:documentation>
+            The ZScale element describes the scale used for measuring
+            along the Z axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CMMScaleType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMScaleType describes a CMM scale.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ScaleMaterial"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The ScaleMaterial element describes the material from
+            which the scale is made.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ScaleCoefficientOfExpansion"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The ScaleCoefficientOfExpansion element is the
+            coefficient of expansion per degree Celsius of the scale.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ScaleCoefficientOfExpansionUncertainty"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The ScaleCoefficientOfExpansionUncertainty element is
+            the uncertainty of the coefficient of expansion per degree
+            Celsius of the scale.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TypeOfScale"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The TypeOfScale element describes the type of the
+            scale.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ScaleResolution"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The ScaleResolution element is the resolution of the
+            scale.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CMMSpeedsType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMSpeedsType gives the maximum probing and traversing
+        speeds of a CMM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MaxXTraverseSpeed"
+        type="SpeedValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxXTraverseSpeed element gives the maximum traverse
+            speed along the X axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MaxYTraverseSpeed"
+        type="SpeedValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxYTraverseSpeed element gives the maximum traverse
+            speed along the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MaxZTraverseSpeed"
+        type="SpeedValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxZTraverseSpeed element gives the  maximum traverse
+            speed along the Z axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MaxXProbingSpeed"
+        type="SpeedValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxXProbingSpeed element gives the maximum probing
+            speed along the X axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MaxYProbingSpeed"
+        type="SpeedValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxYProbingSpeed element gives the maximum probing
+            speed along the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MaxZProbingSpeed"
+        type="SpeedValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxZProbingSpeed element gives the  maximum probing
+            speed along the Z axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GageDeviceType">
+    <xs:annotation>
+      <xs:documentation>
+        The GageDeviceType defines a gage measurement device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementDeviceType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ManualDeviceType">
+    <xs:annotation>
+      <xs:documentation>
+        The ManualDeviceType defines a manual measurement device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementDeviceType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CaliperType">
+    <xs:annotation>
+      <xs:documentation>
+        The CaliperType defines a caliper measurement device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ManualDeviceType">
+        <xs:sequence>
+          <xs:element name="Resolution"
+            type="LinearValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional Resolution element is the resolution of the
+                caliper.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Accuracy"
+            type="NumericalLengthAccuracyType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional Accuracy element is the accuracy of the
+                caliper.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MinMeasurement"
+            type="LinearValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MinMeasurement element is the smallest
+                distance the caliper can measure.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MaxMeasurement"
+            type="LinearValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MaxMeasurement element is the largest
+                distance the caliper can measure.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CanMeasureInnerD"
+            type="xs:boolean"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional CanMeasureInnerD element indicates whether the
+                caliper can measure an inner diameter. If present and set
+                to true, the caliper can measure an inner diameter. If
+                omitted or set to false the caliper cannot measure an inner
+                diameter.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CanMeasureOuterD"
+            type="xs:boolean"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional CanMeasureOuterD element indicates whether the
+                caliper can measure an outer diameter. If present and set
+                to true, the caliper can measure an outer diameter. If
+                omitted or set to false the caliper cannot measure an outer
+                diameter.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="CanMeasureDepth"
+            type="xs:boolean"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional CanMeasureDepth element indicates whether the
+                caliper can measure the depth of a hole. If present and set
+                to true, the caliper can measure the depth of a hole. If
+                omitted or set to false the caliper cannot measure the
+                depth of a hole.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="CMMDirectionEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMDirectionEnumType enumerates values that describe the
+        directions on a CMM with which axes may be aligned. The
+        directions are those seen when standing in front of the CMM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="RIGHT"/>
+      <xs:enumeration value="LEFT"/>
+      <xs:enumeration value="FRONT"/>
+      <xs:enumeration value="BACK"/>
+      <xs:enumeration value="UP"/>
+      <xs:enumeration value="DOWN"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="CMMGeometryType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMGeometryType defines a type of construction of a CMM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="CMMGeometryEnum"
+        type="CMMGeometryEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The CMMGeometryEnum element describes an often-used type
+            of CMM construction.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherCMMGeometry"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherCMMGeometry element describes the CMM
+            construction type in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="CMMGeometryEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMGeometryEnumType enumerates values that describe
+        types of CMM construction.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="CANTILEVER"/>
+      <xs:enumeration value="BRIDGEMOVINGBRIDGE"/>
+      <xs:enumeration value="BRIDGEMOVINGTABLE"/>
+      <xs:enumeration value="COLUMN"/>
+      <xs:enumeration value="GANTRY"/>
+      <xs:enumeration value="HORIZONTALARMMOVINGARM"/>
+      <xs:enumeration value="HORIZONTALARMMOVINGTABLE"/>
+      <xs:enumeration value="ARTICULATEDARM"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="CMMAxisDirectionsType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMAxisDirectionsType defines how the coordinate axes point
+        with respect to the machine. The axis directions must form a
+        right-handed 3D Cartesian coordinate system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="XAxisDirection"
+        type="CMMDirectionEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The XAxisDirection element gives the direction of the
+            positive X axis with respect to the machine.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="YAxisDirection"
+        type="CMMDirectionEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The YAxisDirection element gives the direction of the
+            positive Y axis with respect to the machine.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZAxisDirection"
+        type="CMMDirectionEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The ZAxisDirection element gives the direction of the
+            positive Z axis with respect to the machine.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="WorkingVolumeType">
+    <xs:annotation>
+      <xs:documentation>
+        The WorkingVolumeType defines a box-shaped working volume
+        whose sides are aligned with the axes of a 3D Cartesian
+        coordinate coordinate system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="XAxisLength"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The XAxisLength element gives the length of the
+            working volume in the X direction.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="YAxisLength"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The YAxisLength element gives the length of the
+            working volume in the Y direction.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZAxisLength"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The ZAxisLength element gives the length of the
+            working volume in the Z direction.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EffectiveWorkingVolumeType">
+    <xs:annotation>
+      <xs:documentation>
+        The WorkingVolumeType defines the size and location of a
+        box-shaped working volume whose sides are aligned with the
+        axes of a 3D Cartesian coordinate coordinate system. The box
+        is described by giving the points at diagonally opposite
+        corners of the box, one with minimum XYZ values, the other
+        with maximum XYZ values.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MinPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The MinPoint element is the minimum corner of the working
+            volume.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MaxPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The XAxisMax element is the maximum corner of the working
+            volume.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RotaryTableType">
+    <xs:annotation>
+      <xs:documentation>
+        The RotaryTableType describes a rotary table attached to a CMM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="LocationOnCMM"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The LocationOnCMM element is the point in the CMM
+            coordinate system at which the center of the rotary table
+            is located.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AxisDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The AxisDirection element is the direction of the axis of
+            the rotary table in the CMM coordinate system.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZeroIndexDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The ZeroIndexDirection element is the direction of the
+            zero index of the rotary table in the CMM coordinate system.
+            The ZeroIndexDirection must be normal to the AxisDirection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TableRadius"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The TableRadius element is the radius of the table.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TableErrors"
+        type="TableErrorsType">
+        <xs:annotation>
+          <xs:documentation>
+            The TableErrors element gives the table errors.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TableErrorsType">
+    <xs:annotation>
+      <xs:documentation>
+        The TableErrorsType gives the maximum errors of a rotary
+        table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AxialError"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The AxialError element is the maximum error in the
+            direction of the axis of the table.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RadialError"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The RadialError element is the maximum error in the
+            direction of the radius of the table.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TangentialError"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The TangentialError element is the maximum error in the
+            direction of the tangent to the table at the outer edge
+            of the table.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ResolutionType">
+    <xs:annotation>
+      <xs:documentation>
+        The ResolutionType gives the resolution of a CMM (or other
+        device with 3D Cartesian coordinates) as an overall resolution,
+        or as a sequence of X, Y, and Z axis resolutions, or both.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:annotation>
+        <xs:documentation>
+          The choice is among (1) CombinedResolution, (2) XYZResolution, or
+          (3) both (with CombinedResolution coming first). This choice
+          structure is the normal XML schema language structure for 'one or
+          both'.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:sequence>
+        <xs:element name="CombinedResolution"
+          type="LinearValueType">
+          <xs:annotation>
+            <xs:documentation>
+              The CombinedResolution element is the resolution of the
+              device.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="XYZResolution"
+          type="XYZResolutionType"
+          minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              The XYZResolution element gives the resolution of the device
+              along each of the three coordinate axes.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:element name="XYZResolution"
+        type="XYZResolutionType">
+        <xs:annotation>
+          <xs:documentation>
+            The XYZResolution element gives the resolution of the device
+            along each of the three coordinate axes.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="XYZResolutionType">
+    <xs:annotation>
+      <xs:documentation>
+        The XYZResolutionType defines the resolution of a CMM (or other
+        device with 3D Cartesian coordinates) using separate values for
+        the three axes.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="XResolution"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The XResolution element is the resolution of the X axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="YResolution"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The YResolution element is the resolution of the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZResolution"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The ZResolution element is the resolution of the Z axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FPSTestType">
+    <xs:annotation>
+      <xs:documentation>
+        The FPSTestType defines a full parametric specification of the
+        accuracy of a CMM. The value of each element other than the
+        squareness elements is a function of the reported value of one
+        of the three axes. The value of the function is the error at
+        that point on the axis.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="CMMAccuracyTestBaseType">
+        <xs:sequence>
+          <xs:element name="XLinearity"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The XLinearity element is the linearity of the machine X
+                axis. Each value in the range represents a displacement
+                along the X axis of a point on the X axis. The value is the
+                value measured by high-accuracy methods minus the value
+                reported by the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YLinearity"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The YLinearity element is the linearity of the machine Y
+                axis. Each value in the range represents a displacement
+                along the Y axis of a point on the Y axis. The value is the
+                value measured by high-accuracy methods minus the value
+                reported by the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZLinearity"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZLinearity element is the linearity of the machine Z
+                axis. Each value in the range represents a displacement
+                along the Z axis of a point on the Z axis. The value is the
+                value measured by high-accuracy methods minus the value
+                reported by the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XAxisRoll"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The XRoll element gives the local roll of the machine X
+                axis with respect to the nominal coordinate system of the
+                CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XAxisPitch"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The XPitch element gives the local pitch of the machine X
+                axis with respect to the nominal coordinate system of the
+                CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XAxisYaw"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The XYaw element gives the local yaw of the machine X axis
+                with respect to the nominal coordinate system of the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YAxisRoll"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The YRoll element gives the local roll of the machine Y
+                axis with respect to the nominal coordinate system of the
+                CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YAxisPitch"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The YPitch element gives the local pitch of the machine Y
+                axis with respect to the nominal coordinate system of the
+                CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YAxisYaw"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The YYaw element gives the local yaw of the machine Y axis
+                with respect to the nominal coordinate system of the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZAxisRoll"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZRoll element gives the local roll of the machine Z
+                axis with respect to the nominal coordinate system of the
+                CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZAxisPitch"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZPitch element gives the local pitch of the machine Z
+                axis with respect to the nominal coordinate system of the
+                CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZAxisYaw"
+            type="AngleFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZYaw element gives the local yaw of the machine Z axis
+                with respect to the nominal coordinate system of the CMM.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XAxisStraightnessY"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The XAxisStraightnessY element gives the deviation from
+                the nominal X axis in the Y direction of measured
+                points on the machine X axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XAxisStraightnessZ"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The XAxisStraightnessZ element gives the deviation from
+                the nominal X axis in the Z direction of measured
+                points on the machine X axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YAxisStraightnessX"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The YAxisStraightnessX element gives the deviation from
+                the nominal Y axis in the X direction of measured
+                points on the machine Y axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YAxisStraightnessZ"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The YAxisStraightnessZ element gives the deviation from
+                the nominal Y axis in the Z direction of measured
+                points on the machine Y axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZAxisStraightnessX"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZAxisStraightnessX element gives the deviation from
+                the nominal Z axis in the X direction of measured
+                points on the machine Z axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZAxisStraightnessY"
+            type="LengthFunctionDiscreteType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZAxisStraightnessY element gives the deviation from
+                the nominal Z axis in the Y direction of measured
+                points on the machine Z axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XYSquareness"
+            type="xs:double">
+            <xs:annotation>
+              <xs:documentation>
+                The XYSquareness element is the rate of offset in the XY
+                plane of a point on the best fit Y axis from the nominal Y
+                axis. The amount of deviation of any point on the Y axis is
+                the XYSquareness times the Y value of the point. A positive
+                value means the angle is greater than a right angle. A
+                negative value means the angle is less than a right angle.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="XZSquareness"
+            type="xs:double">
+            <xs:annotation>
+              <xs:documentation>
+                The XZSquareness element is the rate of offset in the XZ
+                plane of a point on the best fit Z axis from the nominal Z
+                axis. The amount of deviation of any point on the Z axis is
+                the XZSquareness times the Z value of the point. A positive
+                value means the angle is greater than a right angle. A
+                negative value means the angle is less than a right angle.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YZSquareness"
+            type="xs:double">
+            <xs:annotation>
+              <xs:documentation>
+                The YZSquareness element is the rate of offset in the YZ
+                plane of a point on the best fit Z axis from the nominal Z
+                axis. The amount of deviation of any point on the Z axis is
+                the YZSquareness times the Z value of the point. A positive
+                value means the angle is greater than a right angle. A
+                negative value means the angle is less than a right angle.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FunctionDiscreteType">
+    <xs:annotation>
+      <xs:documentation>
+        The FunctionDiscreteType describes a mathematical function
+        whose domain and range are arrays of double values. The
+        function is represented by matching pairs of values from the
+        domain and range.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="DomainValues"
+        type="ListDoubleType">
+        <xs:annotation>
+          <xs:documentation>
+            The DomainValues element gives the values in the domain.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RangeValues"
+        type="ListDoubleType">
+        <xs:annotation>
+          <xs:documentation>
+            The RangeValues element gives the values in the range.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="N"
+      type="NaturalType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The N attribute gives the number of values in the domain
+          and range.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="LengthFunctionDiscreteType">
+    <xs:annotation>
+      <xs:documentation>
+        The LengthFunctionDiscreteType describes a discrete function
+        whose domain is an array of values representing distances and
+        whose range is an array of values representing distances.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="FunctionDiscreteType">
+        <xs:sequence>
+          <xs:element name="DomainLinearUnit"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+                The DomainLinearUnit element gives the name of the
+                linear unit for the domain. This must be the name of a
+                defined linear unit.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RangeLinearUnit"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+                The RangeLinearUnit element gives the name of the
+                linear unit for the range. This must be the name of a
+                defined linear unit.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AngleFunctionDiscreteType">
+    <xs:annotation>
+      <xs:documentation>
+        The AngleFunctionDiscreteType describes a discrete function
+        whose domain is an array of values representing distances and
+        whose range is an array of values representing angles.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="FunctionDiscreteType">
+        <xs:sequence>
+          <xs:element name="DomainLinearUnit"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+                The DomainLinearUnit element gives the name of the
+                linear unit for the domain. This must be the name of a
+                defined linear unit.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RangeAngularUnit"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+                The RangeAngularUnit element gives the name of the
+                angular unit for the range. This must be the name of a
+                defined angular unit.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CMMAccuracyTestBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMAccuracyTestBaseType is the base type for CMM accuracy
+        tests.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:complexType name="B89TestType">
+    <xs:annotation>
+      <xs:documentation>
+        The B89TestType is the CMM accuracy test specified in ASME B89.4.1
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="CMMAccuracyTestBaseType">
+        <xs:sequence>
+          <xs:element name="XLinearAccuracy"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The XLinearAccuracy element is the maximum error along
+                the X axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="YLinearAccuracy"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The YLinearAccuracy is the maximum error along the Y axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ZLinearAccuracy"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The ZLinearAccuracy is the maximum error along the Z axis.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="OffsetVolumetricPerformance"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The OffsetVolumetricPerformance is the maximum error in all
+                directions that were tested when measured with a probe
+                offset at right angles to a ball bar artifact.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="VolumetricPerformance"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The VolumetricPerformance is the maximum error in all
+                directions that were tested.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Repeatability"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The Repeatability element is the difference between
+                the largest and smallest of multiple measurements of
+                the position of a fixed ball.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ISO10360TestType">
+    <xs:annotation>
+      <xs:documentation>
+        The ISO10360TestType is the CMM volumetric accuracy test
+        specified by ISO 10360-2.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="CMMAccuracyTestBaseType">
+        <xs:choice>
+          <xs:element name="MaxErrorConstant"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The MaxErrorConstant element gives the maximum error in
+                measuring a distance as a constant.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LinearError"
+            type="LinearErrorType">
+            <xs:annotation>
+              <xs:documentation>
+                The LinearError element gives the maximum error in
+                measuring a distance as a linear function of the
+                distance measured.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LesserError"
+            type="LesserErrorType">
+            <xs:annotation>
+              <xs:documentation>
+                The LesserError element gives the maximum error in
+                measuring a distance as the lesser of a constant and
+                the value of a linear function of the distance measured.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="LinearErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        The LinearErrorType defines a maximum error that increases linearly
+        with the distance measured. To compute the error, add the BaseError
+        to the ErrorRate times the distance measured. The units for
+        distance measured must be the same as those of the BaseError.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="BaseError"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The BaseError element gives the constant to add.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ErrorRate"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The ErrorRate element gives the rate of increase with
+            distance of the error.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LesserErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        The LesserErrorType defines a maximum error that is the lesser
+        of a constant error or a linear error.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="MaxErrorConstant"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The MaxErrorConstant element gives the maximum error in
+            measuring a distance as a constant.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LinearError"
+        type="LinearErrorType">
+        <xs:annotation>
+          <xs:documentation>
+            The LinearError element gives the maximum error in measuring
+            a distance as a linear function of the distance measured.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PointAccuracyTestType">
+    <xs:annotation>
+      <xs:documentation>
+        The PointAccuracyTestType gives CMM accuracy as the maximum
+        deviation of a measured point location from its actual
+        location throughout the CMM's working volume.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="CMMAccuracyTestBaseType">
+        <xs:sequence>
+          <xs:element name="Accuracy"
+            type="LinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The Accuracy element gives the maximum deviation.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CMMAccuracyType">
+    <xs:annotation>
+      <xs:documentation>
+        The CMMAccuracyType describes the accuracy of a CMM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementDeviceAccuracyBaseType">
+        <xs:sequence>
+          <xs:element name="MinTemperature"
+            type="TemperatureValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The MinTemperature element is the minimum temperature
+                at which the accuracy description is valid.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MaxTemperature"
+            type="TemperatureValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The MaxTemperature element is the maximum temperature
+                at which the accuracy description is valid.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element ref="CMMAccuracyTest"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ProbingDeviceType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The ProbingDeviceType defines a device that uses a probe to
+        measure parts.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MeasurementDeviceType">
+        <xs:sequence>
+          <xs:element name="WorkingVolume"
+            type="WorkingVolumeType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional WorkingVolume element gives the maximum
+                working volume of the probing device, ignoring any
+                removable objects such as a tool rack.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="EffectiveWorkingVolume"
+            type="EffectiveWorkingVolumeType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional EffectiveWorkingVolume element gives the
+                usable working volume of the probing device in which there
+                are no obstacles.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="Resolution"
+            type="ResolutionType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional Resolution element is the resolution of the
+                probing device.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComparatorType">
+    <xs:annotation>
+      <xs:documentation>
+        The ComparatorType defines a probing device that requires
+        measuring both an object being evaluated and an ideal object
+        of the same design in order to produce useful results.
+      </xs:documentation>
+      <xs:documentation>
+        Maybe add NominalAccuracy and ActualAccuracy elements.
+        Need to define ComparatorAccuracy to do that.
+      </xs:documentation>
+      <xs:documentation>
+        Maybe add ToolIds element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ProbingDeviceType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+<!-- BEGIN SUBSTITUTION GROUP FOR SENSORS -->
+
+<!-- BEGIN SUBSTITUTION GROUP FOR MEASUREMENT DEVICES -->
+
+  <xs:element name="MeasurementDevice"
+    type="MeasurementDeviceType">
+    <xs:annotation>
+      <xs:documentation>
+        The global MeasurementDevice element is the head of a substitution
+        group. Any element that is a member of the group may be substituted
+        for the MeasurementDevice element anywhere the MeasurementDevice
+        element may be used in an instance file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="CMM"
+    type="CMMType"
+    substitutionGroup="MeasurementDevice">
+    <xs:annotation>
+      <xs:documentation>
+        The global CMM element gives information about a CMM.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="Caliper"
+    type="CaliperType"
+    substitutionGroup="MeasurementDevice">
+    <xs:annotation>
+      <xs:documentation>
+        The global Caliper element gives information about a caliper.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="GageDevice"
+    type="GageDeviceType"
+    substitutionGroup="MeasurementDevice">
+    <xs:annotation>
+      <xs:documentation>
+        The global GageDevice element gives information about a gage.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="Comparator"
+    type="ComparatorType"
+    substitutionGroup="MeasurementDevice">
+    <xs:annotation>
+      <xs:documentation>
+        The global ComparatorDevice element gives information about a
+        comparator.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+<!-- BEGIN SUBSTITUTION GROUP FOR ACCURACY TESTS -->
+
+  <xs:element name="CMMAccuracyTest"
+    type="CMMAccuracyTestBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The global CMMAccuracyTest element is the head of a
+        substitution group. Any element that is a member of the group
+        may be substituted for the CMMAccuracyTest element anywhere
+        the CMMAccuracyTest element may be used in an instance file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="FPSTest"
+    type="FPSTestType"
+    substitutionGroup="CMMAccuracyTest">
+    <xs:annotation>
+      <xs:documentation>
+        The global FPSTest element gives information about CMM
+        accuracy based on a full parametric specification CMM test.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="B89Test"
+    type="B89TestType"
+    substitutionGroup="CMMAccuracyTest">
+    <xs:annotation>
+      <xs:documentation>
+        The global B89Test element gives information about CMM
+        accuracy based on a B89 CMM test.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="ISO10360Test"
+    type="ISO10360TestType"
+    substitutionGroup="CMMAccuracyTest">
+    <xs:annotation>
+      <xs:documentation>
+        The global ISO10360Test element gives information about CMM
+        accuracy based on an ISO10360Test CMM test.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="PointAccuracyTest"
+    type="PointAccuracyTestType"
+    substitutionGroup="CMMAccuracyTest">
+    <xs:annotation>
+      <xs:documentation>
+        The PointAccuracyTest element gives CMM accuracy as the
+        maximum deviation of a measured point location from its actual
+        location throughout the CMM's working volume.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+<!-- BEGIN SUBSTITUTION GROUP FOR SENSORS -->
+
+  <xs:element name="Sensor"
+    type="SensorType">
+    <xs:annotation>
+      <xs:documentation>
+        The global Sensor element is the head of a substitution group.
+        Any element that is a member of the group may be substituted
+        for the Sensor element anywhere the Sensor element may be used
+        in an instance file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="TouchProbe"
+    type="TouchProbeType"
+    substitutionGroup="Sensor">
+    <xs:annotation>
+      <xs:documentation>
+        The global TouchProbe element gives information about a touch
+        probe.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+</xs:schema>

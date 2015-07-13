@@ -1,0 +1,125 @@
+Name=QIFDocumentType TypeName=type_ Type=QIFDocumentType BaseType=F Simple=anyType Abstract=0 [-2,-2]
+	Attributes: 0. versionQIF(1) 1. idMax(0) 
+	 Name=versionQIF Type=attribute_ TypeName=  Basetype= [-2,-2]
+	 Name=idMax Type=attribute_ TypeName=  Basetype= [-2,-2]
+	 Name=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+	 Name=VersionHistory Type=element_ TypeName=VersionHistoryType  Basetype=anyType [0,1]
+	 Name=Version Type=element_ TypeName=VersionType  Basetype=VersionBaseType [0,1]
+	 Name=Header Type=element_ TypeName=QIFDocumentHeaderType  Basetype=anyType [0,1]
+	 Name=PreInspectionTraceability Type=element_ TypeName=PreInspectionTraceabilityType  Basetype=anyType [0,1]
+	 Name=FileUnits Type=element_ TypeName=FileUnitsType  Basetype=anyType [0,1]
+	 Name=DatumDefinitions Type=element_ TypeName=DatumDefinitionsType  Basetype=anyType [0,1]
+	 Name=DatumTargetDefinitions Type=element_ TypeName=DatumTargetDefinitionsType  Basetype=anyType [0,1]
+	 Name=Transforms Type=element_ TypeName=TransformListType  Basetype=anyType [0,1]
+	 Name=CoordinateSystems Type=element_ TypeName=CoordinateSystemListType  Basetype=anyType [0,1]
+	 Name=DatumReferenceFrames Type=element_ TypeName=DatumReferenceFramesType  Basetype=anyType [0,1]
+	 Name=MeasurementResources Type=element_ TypeName=MeasurementResourcesType  Basetype=anyType [0,1]
+	 Name=ThreadSpecifications Type=element_ TypeName=ThreadSpecificationsType  Basetype=anyType [0,1]
+	 Name=Product Type=element_ TypeName=ProductType  Basetype=anyType [0,1]
+	 Name=Features Type=element_ TypeName=FeatureAspectsListsType  Basetype=anyType [0,1]
+	 Name=Characteristics Type=element_ TypeName=CharacteristicAspectsListsType  Basetype=anyType [0,1]
+	 Name=MeasurementPlan Type=element_ TypeName=MeasurementPlanType  Basetype=anyType [0,1]
+	 Name=MeasurementsResults Type=element_ TypeName=MeasurementsResultsType  Basetype=anyType [0,1]
+	 Name=Statistics Type=element_ TypeName=StatisticsType  Basetype=anyType [0,1]
+	 Name=ManufacturingProcessTraceabilities Type=element_ TypeName=ManufacturingProcessTraceabilitiesType  Basetype=anyType [0,1]
+	 Name=Rules Type=element_ TypeName=QIFRulesType  Basetype=anyType [0,1]
+	 Name=UserDataXML Type=element_ TypeName=UserDataXMLType  Basetype=anyType [0,1]
+
+Name=CharacteristicAspectsListsType TypeName=type_ Type=CharacteristicAspectsListsType BaseType=F Simple=anyType Abstract=0 [-2,-2]
+	 Name=FormalStandard Type=element_ TypeName=FormalStandardType  Basetype=anyType [1,1]
+	 Name=CharacteristicDefinitions Type=element_ TypeName=CharacteristicDefinitionsType  Basetype=anyType [1,1]
+	 Name=DefaultCharacteristicDefinitions Type=element_ TypeName=CharacteristicDefinitionsType  Basetype=anyType [0,1]
+	 Name=DefaultToleranceDefinitions Type=element_ TypeName=ToleranceDefinitionsType  Basetype=anyType [0,1]
+	 Name=CharacteristicNominals Type=element_ TypeName=CharacteristicNominalsType  Basetype=anyType [1,1]
+	 Name=CharacteristicItems Type=element_ TypeName=CharacteristicItemsType  Basetype=anyType [0,1]
+	 Name=CharacteristicGroups Type=element_ TypeName=CharacteristicGroupsType  Basetype=anyType [0,1]
+
+
+Name=DiameterCharacteristicDefinition TypeName=DiameterCharacteristicDefinitionType Type=entity_ Simple=F BaseType=LinearCharacteristicDefinitionBaseType Outer=True Parent=  OuterElementTypeName=
+Substitution Group:
+DiameterCharacteristicDefinition=CharacteristicDefinition
+
+
+Name=DiameterCharacteristicDefinitionType TypeName=type_ Type=DiameterCharacteristicDefinitionType BaseType=F Simple=LinearCharacteristicDefinitionBaseType Abstract=0 [-2,-2]
+	Attributes: 0. id(1) 
+	Subtypes: LinearCharacteristicDefinitionBaseType->LinearCharacteristicDefinitionBaseType->DimensionalCharacteristicDefinitionBaseType->CharacteristicDefinitionBaseType->CharacteristicBaseType->
+	 Name=id Type=attribute_ TypeName=  Basetype= [-2,-2]
+	 Derived:LinearCharacteristicDefinitionBaseType
+		 Name=id Type=attribute_ TypeName=  Basetype= [-2,-2]
+		 Derived:DimensionalCharacteristicDefinitionBaseType
+			 Name=id Type=attribute_ TypeName=  Basetype= [-2,-2]
+			 Derived:CharacteristicDefinitionBaseType
+				 Name=id Type=attribute_ TypeName=  Basetype= [-2,-2]
+				 Derived:CharacteristicBaseType
+					 Name=id Type=attribute_ TypeName=  Basetype= [-2,-2]
+					 Name=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+					 Name=Description Type=element_ TypeName=string  Basetype=anySimpleType [0,1]
+				 Inherited:
+					 Name=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+					 Name=Description Type=element_ TypeName=string  Basetype=anySimpleType [0,1]
+				 Inherited:
+					 Name=Name Type=element_ TypeName=token  Basetype=normalizedString [0,1]
+					 Name=KeyCharacteristic Type=element_ TypeName=KeyCharacteristicType  Basetype=anyType [0,1]
+					 Name=FreeState Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=StatisticalCharacteristic Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=CommonZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=MedianFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=EnvelopeRequirement Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=UnitedFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=SeparateZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+			 Inherited:
+				 Inherited:
+					 Name=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+					 Name=Description Type=element_ TypeName=string  Basetype=anySimpleType [0,1]
+				 Inherited:
+					 Name=Name Type=element_ TypeName=token  Basetype=normalizedString [0,1]
+					 Name=KeyCharacteristic Type=element_ TypeName=KeyCharacteristicType  Basetype=anyType [0,1]
+					 Name=FreeState Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=StatisticalCharacteristic Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=CommonZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=MedianFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=EnvelopeRequirement Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=UnitedFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=SeparateZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+			 Inherited:
+				 Name=DimensionType Type=element_ TypeName=DimensionModifierEnumType  Basetype=NMTOKEN [0,1]
+		 Inherited:
+			 Inherited:
+				 Inherited:
+					 Name=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+					 Name=Description Type=element_ TypeName=string  Basetype=anySimpleType [0,1]
+				 Inherited:
+					 Name=Name Type=element_ TypeName=token  Basetype=normalizedString [0,1]
+					 Name=KeyCharacteristic Type=element_ TypeName=KeyCharacteristicType  Basetype=anyType [0,1]
+					 Name=FreeState Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=StatisticalCharacteristic Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=CommonZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=MedianFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=EnvelopeRequirement Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=UnitedFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+					 Name=SeparateZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+			 Inherited:
+				 Name=DimensionType Type=element_ TypeName=DimensionModifierEnumType  Basetype=NMTOKEN [0,1]
+		 Inherited:
+			 Name=Tolerance Type=element_ TypeName=LinearToleranceType  Basetype=anyType [1,1]
+			 Name=NonTolerance Type=element_ TypeName=NonToleranceEnumType  Basetype=NMTOKEN [1,1]
+	 Inherited:
+		 Inherited:
+			 Inherited:
+				 Name=Attributes Type=element_ TypeName=AttributesType  Basetype=anyType [0,1]
+				 Name=Description Type=element_ TypeName=string  Basetype=anySimpleType [0,1]
+			 Inherited:
+				 Name=Name Type=element_ TypeName=token  Basetype=normalizedString [0,1]
+				 Name=KeyCharacteristic Type=element_ TypeName=KeyCharacteristicType  Basetype=anyType [0,1]
+				 Name=FreeState Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+				 Name=StatisticalCharacteristic Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+				 Name=CommonZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+				 Name=MedianFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+				 Name=EnvelopeRequirement Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+				 Name=UnitedFeature Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+				 Name=SeparateZone Type=element_ TypeName=boolean  Basetype=anySimpleType [0,1]
+		 Inherited:
+			 Name=DimensionType Type=element_ TypeName=DimensionModifierEnumType  Basetype=NMTOKEN [0,1]
+	 Inherited:
+		 Name=Tolerance Type=element_ TypeName=LinearToleranceType  Basetype=anyType [1,1]
+		 Name=NonTolerance Type=element_ TypeName=NonToleranceEnumType  Basetype=NMTOKEN [1,1]

@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="QIF">
+      <UniqueIdentifier>{dea054ef-1790-4895-8796-83de1b8812fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NIST">
+      <UniqueIdentifier>{b9316267-348b-4c12-a1b8-b9129a4730c5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="Scraps.txt" />
+    <None Include="..\tests.txt" />
+    <None Include="Fixes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Auxiliary.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Characteristics.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Expressions.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Features.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\GenericExpressions.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Geometry.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\IntermediatesPMI.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Primitives.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\PrimitivesPD.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\PrimitivesPMI.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Statistics.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Topology.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Traceability.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Units.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFLibrary\Visualization.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFDocument.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFMeasurementResources.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFPlan.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFProduct.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFResults.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFRules.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\QIFApplications\QIFStatistics.cxx">
+      <Filter>QIF</Filter>
+    </ClCompile>
+    <ClCompile Include="MSVCQIF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XercesUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FairReports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XsdParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Symbol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SymbolTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XmlAndSql.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OdbcArchiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NIST\Math\linalg3d.cpp">
+      <Filter>NIST</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Auxiliary.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Characteristics.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Expressions.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Features.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\GenericExpressions.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Geometry.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\IntermediatesPMI.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Primitives.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\PrimitivesPD.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\PrimitivesPMI.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Statistics.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Topology.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Traceability.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Units.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFLibrary\Visualization.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFDocument.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFMeasurementResources.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFPlan.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFProduct.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFResults.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFRules.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\QIFApplications\QIFStatistics.hxx">
+      <Filter>QIF</Filter>
+    </ClInclude>
+    <ClInclude Include="XercesUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FairReports.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XsdParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Symbol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XmlAndSql.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OdbcArchiver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NIST\StdStringFcn.h">
+      <Filter>NIST</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NIST\Math\linalg3d.h">
+      <Filter>NIST</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NIST\Math\linalg3dII.h">
+      <Filter>NIST</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NIST\Math\linalg3dImpl.h">
+      <Filter>NIST</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

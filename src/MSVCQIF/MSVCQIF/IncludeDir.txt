@@ -1,0 +1,11 @@
+-I"C:\Program Files\NIST\src\boost_1_54_0"
+-I.
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF"
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\QIFApplications"
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\QIFLibrary"
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\MSVCQIF"
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\NIST"
+-I"C:\Program Files (x86)\CodeSynthesis XSD 4.0\XQilla-2.3.0\include"
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\MSVCQIF\UnitTests"
+-I"C:\Program Files (x86)\CodeSynthesis XSD 4.0\include"
+-I"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\NIST\Math"

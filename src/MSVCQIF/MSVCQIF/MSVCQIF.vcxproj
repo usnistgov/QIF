@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A3E68CA6-D293-4D3D-BE5D-EA6A88932408}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MSVCQIF</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfAtl>Static</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfAtl>Static</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfAtl>Static</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfAtl>Static</UseOfAtl>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\Intermediate\</IntDir>
+    <ExecutablePath>C:\Program Files\CodeSynthesis XSD 4.0\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>C:\Program Files\CodeSynthesis XSD 4.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\CodeSynthesis XSD 4.0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\Intermediate\</IntDir>
+    <ExecutablePath>C:\Program Files\CodeSynthesis XSD 4.0\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>C:\Program Files\CodeSynthesis XSD 4.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\CodeSynthesis XSD 4.0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\Intermediate\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\Intermediate\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>@IncludeDir.txt /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Async</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN64;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>@IncludeDir.txt /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Async</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>@IncludeDir.txt %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>@IncludeDir.txt %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="..\tests.txt" />
+    <None Include="Fixes.txt" />
+    <None Include="ReadMe.txt" />
+    <None Include="Scraps.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\NIST\Math\linalg3d.cpp" />
+    <ClCompile Include="..\QIFApplications\QIFDocument.cxx" />
+    <ClCompile Include="..\QIFApplications\QIFMeasurementResources.cxx" />
+    <ClCompile Include="..\QIFApplications\QIFPlan.cxx" />
+    <ClCompile Include="..\QIFApplications\QIFProduct.cxx" />
+    <ClCompile Include="..\QIFApplications\QIFResults.cxx" />
+    <ClCompile Include="..\QIFApplications\QIFRules.cxx" />
+    <ClCompile Include="..\QIFApplications\QIFStatistics.cxx" />
+    <ClCompile Include="..\QIFLibrary\Auxiliary.cxx" />
+    <ClCompile Include="..\QIFLibrary\Characteristics.cxx" />
+    <ClCompile Include="..\QIFLibrary\Expressions.cxx" />
+    <ClCompile Include="..\QIFLibrary\Features.cxx" />
+    <ClCompile Include="..\QIFLibrary\GenericExpressions.cxx" />
+    <ClCompile Include="..\QIFLibrary\Geometry.cxx" />
+    <ClCompile Include="..\QIFLibrary\IntermediatesPMI.cxx" />
+    <ClCompile Include="..\QIFLibrary\Primitives.cxx" />
+    <ClCompile Include="..\QIFLibrary\PrimitivesPD.cxx" />
+    <ClCompile Include="..\QIFLibrary\PrimitivesPMI.cxx" />
+    <ClCompile Include="..\QIFLibrary\Statistics.cxx" />
+    <ClCompile Include="..\QIFLibrary\Topology.cxx" />
+    <ClCompile Include="..\QIFLibrary\Traceability.cxx" />
+    <ClCompile Include="..\QIFLibrary\Units.cxx" />
+    <ClCompile Include="..\QIFLibrary\Visualization.cxx" />
+    <ClCompile Include="FairReports.cpp" />
+    <ClCompile Include="MSVCQIF.cpp" />
+    <ClCompile Include="OdbcArchiver.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Symbol.cpp" />
+    <ClCompile Include="SymbolTable.cpp" />
+    <ClCompile Include="WinUtils.cpp" />
+    <ClCompile Include="XercesUtils.cpp" />
+    <ClCompile Include="XmlAndSql.cpp" />
+    <ClCompile Include="XsdParser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\NIST\Math\linalg3d.h" />
+    <ClInclude Include="..\NIST\Math\linalg3dII.h" />
+    <ClInclude Include="..\NIST\Math\linalg3dImpl.h" />
+    <ClInclude Include="..\NIST\StdStringFcn.h" />
+    <ClInclude Include="..\QIFApplications\QIFDocument.hxx" />
+    <ClInclude Include="..\QIFApplications\QIFMeasurementResources.hxx" />
+    <ClInclude Include="..\QIFApplications\QIFPlan.hxx" />
+    <ClInclude Include="..\QIFApplications\QIFProduct.hxx" />
+    <ClInclude Include="..\QIFApplications\QIFResults.hxx" />
+    <ClInclude Include="..\QIFApplications\QIFRules.hxx" />
+    <ClInclude Include="..\QIFApplications\QIFStatistics.hxx" />
+    <ClInclude Include="..\QIFLibrary\Auxiliary.hxx" />
+    <ClInclude Include="..\QIFLibrary\Characteristics.hxx" />
+    <ClInclude Include="..\QIFLibrary\Expressions.hxx" />
+    <ClInclude Include="..\QIFLibrary\Features.hxx" />
+    <ClInclude Include="..\QIFLibrary\GenericExpressions.hxx" />
+    <ClInclude Include="..\QIFLibrary\Geometry.hxx" />
+    <ClInclude Include="..\QIFLibrary\IntermediatesPMI.hxx" />
+    <ClInclude Include="..\QIFLibrary\Primitives.hxx" />
+    <ClInclude Include="..\QIFLibrary\PrimitivesPD.hxx" />
+    <ClInclude Include="..\QIFLibrary\PrimitivesPMI.hxx" />
+    <ClInclude Include="..\QIFLibrary\Statistics.hxx" />
+    <ClInclude Include="..\QIFLibrary\Topology.hxx" />
+    <ClInclude Include="..\QIFLibrary\Traceability.hxx" />
+    <ClInclude Include="..\QIFLibrary\Units.hxx" />
+    <ClInclude Include="..\QIFLibrary\Visualization.hxx" />
+    <ClInclude Include="FairReports.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="OdbcArchiver.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Symbol.h" />
+    <ClInclude Include="SymbolTable.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="XercesUtils.h" />
+    <ClInclude Include="XmlAndSql.h" />
+    <ClInclude Include="XsdParser.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,3376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This document is part of QIF 2.0, an open, industry-wide standard -->
+<!-- established by the Dimensional Metrology Standards Consortium.    -->
+<!-- This document shall not be used in any manner to claim any        -->
+<!-- proprietary rights to such information, such as rights to a       -->
+<!-- patent, trademark, or copyright.                                  -->
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://qifstandards.org/xsd/qif2"
+  xmlns:t="http://qifstandards.org/xsd/qif2"
+  targetNamespace="http://qifstandards.org/xsd/qif2"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="2.0.0">
+
+  <xs:include schemaLocation="QIFPlan.xsd"/>
+  <xs:include schemaLocation="QIFResults.xsd"/>
+  <xs:include schemaLocation="QIFStatistics.xsd"/>
+  <xs:include schemaLocation="QIFRules.xsd"/>
+  <xs:include schemaLocation="QIFProduct.xsd"/>
+  <xs:include schemaLocation="QIFMeasurementResources.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      The QIFDocument.xsd schema file defines types that describe a QIF
+      document. In addition, many of the key/keyref constraints on QIF
+      instance files are given in this schema file. This is the top level
+      file of the QIF schema file hierarchy.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="QIFDocument"
+    type="QIFDocumentType">
+    <xs:annotation>
+      <xs:documentation>
+        The global QIFDocument element is the root of a QIF document.
+        Every QIF XML instance file will have QIFDocument as its root.
+      </xs:documentation>
+    </xs:annotation>
+
+<!--
+
+The CharacteristicItemIdKeyref and the MeasurementResourceIdKeyref should
+be using .// since the ids they check may appear at arbitrarily deep levels
+in a MeasurementPlan (since MeasurementPlan has a recursive structure). As
+a result, ids that occur below the least nested locations they can occur
+will not be checked. These keyrefs are not currently using .// because of
+the interaction of .// in XMLSpy with Rules, which uses up all memory.
+Altova has been notified of this problem in XMLSpy.
+
+-->
+<!-- start key and one keyref for QIF ids of datum definitions -->
+
+    <xs:key name="DatumDefinitionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DatumDefinitionIdKey collects all QIF ids of DatumDefinitions
+          in the DatumDefinitions.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:DatumDefinitions/t:DatumDefinition"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DatumDefinitionIdKeyref"
+      refer="DatumDefinitionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DatumDefinitionIdKeyref requires that a DatumDefinitionId
+          located anywhere be the id of a DatumDefinition.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementPlan/t:Measurands/t:EstablishDatumMeasurand/t:DatumDefinitionId
+             | t:Characteristics/t:CharacteristicNominals/t:*/t:OriginReference/t:DatumDefinitionId
+             | t:DatumTargetDefinitions/t:*/t:SimpleDatum/t:DatumDefinitionId
+             | t:DatumReferenceFrames/t:DatumReferenceFrame/t:Datum/t:SimpleDatum/t:DatumDefinitionId
+             | t:DatumReferenceFrames/t:DatumReferenceFrame/t:Datum/t:*/t:*/t:*/t:DatumDefinitionId
+             | t:Product/t:PartSet/t:Part/t:DatumDefinitionIds/t:Id
+             | t:Product/t:AssemblySet/t:Assembly/t:DatumDefinitionIds/t:Id
+             | t:CoordinateSystems/t:CoordinateSystem/t:AlignmentOperations/t:*/t:*/t:*/t:DatumDefinitionId
+             | t:CoordinateSystems/t:CoordinateSystem/t:AlignmentOperations/t:*/t:*/t:DatumDefinitionId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of datum reference frames -->
+
+    <xs:key name="DatumReferenceFrameIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DatumReferenceFrameIdKey collects all QIF ids of
+          DatumReferenceFrame in the DatumReferenceFrames.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:DatumReferenceFrames/t:DatumReferenceFrame"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DatumReferenceFrameKeyref"
+      refer="DatumReferenceFrameIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DatumReferenceFrameKeyref requires that a
+          DatumReferenceFrameId located anywhere be the id of a
+          DatumReferenceFrame.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:CoordinateSystems/t:CoordinateSystem/t:AlignmentOperations/t:*/t:DatumReferenceFrameId
+             | t:Characteristics/t:CharacteristicDefinitions/t:*/t:DatumReferenceFrameId
+             | t:Characteristics/t:CharacteristicDefinitions/t:*/t:*/t:DatumReferenceFrameId
+             | t:Product/t:PartSet/t:Part/t:DatumReferenceFrameIds/t:Id
+             | t:Product/t:AssemblySet/t:Assembly/t:DatumReferenceFrameIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of part drawings -->
+
+    <xs:key name="DrawingIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DrawingIdKey collects all QIF ids of PrintedDrawings and
+          DigitalDrawings.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:PrintedDrawing
+             | t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:DigitalDrawing
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:PrintedDrawing
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:DigitalDrawing"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DrawingIdKeyref"
+      refer="DrawingIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DrawingIdKeyref requires that the DrawingId in a
+          LocationOnDrawing in a CharacteristicItem be the id of a
+          PrintedDrawing or a DigitalDrawing.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:*/t:LocationOnDrawing"/>
+      <xs:field xpath="t:DrawingId"/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of external entities -->
+
+    <xs:key name="EntityExternalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The EntityExternalIdKey collects all QIF ids of external entities.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:*/t:Entities/t:Entity
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:*/t:Entities/t:Entity"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="EntityExternalIdKeyref"
+      refer="EntityExternalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The EntityExternalIdKeyref requires that an EntityExternalIds/Id
+          located anywhere be the id of an EntityExternal.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Features/t:FeatureNominals/t:*/t:EntityExternalIds/t:Id
+             | t:Characteristics/t:CharacteristicNominals/t:*/t:EntityExternalIds/t:Id
+             | t:CoordinateSystems/t:CoordinateSystem/t:ExternalCADCoordinateSystemId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- end key and one keyref for QIF ids of external entities -->
+
+    <xs:key name="GeometryModelIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The GeometryModelIdKey collects all QIF ids of all
+          GeometryModels. The notional GeometryModelType is the parent type
+          of the PrintedDrawingType, the DigitalDesignModelType, and the
+          PhysicalModelType. It does not actually exist because the
+          DigitalDesignModelType is already derived from the FileType,
+          whereas the other two are not (since they are not files).
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:PrintedDrawing
+             | t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:DigitalDrawing
+             | t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:DigitalModel
+             | t:Product/t:PartSet/t:Part/t:DefinitionExternal/t:PhysicalModel
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:PrintedDrawing
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:DigitalDrawing
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:DigitalModel
+             | t:Product/t:AssemblySet/t:Assembly/t:DefinitionExternal/t:PhysicalModel"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- start key and one keyref for QIF ids of feature items -->
+
+    <xs:key name="FeatureItemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureItemIdKey collects all QIF ids of
+          FeaturesItems.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Features/t:FeatureItems/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="FeatureItemIdKeyref"
+      refer="FeatureItemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureItemIdKeyref requires that a feature item Id
+          located anywhere be the id of a FeatureItem.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:DatumReferenceFrames/t:DatumReferenceFrame/t:Datum/t:*/t:FeatureItemId
+             | t:DatumTargetDefinitions/t:DatumTarget/t:FeatureItemId
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:FeatureActual/t:FeatureItemId
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:FeatureItemIds/t:Id
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:FeatureItemId
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*/t:ZoneData/t:FeatureItemId
+             | t:Characteristics/t:CharacteristicItems/t:*/t:FeatureItemIds/t:Id
+             | t:CoordinateSystems/t:CoordinateSystem/t:AlignmentOperations/t:*/t:*/t:*/t:FeatureItemId
+             | t:CoordinateSystems/t:CoordinateSystem/t:AlignmentOperations/t:*/t:*/t:FeatureItemId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of feature nominals -->
+
+    <xs:key name="FeatureNominalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureNominalIdKey collects all QIF ids of FeatureNominals.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Features/t:FeatureNominals/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="FeatureNominalIdKeyref"
+      refer="FeatureNominalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureNominalIdKeyref requires that a feature nominal Id
+          located anywhere be the id of a FeatureNominal.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Features/t:FeatureNominals/t:*/t:FeatureNominalIds/t:Id
+             | t:DatumTargetDefinitions/t:*/t:FeatureNominalId
+             | t:Characteristics/t:CharacteristicNominals/t:*/t:FeatureNominalIds/t:Id
+             | t:DatumDefinitions/t:DatumDefinition/t:FeatureNominalIds/t:Id
+             | t:Product/t:PartSet/t:Part/t:FeatureNominalIds/t:Id
+             | t:Product/t:AssemblySet/t:Assembly/t:FeatureNominalIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key for QIF ids of feature definitions -->
+
+    <xs:key name="FeatureDefinitionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureDefinitionIdKey collects all QIF ids of all
+          FeatureDefinitions.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Features/t:FeatureDefinitions/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- start key and one keyref for QIF ids of feature actuals -->
+
+    <xs:key name="FeatureActualIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureActualIdKey collects all QIF ids of all
+          FeatureActuals.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="FeatureActualIdKeyref"
+      refer="FeatureActualIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FeatureActualIdKeyref requires that an id in the ActualIds of
+          an AverageFeature be the id of a FeatureActual. This is a weak
+          check since it does not require that the referenced features be
+          the same type of feature as the FeatureActual of the
+          AverageFeature. That check cannot be done in XSDL.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Statistics/StatisticalStudiesResults/*/t:AverageFeature/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of CharacteristicItems -->
+
+    <xs:key name="CharacteristicItemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicItemIdKey collects all QIF ids of all
+          CharacteristicItemss.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Characteristics/t:CharacteristicItems/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CharacteristicItemIdKeyref"
+      refer="CharacteristicItemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicItemIdKeyref requires that a
+          characteristic item Id located anywhere be the id of a
+          CharacteristicItem.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicGroups/t:*/t:CharacteristicItemIds/t:Id
+          | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*/t:CharacteristicItemId
+          | t:Statistics/t:StatisticalStudyPlans/t:*/t:CharacteristicItemIds/t:Id
+          | t:MeasurementPlan/t:*/t:*/t:*/t:*/t:CharacteristicItemIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- The following keys are for segmenting QIF ids by type -->
+
+    <xs:key name="CharacteristicDefinitionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicDefinitionIdKey collects all QIF ids of all
+          CharacteristicDefinitions.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Characteristics/t:CharacteristicDefinitions/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:key name="CharacteristicNominalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicNominalIdKey collects all QIF ids of all
+          CharacteristicNominals.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Characteristics/t:CharacteristicNominals/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:key name="CharacteristicActualIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicActualIdKey collects all QIF ids of all
+          CharacteristicActuals.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- start keys and keyrefs for UnitName of units -->
+
+    <xs:key name="AngularUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AngularUnitKey collects all UnitNames of AngularUnits in
+          FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:AngularUnit
+             | t:FileUnits/t:OtherUnits/t:AngularUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="AngularUnitKeyref"
+      refer="AngularUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AngularUnitKeyref requires that an angularUnit located
+          anywhere be the UnitName of an AngularUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:GeometrySet/t:*/t:*/t:*/t:*/t:*/t:LatitudeLongitudeSweep/t:*
+             | t:Product/t:GeometrySet/t:*/t:*/t:*/t:LatitudeLongitudeSweep/t:*
+             | t:Product/t:GeometrySet/t:*/t:*/t:*/t:*/t:*/t:Sweep/t:DomainAngle
+             | t:Product/t:GeometrySet/t:*/t:*/t:*/t:Sweep/t:DomainAngle
+             | t:Characteristics/t:CharacteristicNominals/t:*/t:TargetValue
+             | t:Characteristics/t:CharacteristicDefinitions/t:*/t:Tolerance/t:*
+             | t:Features/t:FeatureNominals/t:*/t:*/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:*/t:*/t:*/t:*
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@angularUnit"/>
+    </xs:keyref>
+
+    <xs:key name="LinearUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The LinearUnitKey collects all UnitNames of LinearUnits in
+          FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:LinearUnit
+             | t:FileUnits/t:OtherUnits/t:LinearUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="LinearUnitKeyref"
+      refer="LinearUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The LinearUnitKeyref requires that a linearUnit located anywhere
+          be the UnitName of a LinearUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Transforms/t:Transform
+             | t:CoordinateSystems/t:CoordinateSystem/t:NominalTransform
+             | t:DatumReferenceFrames/t:DatumReferenceFrame/t:Datum/t:SimpleDatum/t:DatumFeatureSimulatorModifier/t:*
+             | t:ThreadSpecifications/t:ThreadSpecification/t:*/t:*
+             | t:Product/t:*/t:*/t:*/t:*/t:*/t:*
+             | t:Product/t:*/t:*/t:*/t:*/t:*
+             | t:Product/t:*/t:*/t:*/t:*
+             | t:Features/t:*/t:*/t:*/t:*/t:*
+             | t:Features/t:*/t:*/t:*/t:*
+             | t:Features/t:*/t:*/t:*
+             | t:Characteristics/t:*/t:*/t:*/t:*
+             | t:Characteristics/t:*/t:*/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:*/t:*/t:*/t:*/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:*/t:*/t:*/t:*
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*/t:*/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@linearUnit"/>
+    </xs:keyref>
+
+    <xs:key name="TemperatureUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TemperatureUnitKey collects all UnitNames of TemperatureUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:TemperatureUnit
+             | t:FileUnits/t:OtherUnits/t:TemperatureUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="TemperatureUnitKeyref"
+      refer="TemperatureUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TemperatureUnitKeyref requires that a temperatureUnit located
+          anywhere be the UnitName of a TemperatureUnit defined in
+          FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementResources/t:MeasurementDevices/t:*/t:Calibrations/t:Calibration/t:Temperatures/t:Temperature/t:Temperature
+             | t:MeasurementResources/t:MeasurementDevices/t:*/t:InspectionTemperatures/t:Temperature/t:Temperature
+             | t:Characteristics/t:CharacteristicNominals/t:UserDefinedTemperatureCharacteristicNominal/t:*
+             | t:Characteristics/t:CharacteristicDefinitions/t:UserDefinedTemperatureCharacteristicDefinition/t:Tolerance/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedTemperatureCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@temperatureUnit"/>
+    </xs:keyref>
+
+    <xs:key name="AreaUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AreaUnitKey collects all UnitNames of AreaUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:AreaUnit
+             | t:FileUnits/t:OtherUnits/t:AreaUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="AreaUnitKeyref"
+      refer="AreaUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AreaUnitKeyref requires that an areaUnit located anywhere
+          be the UnitName of an AreaUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedAreaCharacteristicNominal/t:*
+             | t:Characteristics/t:CharacteristicDefinitions/t:UserDefinedAreaCharacteristicDefinition/t:Tolerance/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedAreaCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@areaUnit"/>
+    </xs:keyref>
+
+    <xs:key name="ForceUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ForceUnitKey collects all UnitNames of ForceUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:ForceUnit
+             | t:FileUnits/t:OtherUnits/t:ForceUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="ForceUnitKeyref"
+      refer="ForceUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ForceUnitKeyref requires that a forceUnit located anywhere
+          be the UnitName of a ForceUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedForceCharacteristicNominal/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedForceCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@forceUnit"/>
+    </xs:keyref>
+
+    <xs:key name="MassUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MassUnitKey collects all UnitNames of MassUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:MassUnit
+             | t:FileUnits/t:OtherUnits/t:MassUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="MassUnitKeyref"
+      refer="MassUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MassUnitKeyref requires that a massUnit located anywhere
+          be the UnitName of a MassUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedMassCharacteristicNominal/t:*
+             | t:Characteristics/t:CharacteristicDefinitions/t:UserDefinedMassCharacteristicDefinition/t:Tolerance/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedMassCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@massUnit"/>
+    </xs:keyref>
+
+    <xs:key name="PressureUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The PressureUnitKey collects all UnitNames of PressureUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:PressureUnit
+             | t:FileUnits/t:OtherUnits/t:PressureUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="PressureUnitKeyref"
+      refer="PressureUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The PressureUnitKeyref requires that a pressureUnit located
+          anywhere be the UnitName of a PressureUnit defined in
+          FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedPressureCharacteristicNominal/t:*
+             | t:Characteristics/t:CharacteristicDefinitions/t:UserDefinedPressureCharacteristicDefinition/t:Tolerance/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedPressureCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@pressureUnit"/>
+    </xs:keyref>
+
+    <xs:key name="SpeedUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The SpeedUnitKey collects all UnitNames of SpeedUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:SpeedUnit
+             | t:FileUnits/t:OtherUnits/t:SpeedUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="SpeedUnitKeyref"
+      refer="SpeedUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The SpeedUnitKeyref requires that a speedUnit located anywhere
+          be the UnitName of a SpeedUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedSpeedCharacteristicNominal/t:*
+             | t:Characteristics/t:CharacteristicDefinitions/t:UserDefinedSpeedCharacteristicDefinition/t:Tolerance/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedSpeedCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@speedUnit"/>
+    </xs:keyref>
+
+    <xs:key name="TimeUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TimeUnitKey collects all UnitNames of TimeUnits
+          in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:FileUnits/t:PrimaryUnits/t:TimeUnit
+             | t:FileUnits/t:OtherUnits/t:TimeUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="TimeUnitKeyref"
+      refer="TimeUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TimeUnitKeyref requires that a TimeUnit located anywhere
+          be the UnitName of a TimeUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedTimeCharacteristicNominal/t:*
+             | t:Characteristics/t:CharacteristicDefinitions/t:UserDefinedTimeCharacteristicDefinition/t:Tolerance/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedTimeCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@timeUnit"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The UserDefinedUnitKey collects all UnitNames of
+          UserDefinedUnits in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:FileUnits/t:UserDefinedUnits/t:UserDefinedUnit"/>
+      <xs:field xpath="t:UnitName"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedUnitKeyref"
+      refer="UserDefinedUnitKey">
+      <xs:annotation>
+        <xs:documentation>
+          The UserDefinedUnitKeyref requires that a unitName in a nominal
+          or actual UserDefinedUnitCharacteristic be the UnitName of a
+          UserDefinedUnit defined in FileUnits.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:UserDefinedUnitCharacteristicNominal/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedUnitCharacteristicActual/t:Value
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:*
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:*"/>
+      <xs:field xpath="@unitName"/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of datum target definitions -->
+
+    <xs:key name="DatumTargetDefinitionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DatumTargetDefinitionIdKey collects all QIF ids of
+          DatumTarget in the DatumTargetDefinitions.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:DatumTargetDefinitions/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DatumTargetDefinitionIdKeyref"
+      refer="DatumTargetDefinitionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DatumTargetDefinitionIdKeyref requires that a datum target Id
+          located anywhere be the id of a DatumTargetDefinition.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:DatumDefinitions/t:DatumDefinition/t:DatumTargetIds/t:Id
+             | t:Product/t:PartSet/t:Part/t:DatumTargetDefinitionIds/t:Id
+             | t:Product/t:AssemblySet/t:Assembly/t:DatumTargetDefinitionIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of NotableEvents -->
+
+    <xs:key name="NotableEventIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The NotableEventIdKey collects all QIF ids of NotableEvents.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:PreInspectionTraceability/t:NotableEvents/t:NotableEvent"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="NotableEventIdKeyref"
+      refer="NotableEventIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The NotableEventIdKeyref requires that a notable event Id located
+          anywhere be the id of a NotableEvent.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:ComponentSet/t:Component/t:Traceability/t:NotableEventIds/t:Id
+             | t:Features/t:FeatureItems/t:*/t:NotableEventIds/t:Id
+             | t:Characteristics/t:CharacteristicItems/t:*/t:NotableEventIds/t:Id
+             | t:MeasurementsResults/t:MeasurementResults/t:InspectionTraceability/t:NotedEvents/t:NotedEvent/t:NotableEventId
+             | t:MeasurementsResults/t:ActualComponentSet/t:ActualComponent/t:Traceability/t:NotableEventIds/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:InspectionTraceability/t:NotedEvents/t:NotedEvent/t:NotableEventId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of NotedEvents -->
+
+    <xs:key name="NotedEventIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The NotedEventIdKey collects all QIF ids of NotedEvents.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:InspectionTraceability/t:NotedEvents/t:NotedEvent"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="NotedEventIdKeyref"
+      refer="NotedEventIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The NotedEventIdKeyref requires that a NotedEventIds/Id located
+          anywhere be the id of a NotedEvent.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:NotedEventIds/t:Id
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*/t:NotedEventIds/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:*/t:NotedEventIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and two keyrefs for QIF ids of Transforms -->
+
+    <xs:key name="TransformIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TransformIdKey collects all QIF ids of Transforms.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Transforms/t:Transform"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="TransformIdKeyref"
+      refer="TransformIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TransformIdKeyref requires that a reference to transformation
+          be the id of a Transform.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:PartSet/t:Part/t:*/t:*/t:TransformId
+             | t:Characteristics/t:CharacteristicGroups/t:*/t:TransformId
+             | t:Product/t:GeometrySet/t:Curve13Set/t:*/t:Transform/t:Id
+             | t:Product/t:GeometrySet/t:SurfaceSet/t:*/t:Transform/t:Id
+             | t:Product/t:TopologySet/t:BodySet/t:Body/t:Transform/t:Id
+             | t:Product/t:ComponentSet/t:Component/t:Transform/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:keyref name="DRFTransformActualIdKeyref"
+      refer="TransformIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The DRFTransformActualIdKeyref requires that a
+          DRFTransformActualId located anywhere be the id of a Transform.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*/t:*"/>
+      <xs:field xpath="t:DRFTransformActualId"/>
+    </xs:keyref>
+
+<!-- start key and four keyrefs for QIF ids of CoordinateSystems -->
+
+    <xs:key name="CoordinateSystemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CoordinateSystemIdKey collects all QIF ids of
+          CoordinateSystems.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:CoordinateSystems/t:CoordinateSystem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CoordinateSystemIdKeyref"
+      refer="CoordinateSystemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CoordinateSystemIdKeyref requires that a CoordinateSystemId
+          located anywhere be the id of a CoordinateSystem.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:DatumReferenceFrames/t:DatumReferenceFrame
+             | t:Features/t:FeatureItems/t:*
+             | t:MeasurementsResults/t:MeasurementResults/t:CoordinateSystemActualTransforms/t:Transform"/>
+      <xs:field xpath="t:CoordinateSystemId"/>
+    </xs:keyref>
+
+    <xs:keyref name="CommonCoordinateSystemIdKeyref"
+      refer="CoordinateSystemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CommonCoordinateSystemIdKeyref requires that the
+          CommonCoordinateSystemId be the id of a CoordinateSystem.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:CoordinateSystems"/>
+      <xs:field xpath="t:CommonCoordinateSystemId"/>
+    </xs:keyref>
+
+    <xs:keyref name="MachineCoordinateSystemIdKeyref"
+      refer="CoordinateSystemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MachineCoordinateSystemIdKeyref requires that the
+          MachineCoordinateSystemId be the id of a CoordinateSystem.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:CoordinateSystems"/>
+      <xs:field xpath="t:MachineCoordinateSystemId"/>
+    </xs:keyref>
+
+    <xs:keyref name="BaseCoordinateSystemIdKeyref"
+      refer="CoordinateSystemIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The BaseCoordinateSystemIdKeyref requires that a
+          BaseCoordinateSystemId located anywhere be the id of a
+          CoordinateSystem.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:CoordinateSystems/t:CoordinateSystem/t:AlignmentOperations"/>
+      <xs:field xpath="t:BaseCoordinateSystemId"/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of ThreadSpecifications -->
+
+    <xs:key name="ThreadSpecificationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ThreadSpecificationIdKey collects all QIF ids of
+          ThreadSpecifications.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:ThreadSpecifications/t:ThreadSpecification/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ThreadSpecificationIdKeyref"
+      refer="ThreadSpecificationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ThreadSpecificationIdKeyref requires that a
+          ThreadSpecificationId located anywhere be the id of a
+          ThreadSpecification.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicDefinitions/t:ThreadCharacteristicDefinition
+             | t:Features/t:FeatureDefinitions/t:ThreadedFeatureDefinition"/>
+      <xs:field xpath="t:ThreadSpecificationId"/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of fixtures -->
+
+    <xs:key name="FixtureIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FixtureIdKey collects all QIF ids of Fixtures in
+          MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:MeasurementResources/t:Fixtures/t:Fixture"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="FixtureIdKeyref"
+      refer="FixtureIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The FixtureIdKeyref requires that a FixtureId located anywhere be
+          the id of a Fixture defined in MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:ComponentSet/t:Component/t:Traceability"/>
+      <xs:field xpath="t:FixtureId"/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of measurement devices -->
+
+    <xs:key name="MeasurementDeviceIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurementDeviceIdKey collects all QIF ids of
+          MeasurementDevices in MeasurementResources.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:MeasurementResources/t:MeasurementDevices/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="MeasurementDeviceIdKeyref"
+      refer="MeasurementDeviceIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurementDeviceIdKeyref requires that a measurement device
+          Id located anywhere be the id of a MeasurementDevice.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:ComponentSet/t:Component/t:Traceability/t:MeasurementDeviceIds/t:Id
+             | t:Features/t:FeatureNominals/t:*/t:PointList/t:MeasurePoint/t:MeasurementDeviceId
+             | t:Characteristics/t:CharacteristicItems/t:*/t:MeasurementDeviceIds/t:Id
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*/t:MeasurementDeviceIds/t:Id
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:PointList/t:MeasurePoint/t:MeasurementDeviceId
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:MeasurementDeviceId
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:MeasurementDeviceId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of sensors -->
+
+    <xs:key name="SensorIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The SensorsIdKey collects all QIF ids of Sensors.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementResources/t:Sensors/t:Sensor
+             | t:MeasurementResources/t:Sensors/t:TouchProbe"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SensorIdKeyref"
+      refer="SensorIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The SensorIdKeyref requires that a sensor Id located anywhere be
+          the id of a Sensor.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementResources/t:Tools/t:Tool/t:SensorIds/t:Id
+             | t:Features/t:FeatureNominals/t:*/t:PointList/t:MeasurePoint/t:SensorId
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:PointList/t:MeasurePoint/t:SensorId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of measurement resources -->
+
+    <xs:key name="MeasurementResourceIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurementResourceIdKey collects all QIF ids of
+          MeasurementResources of any sort.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:MeasurementResources/t:*/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="MeasurementResourceIdKeyref"
+      refer="MeasurementResourceIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurementResourceIdKeyref requires that a
+          measurement resource Id located anywhere be the id of a
+          MeasurementResource.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementPlan/t:ActionMethods/t:*/t:ChosenResourceIds/t:Id
+             | t:MeasurementPlan/t:*/t:*/t:*/t:PreferredResourceIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of assembly paths -->
+
+    <xs:key name="AsmPathKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AsmPathKey collects all QIF ids of AsmPath/s.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Product/t:AsmPaths/t:AsmPath"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AsmPathKeyref"
+      refer="AsmPathKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AsmPathKeyref requires that an Id/@asmPath
+          located anywhere be the id of an AsmPath.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:*/t:*/t:*/t:*/t:*/t:Id
+             | t:Product/t:*/t:*/t:*/t:*/t:Id
+             | t:Product/t:*/t:*/t:*/t:Id
+             | t:Product/t:*/t:*/t:Id
+             | t:Product/t:*/t:Id
+             | t:Statistics/t:*/t:*/t:*/t:*/t:*/t:*/t:Id
+             | t:Statistics/t:*/t:*/t:*/t:*/t:*/t:Id
+             | t:Statistics/t:*/t:*/t:*/t:*/t:Id"/>
+      <xs:field xpath="@asmPath"/>
+    </xs:keyref>
+
+    <xs:keyref name="ActualComponentAsmPathKeyref"
+      refer="AsmPathKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ActualComponentAsmPathKeyref requires that AsmPathId
+          located in ActualComponent be the id of AsmPath.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:ActualComponentSet/t:ActualComponent"/>
+      <xs:field xpath="t:AsmPathId"/>
+    </xs:keyref>
+
+    <xs:keyref name="PreInspectionTraceabilityAsmPathKeyref"
+      refer="AsmPathKey">
+      <xs:annotation>
+        <xs:documentation>
+          The PreInspectionTraceabilityAsmPathKeyref requires that
+          AsmPathIds located in PreInspectionTraceability be the ids of
+          AsmPath.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:PreInspectionTraceability/t:AsmPathIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of products topology entities -->
+
+    <xs:key name="TopologyKey">
+      <xs:annotation>
+        <xs:documentation>
+          The TopologyKey collects all QIF ids of products topology.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Product/t:TopologySet/t:*/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="EntityInternalTopologyKeyref"
+      refer="TopologyKey">
+      <xs:annotation>
+        <xs:documentation>
+          The EntityInternalTopologyKeyref requires that an
+          EntityInternalIds/Id located anywhere be the id of a products
+          topology.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Features/t:FeatureNominals/t:*/t:EntityInternalIds/t:Id
+             | t:Characteristics/t:CharacteristicNominals/t:*/t:EntityInternalIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of views -->
+
+    <xs:key name="ViewKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ViewKey collects all QIF ids of views.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Product/t:ViewSet/t:SavedView"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ViewKeyref"
+      refer="ViewKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ViewKeyref requires that a ViewId of a characteristic be
+          the id of a view.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:*/t:LocationOnDrawing"/>
+      <xs:field xpath="ViewId"/>
+    </xs:keyref>
+
+<!-- start key and two keyrefs for manufacturing process ids -->
+
+    <xs:key name="ManufacturingProcessKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ManufacturingProcessKey collects all QIF ids of
+          ManufacturingProcessTraceabilities.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:ManufacturingProcessTraceabilities/t:ManufacturingProcessTraceability"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ManufacturingProcessIdKeyref"
+      refer="ManufacturingProcessKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ManufacturingProcessIdKeyref requires that a
+          ManufacturingProcessId located anywhere be the id of a
+          ManufacturingProcessTraceability.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*
+             | t:MeasurementsResults/t:ActualComponentSet/t:ActualComponent/t:Traceability
+             | t:Characteristics/t:CharacteristicGroups/t:CharacteristicManufacturingProcessGroup
+             | t:Statistics/t:StatisticalStudyPlans/t:ProcessDifferenceStudyPlan
+             | t:Statistics/t:StatisticalStudiesResults/t:ProcessDifferenceStudyResults
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*
+             | t:Product/t:ComponentSet/t:Component/t:Traceability"/>
+      <xs:field xpath="t:ManufacturingProcessId"/>
+    </xs:keyref>
+
+    <xs:keyref name="OtherManufacturingProcessKeyref"
+      refer="ManufacturingProcessKey">
+      <xs:annotation>
+        <xs:documentation>
+          The OtherManufacturingProcessKeyref requires that a
+          PreviousOperationId or an AssociatedTraceabilityId of a
+          ManufacturingProcessTraceability be the id
+          of a ManufacturingProcessTraceability.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:ManufacturingProcessTraceabilities/t:ManufacturingProcessTraceability/t:PreviousOperationId
+             | t:ManufacturingProcessTraceabilities/t:ManufacturingProcessTraceability/t:AssociatedTraceabilityId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- START ACTUAL TO ITEM KEY/KEYREF PAIRS FOR FEATURES -->
+
+    <xs:keyref name="ArcFeatureActualToItemKeyref"
+      refer="ArcFeatureItemKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ArcFeatureActualToItemKeyref requires that the FeatureItemId
+          of an ArcFeatureActual be the QIF id of an ArcFeatureItem. All
+          other FeatureActualToItemKeyrefs are similar.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ArcFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ArcFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ArcFeatureItemKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ArcFeatureItemKey collects all QIF ids of
+          ArcFeatureItems. All other FeatureItemKeys are similar.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:Features/t:FeatureItems/t:ArcFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="GenericFeatureActualToItemKeyref"
+      refer="GenericFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:GenericFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="GenericFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:GenericFeatureItem
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:GenericFeatureActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CircleFeatureActualToItemKeyref"
+      refer="CircleFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:CircleFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:CircleFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CircleFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:CircleFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CompoundFeatureActualToItemKeyref"
+      refer="CompoundFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:CompoundFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:CompoundFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CompoundFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:CompoundFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ConeFeatureActualToItemKeyref"
+      refer="ConeFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ConeFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ConeFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ConeFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:ConeFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ConicalSegmentFeatureActualToItemKeyref"
+      refer="ConicalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ConicalSegmentFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ConicalSegmentFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ConicalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:ConicalSegmentFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CuboidFeatureActualToItemKeyref"
+      refer="CuboidFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:CuboidFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:CuboidFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CuboidFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:CuboidFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CylinderFeatureActualToItemKeyref"
+      refer="CylinderFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:CylinderFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:CylinderFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CylinderFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:CylinderFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CylindricalSegmentFeatureActualToItemKeyref"
+      refer="CylindricalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:CylindricalSegmentFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:CylindricalSegmentFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CylindricalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:CylindricalSegmentFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="EdgePointFeatureActualToItemKeyref"
+      refer="EdgePointFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:EdgePointFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:EdgePointFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="EdgePointFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:EdgePointFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="EllipseFeatureActualToItemKeyref"
+      refer="EllipseFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:EllipseFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:EllipseFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="EllipseFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:EllipseFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ElongatedCylinderFeatureActualToItemKeyref"
+      refer="ElongatedCylinderFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ElongatedCylinderFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ElongatedCylinderFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ElongatedCylinderFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:ElongatedCylinderFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ExtrudedCrossSectionFeatureActualToItemKeyref"
+      refer="ExtrudedCrossSectionFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ExtrudedCrossSectionFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ExtrudedCrosssectionFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ExtrudedCrossSectionFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:ExtrudedCrossSectionFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LineFeatureActualToItemKeyref"
+      refer="LineFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:LineFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:LineFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="LineFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:LineFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="OppositeLinesFeatureActualToItemKeyref"
+      refer="OppositeLinesFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:OppositeLinesFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:OppositeLinesFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="OppositeLinesFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:OppositeLinesFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="OppositePlanesFeatureActualToItemKeyref"
+      refer="OppositePlanesFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:OppositePlanesFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:OppositePlanesFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="OppositePlanesFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:OppositePlanesFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PatternFeatureActualToItemKeyref"
+      refer="PatternFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:PatternFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:PatternFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PatternFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:PatternFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PlaneFeatureActualToItemKeyref"
+      refer="PlaneFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:PlaneFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:PlaneFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PlaneFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:PlaneFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PointDefinedCurveFeatureActualToItemKeyref"
+      refer="PointDefinedCurveFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:PointDefinedCurveFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:PointdefinedCurveFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PointDefinedCurveFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:PointDefinedCurveFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PointDefinedSurfaceFeatureActualToItemKeyref"
+      refer="PointDefinedSurfaceFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:PointDefinedSurfaceFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:PointdefinedSurfaceFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PointDefinedSurfaceFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:PointDefinedSurfaceFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PointFeatureActualToItemKeyref"
+      refer="PointFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:PointFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:PointFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PointFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:PointFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ProfileGroupFeatureActualToItemKeyref"
+      refer="ProfileGroupFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ProfileGroupFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ProfileGroupFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ProfileGroupFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:ProfileGroupFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="RunoutGroupFeatureActualToItemKeyref"
+      refer="RunoutGroupFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:RunoutGroupFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:RunoutGroupFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="RunoutGroupFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:RunoutGroupFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SphereFeatureActualToItemKeyref"
+      refer="SphereFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:SphereFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:SphereFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SphereFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:SphereFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SphericalSegmentFeatureActualToItemKeyref"
+      refer="SphericalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:SphericalSegmentFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:SphericalSegmentFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SphericalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:SphericalSegmentFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceOfRevolutionFeatureActualToItemKeyref"
+      refer="SurfaceOfRevolutionFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:SurfaceOfRevolutionFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:SurfaceOfRevolutionFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceOfRevolutionFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:SurfaceOfRevolutionFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ThreadedFeatureActualToItemKeyref"
+      refer="ThreadedFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ThreadedFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ThreadedFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ThreadedFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:ThreadedFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ToroidalSegmentFeatureActualToItemKeyref"
+      refer="ToroidalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:ToroidalSegmentFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:ToroidalSegmentFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ToroidalSegmentFeatureItemKey">
+      <xs:selector
+        xpath="t:Features/t:FeatureItems/t:ToroidalSegmentFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="TorusFeatureActualToItemKeyref"
+      refer="TorusFeatureItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:TorusFeatureActual
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:AverageFeature/t:TorusFeatureActual"/>
+      <xs:field xpath="t:FeatureItemId"/>
+    </xs:keyref>
+
+    <xs:key name="TorusFeatureItemKey">
+      <xs:selector xpath="t:Features/t:FeatureItems/t:TorusFeatureItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- END ACTUAL TO ITEM KEY/KEYREF PAIRS FOR FEATURES -->
+<!-- START ACTUAL TO ITEM KEY/KEYREF PAIRS FOR CHARACTERISTICS -->
+
+    <xs:keyref name="AngleCharacteristicActualToItemKeyref"
+      refer="AngleCharacteristicItemKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AngleCharacteristicActualToItemKeyref requires that the
+          CharacteristicItemId of an AngleCharacteristicActual be the
+          QIF id of an AngleCharacteristicItem. All other
+          CharacteristicActualToItemKeyrefs are similar.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="AngleCharacteristicItemKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AngleCharacteristicItemKey collects all QIF ids of
+          AngleCharacteristicItems. All other CharacteristicItemKeys
+          are similar.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:AngleCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngleBetweenCharacteristicActualToItemKeyref"
+      refer="AngleBetweenCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleBetweenCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="AngleBetweenCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:AngleBetweenCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngularCoordinateCharacteristicActualToItemKeyref"
+      refer="AngularCoordinateCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularCoordinateCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="AngularCoordinateCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:AngularCoordinateCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngleFromCharacteristicActualToItemKeyref"
+      refer="AngleFromCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleFromCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="AngleFromCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:AngleFromCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngularityCharacteristicActualToItemKeyref"
+      refer="AngularityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularityCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="AngularityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:AngularityCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ChordCharacteristicActualToItemKeyref"
+      refer="ChordCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ChordCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ChordCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:ChordCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CircularityCharacteristicActualToItemKeyref"
+      refer="CircularityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CircularityCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CircularityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:CircularityCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CircularRunoutCharacteristicActualToItemKeyref"
+      refer="CircularRunoutCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CircularRunoutCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CircularRunoutCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:CircularRunoutCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ConcentricityCharacteristicActualToItemKeyref"
+      refer="ConcentricityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ConcentricityCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ConcentricityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:ConcentricityCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LinearCoordinateCharacteristicActualToItemKeyref"
+      refer="LinearCoordinateCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LinearCoordinateCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="LinearCoordinateCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:LinearCoordinateCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CurveLengthCharacteristicActualToItemKeyref"
+      refer="CurveLengthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CurveLengthCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CurveLengthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:CurveLengthCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CylindricityCharacteristicActualToItemKeyref"
+      refer="CylindricityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CylindricityCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="CylindricityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:CylindricityCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DepthCharacteristicActualToItemKeyref"
+      refer="DepthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DepthCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="DepthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:DepthCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DiameterCharacteristicActualToItemKeyref"
+      refer="DiameterCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DiameterCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="DiameterCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:DiameterCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DistanceBetweenCharacteristicActualToItemKeyref"
+      refer="DistanceBetweenCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DistanceBetweenCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="DistanceBetweenCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:DistanceBetweenCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DistanceFromCharacteristicActualToItemKeyref"
+      refer="DistanceFromCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DistanceFromCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="DistanceFromCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:DistanceFromCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="FlatnessCharacteristicActualToItemKeyref"
+      refer="FlatnessCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:FlatnessCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="FlatnessCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:FlatnessCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="HeightCharacteristicActualToItemKeyref"
+      refer="HeightCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:HeightCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="HeightCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:HeightCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LengthCharacteristicActualToItemKeyref"
+      refer="LengthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LengthCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="LengthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:LengthCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LineProfileCharacteristicActualToItemKeyref"
+      refer="LineProfileCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LineProfileCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="LineProfileCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:LineProfileCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ParallelismCharacteristicActualToItemKeyref"
+      refer="ParallelismCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ParallelismCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ParallelismCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:ParallelismCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PerpendicularityCharacteristicActualToItemKeyref"
+      refer="PerpendicularityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PerpendicularityCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PerpendicularityCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:PerpendicularityCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PointProfileCharacteristicActualToItemKeyref"
+      refer="PointProfileCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PointProfileCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PointProfileCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:PointProfileCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PositionCharacteristicActualToItemKeyref"
+      refer="PositionCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PositionCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="PositionCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:PositionCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="RadiusCharacteristicActualToItemKeyref"
+      refer="RadiusCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:RadiusCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="RadiusCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:RadiusCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SquareCharacteristicActualToItemKeyref"
+      refer="SquareCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SquareCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SquareCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:SquareCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="StraightnessCharacteristicActualToItemKeyref"
+      refer="StraightnessCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:StraightnessCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="StraightnessCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:StraightnessCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceProfileCharacteristicActualToItemKeyref"
+      refer="SurfaceProfileCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceProfileCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:SurfaceProfileCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceProfileNonUniformCharacteristicActualToItemKeyref"
+      refer="SurfaceProfileNonUniformCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileNonUniformCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceProfileNonUniformCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:SurfaceProfileNonUniformCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceTextureCharacteristicActualToItemKeyref"
+      refer="SurfaceTextureCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceTextureCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceTextureCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:SurfaceTextureCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SymmetryCharacteristicActualToItemKeyref"
+      refer="SymmetryCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SymmetryCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="SymmetryCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:SymmetryCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ThicknessCharacteristicActualToItemKeyref"
+      refer="ThicknessCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ThicknessCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ThicknessCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:ThicknessCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ThreadCharacteristicActualToItemKeyref"
+      refer="ThreadCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ThreadCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="ThreadCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:ThreadCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="TotalRunoutCharacteristicActualToItemKeyref"
+      refer="TotalRunoutCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:TotalRunoutCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="TotalRunoutCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:TotalRunoutCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedAttributeCharacteristicActualToItemKeyref"
+      refer="UserDefinedAttributeCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedAttributeCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedAttributeCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedAttributeCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedUnitCharacteristicActualToItemKeyref"
+      refer="UserDefinedUnitCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedUnitCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedUnitCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedUnitCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedLinearCharacteristicActualToItemKeyref"
+      refer="UserDefinedLinearCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedLinearCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedLinearCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedLinearCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedAngularCharacteristicActualToItemKeyref"
+      refer="UserDefinedAngularCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedAngularCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedAngularCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedAngularCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedTemperatureCharacteristicActualToItemKeyref"
+      refer="UserDefinedTemperatureCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedTemperatureCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedTemperatureCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedTemperatureCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedAreaCharacteristicActualToItemKeyref"
+      refer="UserDefinedAreaCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedAreaCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedAreaCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedAreaCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedForceCharacteristicActualToItemKeyref"
+      refer="UserDefinedForceCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedForceCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedForceCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedForceCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedMassCharacteristicActualToItemKeyref"
+      refer="UserDefinedMassCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedMassCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedMassCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedMassCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedPressureCharacteristicActualToItemKeyref"
+      refer="UserDefinedPressureCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedPressureCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedPressureCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedPressureCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedSpeedCharacteristicActualToItemKeyref"
+      refer="UserDefinedSpeedCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedSpeedCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedSpeedCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedSpeedCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedTimeCharacteristicActualToItemKeyref"
+      refer="UserDefinedTimeCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedTimeCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedTimeCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:UserDefinedTimeCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="WidthCharacteristicActualToItemKeyref"
+      refer="WidthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:WidthCharacteristicActual"/>
+      <xs:field xpath="t:CharacteristicItemId"/>
+    </xs:keyref>
+
+    <xs:key name="WidthCharacteristicItemKey">
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicItems/t:WidthCharacteristicItem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- END ACTUAL TO ITEM KEY/KEYREF PAIRS FOR CHARACTERISTICS -->
+<!-- START STATSEVAL TO ACTUAL KEY/KEYREF PAIRS FOR CHARACTERISTICS -->
+
+    <xs:key name="AngleBetweenCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleBetweenCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngleBetweenCharacteristicActualKeyref"
+      refer="AngleBetweenCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngleBetweenCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngleBetweenCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="AngleCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngleCharacteristicActualKeyref"
+      refer="AngleCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngleCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngleCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="AngleFromCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleFromCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngleFromCharacteristicActualKeyref"
+      refer="AngleFromCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngleFromCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngleFromCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="AngularCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularCoordinateCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleFromCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleBetweenCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngularCharacteristicActualKeyref"
+      refer="AngularCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngularCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngularCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="AngularCoordinateCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularCoordinateCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngularCoordinateCharacteristicActualKeyref"
+      refer="AngularCoordinateCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngularCoordinateCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngularCoordinateCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="AngularityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularityCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AngularityCharacteristicActualKeyref"
+      refer="AngularityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngularityCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:AngularityCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="ChordCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ChordCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ChordCharacteristicActualKeyref"
+      refer="ChordCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ChordCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ChordCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="CircularRunoutCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CircularRunoutCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CircularRunoutCharacteristicActualKeyref"
+      refer="CircularRunoutCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CircularRunoutCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CircularRunoutCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="CircularityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CircularityCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CircularityCharacteristicActualKeyref"
+      refer="CircularityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CircularityCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CircularityCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="ConcentricityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ConcentricityCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ConcentricityCharacteristicActualKeyref"
+      refer="ConcentricityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ConcentricityCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ConcentricityCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="CurveLengthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CurveLengthCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CurveLengthCharacteristicActualKeyref"
+      refer="CurveLengthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CurveLengthCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CurveLengthCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="CylindricityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CylindricityCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CylindricityCharacteristicActualKeyref"
+      refer="CylindricityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CylindricityCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:CylindricityCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="DepthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DepthCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DepthCharacteristicActualKeyref"
+      refer="DepthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DepthCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DepthCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="DiameterCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DiameterCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DiameterCharacteristicActualKeyref"
+      refer="DiameterCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DiameterCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DiameterCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="DistanceBetweenCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DistanceBetweenCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DistanceBetweenCharacteristicActualKeyref"
+      refer="DistanceBetweenCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DistanceBetweenCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DistanceBetweenCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="DistanceFromCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DistanceFromCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="DistanceFromCharacteristicActualKeyref"
+      refer="DistanceFromCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DistanceFromCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:DistanceFromCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="FlatnessCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:FlatnessCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="FlatnessCharacteristicActualKeyref"
+      refer="FlatnessCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:FlatnessCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:FlatnessCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="GeometricCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PositionCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleFromCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleBetweenCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularCoordinateCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ConcentricityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SymmetryCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PerpendicularityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ParallelismCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:StraightnessCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:FlatnessCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CircularityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CylindricityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CircularRunoutCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:TotalRunoutCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LineProfileCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PointProfileCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileNonUniformCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="GeometricCharacteristicActualKeyref"
+      refer="GeometricCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:GeometricCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:GeometricCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="HeightCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:HeightCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="HeightCharacteristicActualKeyref"
+      refer="HeightCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:HeightCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:HeightCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="LengthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LengthCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LengthCharacteristicActualKeyref"
+      refer="LengthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LengthCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LengthCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="LinearCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LinearCoordinateCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:CurveLengthCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DiameterCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LengthCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:WidthCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:HeightCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DepthCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SquareCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DistanceFromCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:DistanceBetweenCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:RadiusCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ChordCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LinearCharacteristicActualKeyref"
+      refer="LinearCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LinearCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LinearCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="LineProfileCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LineProfileCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LineProfileCharacteristicActualKeyref"
+      refer="LineProfileCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LineProfileCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LineProfileCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="LinearCoordinateCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LinearCoordinateCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LinearCoordinateCharacteristicActualKeyref"
+      refer="LinearCoordinateCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LinearCoordinateCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LinearCoordinateCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="LocationCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PositionCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleFromCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngleBetweenCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularCoordinateCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ConcentricityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SymmetryCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="LocationCharacteristicActualKeyref"
+      refer="LocationCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LocationCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LocationCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="OrientationCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:AngularityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PerpendicularityCharacteristicActual
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ParallelismCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="OrientationCharacteristicActualKeyref"
+      refer="OrientationCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:OrientationCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:OrientationCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="ParallelismCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ParallelismCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ParallelismCharacteristicActualKeyref"
+      refer="ParallelismCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ParallelismCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ParallelismCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="PerpendicularityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PerpendicularityCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PerpendicularityCharacteristicActualKeyref"
+      refer="PerpendicularityCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PerpendicularityCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PerpendicularityCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="PointProfileCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PointProfileCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PointProfileCharacteristicActualKeyref"
+      refer="PointProfileCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PointProfileCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PointProfileCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="PositionCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PositionCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="PositionCharacteristicActualKeyref"
+      refer="PositionCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PositionCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PositionCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="RadiusCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:RadiusCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="RadiusCharacteristicActualKeyref"
+      refer="RadiusCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:RadiusCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:RadiusCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="SquareCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SquareCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SquareCharacteristicActualKeyref"
+      refer="SquareCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SquareCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SquareCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="StraightnessCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:StraightnessCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="StraightnessCharacteristicActualKeyref"
+      refer="StraightnessCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:StraightnessCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:StraightnessCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceProfileCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceProfileCharacteristicActualKeyref"
+      refer="SurfaceProfileCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceProfileCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceProfileCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceProfileNonUniformCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileNonUniformCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceProfileNonUniformCharacteristicActualKeyref"
+      refer="SurfaceProfileNonUniformCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceProfileNonUniformCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceProfileNonUniformCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="SurfaceTextureCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceTextureCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SurfaceTextureCharacteristicActualKeyref"
+      refer="SurfaceTextureCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceTextureCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceTextureCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="SymmetryCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SymmetryCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="SymmetryCharacteristicActualKeyref"
+      refer="SymmetryCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SymmetryCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SymmetryCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="ThicknessCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ThicknessCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ThicknessCharacteristicActualKeyref"
+      refer="ThicknessCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ThicknessCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ThicknessCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="ThreadCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:ThreadCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ThreadCharacteristicActualKeyref"
+      refer="ThreadCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ThreadCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:ThreadCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="TotalRunoutCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:TotalRunoutCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="TotalRunoutCharacteristicActualKeyref"
+      refer="TotalRunoutCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:TotalRunoutCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:TotalRunoutCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedAttributeCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedAttributeCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedAttributeCharacteristicActualKeyref"
+      refer="UserDefinedAttributeCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:UserDefinedAttributeCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:UserDefinedAttributeCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="UserDefinedUnitCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:UserDefinedUnitCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="UserDefinedUnitCharacteristicActualKeyref"
+      refer="UserDefinedUnitCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:UserDefinedUnitCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:UserDefinedUnitCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+    <xs:key name="WidthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:WidthCharacteristicActual"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="WidthCharacteristicActualKeyref"
+      refer="WidthCharacteristicActualKey">
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:WidthCharacteristicStats/t:ActualIds/t:Ids/t:Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:WidthCharacteristicStats/t:Subgroup/t:ActualIds/t:Ids/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- END STATSEVAL TO ACTUAL KEY/KEYREF PAIRS FOR CHARACTERISTICS -->
+<!-- START ACTUAL TO NOMINAL KEY/KEYREF PAIR FOR MEASURE POINT -->
+
+    <xs:key name="MeasurePointNominalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurePointNominalKey collects all QIF ids of
+          MeasurePointNominals.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Features/t:FeatureNominals/t:*/t:PointList/t:MeasurePoint"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="MeasurePointActualToNominalKeyref"
+      refer="MeasurePointNominalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurePointActualToNominalKeyref requires that the
+          MeasurePointNominalId of an actual MeasurePoint be the QIF id of
+          a MeasurePointNominal.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:PointList/t:MeasurePoint"/>
+      <xs:field xpath="t:MeasurePointNominalId"/>
+    </xs:keyref>
+
+<!-- END ACTUAL TO NOMINAL KEY/KEYREF PAIR FOR MEASURE POINT -->
+<!-- START KEY AND TWO KEYREFS FOR ACTUAL MEASURE POINT -->
+
+    <xs:key name="MeasurePointActualIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The MeasurePointActualKey collects all QIF ids of
+          MeasurePointActuals.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:PointList/t:MeasurePoint"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CharacteristicToActualMeasurePointKeyref"
+      refer="MeasurePointActualIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicToActualMeasurePointKeyref requires that the
+          MeasurePointActualId of a PointDeviation referenced in
+          CharacteristicActuals be the QIF id of a MeasurePointActual. This
+          applies only to profile characteristics.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:LineProfileCharacteristicActual/t:PointDeviations/t:PointDeviation
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:PointProfileCharacteristicActual/t:PointDeviations/t:PointDeviation
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileCharacteristicActual/t:PointDeviations/t:PointDeviation
+             | t:MeasurementsResults/t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:SurfaceProfileNonUniformCharacteristicActual/t:PointDeviations/t:PointDeviation"/>
+      <xs:field xpath="t:MeasurePointActualId"/>
+    </xs:keyref>
+
+    <xs:keyref name="StatisticsCharacteristicToActualMeasurePointKeyref"
+      refer="MeasurePointActualIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The StatisticsCharacteristicToActualMeasurePointKeyref requires
+          that the MeasurePointActualId of a PointDeviation referenced in
+          CharacteristicsStats be the QIF id of a MeasurePointActual. This
+          applies only to profile characteristics.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:LineProfileCharacteristicStats/t:PointDeviationsStats/t:PointDeviationStats/t:MeasurePointActualIds/Ids/Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:PointProfileCharacteristicStats/t:PointDeviationsStats/t:PointDeviationStats/t:MeasurePointActualIds/Ids/Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceProfileCharacteristicStats/t:PointDeviationsStats/t:PointDeviationStats/t:MeasurePointActualIds/Ids/Id
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:CharacteristicsStats/t:SurfaceProfileNonUniformCharacteristicStats/t:PointDeviationsStats/t:PointDeviationStats/t:MeasurePointActualIds/Ids/Id
+"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- END KEY AND TWO KEYREFS FOR ACTUAL MEASURE POINT -->
+<!-- START KEYREF FOR CHARACTERISTIC NOMINALS -->
+
+    <xs:keyref name="CharacteristicNominalIdKeyref"
+      refer="CharacteristicNominalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CharacteristicNominalIdKeyref requires that a
+          CharacteristicNominalId located anywhere be the id of a
+          CharacteristicNominal.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:PartSet/t:Part/t:CharacteristicNominalIds/t:Id
+             | t:Product/t:AssemblySet/t:Assembly/t:CharacteristicNominalIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- END KEYREF FOR CHARACTERISTIC NOMINALS -->
+<!-- START KEY/KEYREF PAIR FOR IDS OF INTERNAL CAD COORDINATE SYSTEMS -->
+
+    <xs:key name="CADCoordinateSystemInternalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CADCoordinateSystemInternalIdKey collects the ids of all
+          internal CAD coordinate systems.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:CoordinateSystemSet/t:CoordinateSystem"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CADCoordinateSystemInternalIdKeyref"
+      refer="CADCoordinateSystemInternalIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CADCoordinateSystemInternalIdKeyref requires that the
+          InternalCADCoordinateSystemId of an instance of
+          CoordinateSystemType be the id of a CAD coordinate system.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:CoordinateSystems/t:CoordinateSystem"/>
+      <xs:field xpath="InternalCADCoordinateSystemId"/>
+    </xs:keyref>
+
+<!-- END KEY/KEYREF PAIR FOR IDS OF INTERNAL CAD COORDINATE SYSTEMS -->
+<!-- START KEY/KEYREF FOR ANNOTATION IDS OF SAVED VIEW -->
+
+    <xs:key name="AnnotationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AnnotationIdKey collects the QIF ids of all characteristic
+          nominals, notes, flag notes, datum definitions and datum
+          target definitions.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Characteristics/t:CharacteristicNominals/t:*
+             | t:Product/t:NoteSet/t:*
+             | t:Product/t:NoteFlagSet/t:*
+             | t:DatumDefinitions/t:*
+             | t:DatumTargetDefinitions/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="AnnotationIdKeyref"
+      refer="AnnotationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AnnotationIdKeyref requires that annotations
+          whose ids are specified in AnnotationVisibleIds and
+          AnnotationHiddenIds be present in AnnotationIdKey.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Product/t:ViewSet/t:SavedView/t:AnnotationVisibleIds/t:Id
+             | t:Product/t:ViewSet/t:SavedView/t:AnnotationHiddenIds/t:Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+
+<!-- START UNREFERENCED KEYS -->
+
+    <xs:key name="QPIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The QPIdKey collects all QPIds located anywhere in the document
+          and requires that they be unique. There is no keyref for QPIds
+          since referenced QPIds are expected usually to be in other files.
+          QPIds in other instance files must also be different from QPIds
+          in this file, but it is not possible check that using a key.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:Version/t:ThisInstanceQPId
+             | t:Characteristics/t:CharacteristicItems/t:*/t:QPId
+             | t:Features/t:FeatureItems/t:*/t:QPId
+             | t:MeasurementPlan/t:Version/t:ThisInstanceQPId
+             | t:MeasurementResources/t:Version/t:ThisInstanceQPId
+             | t:MeasurementsResults/t:Version/t:ThisInstanceQPId
+             | t:MeasurementsResults/t:MeasurementResults/t:ThisResultsInstanceQPId
+             | t:Product/t:Header/t:File/t:Version/t:ThisInstanceQPId
+             | t:Product/t:AssemblySet/t:Assembly/t:QPId
+             | t:Product/t:ComponentSet/t:Component/t:QPId
+             | t:Product/t:PartSet/t:Part/t:QPId
+             | t:Rules/t:Version/t:ThisInstanceQPId
+             | t:Statistics/t:Version/t:ThisInstanceQPId
+             | t:Statistics/t:StatisticalStudyPlans/t:*/t:ThisStatisticalStudyPlanInstanceQPId
+             | t:Statistics/t:StatisticalStudiesResults/t:*/t:ThisStatisticalStudyResultsInstanceQPId"/>
+      <xs:field xpath="."/>
+    </xs:key>
+
+    <xs:key name="LocationIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The LocationIdKey collects the QIF ids of all Locations located
+          in MeasurementResources or InspectionTraceability.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:PreInspectionTraceability/t:PlantLocation
+             | t:MeasurementResources/t:*/t:*/t:Location"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+  </xs:element>
+
+<!-- END UNREFERENCED KEYS -->
+
+  <xs:complexType name="QIFDocumentType">
+    <xs:annotation>
+      <xs:documentation>
+        The QIFDocumentType defines a QIF document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="VersionHistory"
+        type="VersionHistoryType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional VersionHistory element gives information about
+            earlier versions of the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Version"
+        type="VersionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Version element uniquely identifies the QIF
+            document file.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Header"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Header element contains information about the
+            creation of this QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PreInspectionTraceability"
+        type="PreInspectionTraceabilityType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PreInspectionTraceability element gives
+            traceability information that applies to the entire QIF
+            document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="FileUnits"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional FileUnits element gives information about the
+            units used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DatumDefinitions"
+        type="DatumDefinitionsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional DatumDefinitions element gives information about
+            the datum definitions to be used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DatumTargetDefinitions"
+        type="DatumTargetDefinitionsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional DatumTargetDefinitions element gives information
+            about the datum targets to be used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Transforms"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Transforms element gives information about the
+            transforms to be used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="CoordinateSystems"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CoordinateSystems element gives information about
+            the coordinate systems to be used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DatumReferenceFrames"
+        type="DatumReferenceFramesType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional DatumReferenceFrames element gives information
+            about the datum reference frames to be used in the
+            QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="MeasurementResources"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasurementResources element gives information
+            about the measurement resources used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ThreadSpecifications"
+        type="ThreadSpecificationsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ThreadSpecifications element gives information
+            about the thread specifications used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Product"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Product element gives information about the parts
+            and assemblies used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Features"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Features element gives information about the
+            features used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Characteristics"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Characteristics element gives information about
+            the characteristics used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="MeasurementPlan"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasurementPlan element gives information about
+            the measurement plan used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="MeasurementsResults"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasurementsResults element gives information
+            about the measurement results used in the QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Statistics"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Statistics element gives information about
+            statistical plans and the statistical results in the QIF
+            document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="ManufacturingProcessTraceabilities"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ManufacturingProcessTraceabilities element gives
+            traceability information about the manufacturing process or
+            processes used.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="Rules"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Rules element gives information about rules
+            in the QIF document for selecting on a per-feature basis
+            any or all of (1) the quantity of hit points to use,
+            (2) the strategy to use for locating hit points, and
+            (3) the substitute feature algorithm to use.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UserDataXML"
+        type="UserDataXMLType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The UserDataXMLType defines a user-defined XML structure from
+            any namespace that is not the target namespace. The XML
+            processor will validate elements if the corresponding schema
+            will be presented. If the schema cannot be obtained, no errors
+            will occur.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="versionQIF"
+      type="xs:NMTOKEN"
+      fixed="2.0.0"
+      use="required"/>
+    <xs:attribute name="idMax"
+      type="xs:unsignedInt">
+      <xs:annotation>
+        <xs:documentation>
+          The idMax attribute specifies the largest ID used in the document.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="QIFDocumentHeaderType">
+    <xs:annotation>
+      <xs:documentation>
+        The HeaderType contains information about the generation of this QIF
+        document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Application"
+        type="ApplicationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Application element is the information about the
+            software application wherein the QIF document was most recently
+            edited.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Author"
+        type="AuthorType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Author element is the author who
+            generating this QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ApplicationSource"
+        type="ApplicationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ApplicationSource element is the information about
+            the software application wherein the QIF document was created.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Description element is a description of this QIF
+            document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Scope"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Scope element defines the scope of this QIF
+            document. Examples include: "Results","Plan", "Plan+Results",
+            "MBD", "MBD+Plan+Results+Statistics", "Plan+External Product
+            Definition". The scope of a QIF document can be determined from
+            the optional elements that are present. This element allows for
+            a concise, human-readable summary of the scope to appear near
+            the beginning of a QIF document.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="Header"
+    type="QIFDocumentHeaderType">
+    <xs:annotation>
+      <xs:documentation>
+        The Header contains information about the creation of the
+        file containing the CAD model and global parameters of the model.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+</xs:schema>

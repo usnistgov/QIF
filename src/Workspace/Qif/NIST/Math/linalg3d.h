@@ -21,7 +21,6 @@
 #include <iterator>   // ostream_iterator 
 #include <iostream> // cout
 #include <cstring>
-#include<stdio.h>
 // When in doubt check Numerical recipes: http://www.nr.com/public-domain.html 
 // And check out: http://people.sc.fsu.edu/~jburkardt/cpp_src/cpp_src.html
 
@@ -39,7 +38,7 @@ inline std::string StdStringFormat(const char* format, ...)
 
 	// Kind of a bogus way to insure that we don't
 	// exceed the limit of our buffer
-	while((m=vsnprintf(&tmp[0], n, format, ap))<0)
+	while((m=vsnprintf(&tmp[0], n-1, format, ap))<0)
 	{
 		n=n+1028;
 		tmp.resize(n,'0');
@@ -126,13 +125,17 @@ namespace M
 	}
 	//inline REAL CopyPts2Array(const std::vector<REAL> &pts, REAL *arr) { std::copy(pts.begin(), pts.end(), arr);}
 	inline REAL CoutPts(const std::vector<REAL> &pts) {  std::copy(pts.begin(), pts.end(), std::ostream_iterator<REAL>(std::cout, "\n"));}
-	inline std::vector<REAL> AddNoise(std::vector<REAL> pts, REAL noise_level)
+	inline REAL AddNoise(std::vector<REAL> &pts, REAL noise_level) 
 	{
 		for (size_t i=0; i<pts.size(); i++) 
-			pts[i] += unifRand(-noise_level, noise_level);
+			pts[i] += unifRand(-noise_level, noise_level);		
+	}
+	inline std::vector<REAL> GenerateNoise(size_t N, REAL min, REAL max) 
+	{
+		std::vector<REAL> pts;
+		for (size_t i=0; i<N; i++) 	pts.push_back(unifRand(min, max));		
 		return pts;
 	}
-
 	// REAL sqrt(REAL f) { if(f<0) throw; else return ::sqrt(f); }
 	namespace SliceEnum
 	{	typedef enum {X=1, Y=2, Z=3, XY=3, XZ=5, YZ=6, ZX=7} ; // change with vector array of ordering, 0 if none.
@@ -195,6 +198,10 @@ namespace M
 
 	};
 	template<class T>
+	Vec<T> Noise(Vec<T>  min, Vec<T>  max){ Vec<T>  noise(unifRand(min.x, max.x),unifRand(min.y, max.y),unifRand(min.z, max.z)); return noise; }
+	template<class T>
+	Vec<T>  Noise(REAL min, REAL max){ Vec<T>  noise(unifRand(min, max),unifRand(min, max),unifRand(min, max)); return noise; }
+	template<class T>
 	inline Vec<T> Origin( ) { return Vec<T>(0,0,0); }
 
 	template<class T>
@@ -223,11 +230,13 @@ namespace M
 	inline bool VGt(Vec<T> & v1, Vec<T> & v2){ return (v1.x>v2.x) || (v1.y>v2.y) || (v1.z>v2.z); }
 	template<class T>
 	inline bool VLt(Vec<T> & v1, Vec<T> & v2){ return (v1.x<v2.x) || (v1.y<v2.y) || (v1.z<v2.z); }
+	template<class T>
+	inline std::string ToString(std::vector<Vec<T>> & v){ std::string tmp; for(size_t i=0; i<v.size(); i++) tmp+=v[i].ToString(); return tmp; }
 
 	// make this a template type?
 	template<class T>
 	inline Vec<T> operator * ( const T src, const Vec<T>& v ) { 
-		Vec<T> tmp( v ); 
+		Vec<T> tmp( v );
 		tmp *= src ;
 		return  tmp;
 	}
@@ -243,18 +252,20 @@ namespace M
 		if(s==SliceEnum::Z) std::transform(pts.begin(), pts.end(), std::back_inserter(pts2), [](M::Vec<T> const& v) { return v.z; });
 		return pts2;
 	}
-	inline void AddNoise(std::vector<Vector> &pts, Vector noise_level) 
+
+	inline void AddNoise(std::vector<Vector> &pts, Vector minnoise_level,Vector maxnoise_level) 
 	{
-		AddNoise(Slice(pts, SliceEnum::X), noise_level.x);
-		AddNoise(Slice(pts, SliceEnum::Y), noise_level.y);
-		AddNoise(Slice(pts, SliceEnum::Z), noise_level.z);
+		for(size_t i=0; i<pts.size(); i++) pts[i]=pts[i]+ Noise(minnoise_level, maxnoise_level);
 	}
-	inline void AddNoise(std::vector<Vector> &pts, REAL noise_level) 
+	inline std::vector<Vector>  GenerateNoise(size_t N, Vector minnoise_level, Vector maxnoise_level) 
 	{
-		AddNoise(Slice(pts, SliceEnum::X), noise_level);
-		AddNoise(Slice(pts, SliceEnum::Y), noise_level);
-		AddNoise(Slice(pts, SliceEnum::Z), noise_level);
-	}
+		std::vector<Vector> pts;
+		for(size_t i=0; i< N ; i++) pts[i]= Noise(minnoise_level, maxnoise_level);
+		return pts;
+	}	
+	inline void AddNoise(std::vector<Vector> &pts, REAL min,REAL max) {	AddNoise(pts, Vector(min,min,min), Vector(max,max,max));}
+	//inline std::vector<Vector>  GenerateNoise(size_t N, REAL min, REAL max) {return GenerateNoise(N, Vector(min,min,min), Vector(max,max,max));}
+	
 	template<class T>
 	inline Vec<T> Mean(std::vector<Vec<T>> &pts) 
 	{ 
@@ -360,9 +371,8 @@ namespace M
 		Mtx Rotation() { Mtx tmp(*this);  tmp.data[3]=tmp.data[7]=tmp.data[11]=0; tmp.data[15]=1;  return tmp; }
 		Vector Translation() { Vector tmp( data[3],data[7],data[11],data[15]);  return tmp; }
 		bool IsIdentity() { 
-			static Mtx<T> I( 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 );
-			return   *this == I;  // memcmp(this,&IdentityMatrix,sizeof(T)*16)==0;
-		} 
+			return   *this == Mtx<T>( 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 );
+					}
 		void Diagonal(Vec<T> v) { for(int i=0; i< order; i++) rows[i][i]=v[i]; }
 
 	};

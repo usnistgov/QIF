@@ -96,16 +96,16 @@ ISymbolPtr  SymbolTable::FindVarDefSymbolInclDerived(IXmlNodePtr pNode, std::str
 {
 	// THIS IS A MESS
 	// Cant have null node
-	if(pNode==NULL)
+	if(pNode.get() == NULL)
 		return NULL;
 	//
 	// Legal symbol?
 	ISymbolPtr symbol = FindSymbol(name);
-	if(symbol==(ISymbolPtr) NULL)
+	if(symbol.get() == NULL)
 		return NULL;
 
 	ISymbolPtr symboltype = FindType(symbol->TypeName());
-	assert(symboltype!=NULL);
+	assert(symboltype.get()!=NULL);
 	std::vector<std::string> derived = symboltype->SubTypes();
 	derived.insert(derived.begin(), symboltype->Name());
 
@@ -116,14 +116,14 @@ ISymbolPtr  SymbolTable::FindVarDefSymbolInclDerived(IXmlNodePtr pNode, std::str
 		if(vardef->Type() == special_)  
 		{
 			ISymbolPtr symbol = FindVarDefSymbolInclDerived(vardef->GetXmlNodePtr(), name);
-			if(symbol!=NULL)
+			if(symbol.get()!=NULL)
 				return symbol;
 		}
 		else 
 		{
 			//// Now find type, since not a "particle" type
 			ISymbolPtr vardeftype = FindType(vardef->TypeName());
-			if(vardeftype==(ISymbolPtr) NULL)
+			if(vardeftype.get()== NULL)
 				continue;
 			std::vector<std::string>::iterator it; 
 			if ((it=find(derived.begin(), derived.end(), vardeftype->Name())) != derived.end())
@@ -141,12 +141,12 @@ ISymbolPtr SymbolTable::FindVarDefSymbol(IXmlNodePtr pNode, std::string &name )
 {
 	// THIS IS A MESS
 	// Cant have null node
-	if(pNode==(IXmlNodePtr) NULL)
+	if(pNode.get()== NULL)
 		return NULL;
 	//
 	// Legal symbol?
 	ISymbolPtr symbol = FindSymbol(name);
-	if(symbol==(ISymbolPtr) NULL)
+	if(symbol.get()== NULL)
 		return NULL;
 
 	CVarDefPtr vardef;
@@ -156,13 +156,13 @@ ISymbolPtr SymbolTable::FindVarDefSymbol(IXmlNodePtr pNode, std::string &name )
 		if(vardef->TypeName() == "ParticleType")
 		{
 			ISymbolPtr symbol = FindVarDefSymbol(vardef->GetXmlNodePtr(), name);
-			if(symbol!=NULL)
+			if(symbol.get()!=NULL)
 				return symbol;
 		}
 		else if(vardef->TypeName() == "DerivedType")
 		{
 			ISymbolPtr symbol = FindVarDefSymbol(vardef->GetXmlNodePtr(), name);
-			if(symbol!=NULL)
+			if(symbol.get()!=NULL)
 				return symbol;
 		}		
 		else 
@@ -354,7 +354,7 @@ void SymbolTable::DumpVars(IXmlNodePtr node, std::string &tmp)
 std::string SymbolTable::DumpType(IXmlNodePtr & type)
 {
 	std::string  tmp;
-	if(type==NULL)
+	if(type.get()==NULL)
 		return tmp;
 	if(type->LowerBounds().size()<1) type->LowerBounds().push_back(-2);
 	if(type->UpperBounds().size()<1) type->UpperBounds().push_back(-2);
@@ -411,7 +411,7 @@ std::string SymbolTable::DumpTypes(StringVector excludetypes)
 	for(size_t i=0; i< Types().size(); i++)
 	{
 		IXmlNodePtr type = Types().at(i);
-		if(type==NULL)
+		if(type.get()==NULL)
 			continue;
 		if(std::find(excludetypes.begin(), excludetypes.end(), type->Name()) != excludetypes.end())
 		{
@@ -446,7 +446,7 @@ std::string SymbolTable::DumpNamedElements(StringVector elems)
 std::string SymbolTable::DumpElement(IXmlNodePtr elem )
 {
 	std::string tmp; 
-	if(elem==NULL)
+	if(elem.get()==NULL)
 		return tmp;
 	if(elem->LowerBounds().size()<1) elem->LowerBounds().push_back(-2);
 	if(elem->UpperBounds().size()<1) elem->UpperBounds().push_back(-2);
@@ -460,7 +460,7 @@ std::string SymbolTable::DumpElement(IXmlNodePtr elem )
 		elem->SimpleContent()? "Simple": "Complex",
 		elem->BaseTypeName().c_str(),
 		elem->Global()? "True": "False",
-		elem->Parent() == NULL ? "" : elem->Parent()->Name().c_str(),
+		elem->Parent().get() == NULL ? "" : elem->Parent()->Name().c_str(),
 		elem->OuterElementName().c_str(),
 		elem->OuterElementTypeName().c_str()
 		);

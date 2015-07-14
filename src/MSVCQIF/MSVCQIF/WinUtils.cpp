@@ -27,3 +27,17 @@ struct CSetup
 };
 
 CSetup setup;
+
+#include <string>
+std::string ExeDirectory()
+{
+	std::string cmd = GetCommandLine();
+	if(cmd[0]!= '"')
+		return "";
+	cmd =cmd.substr(1);
+	std::string::size_type delimPos = cmd.find_first_of('"', 0);
+	if(std::string::npos == delimPos)
+		return "";
+	cmd=cmd.substr(0,delimPos);
+	return cmd.substr( 0, cmd.find_last_of( '\\' ) +1 );
+}

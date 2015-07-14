@@ -149,11 +149,37 @@ std::vector<std::string> CXercesUtils::GetXpathResults(DOMElement* root, std::st
 		DOMNode* n (r->getNodeValue ());
 		const XMLCh * value = n->getTextContent	(		);
 		values.push_back(xsd::cxx::xml::transcode<char> (value));
-		i=i;
 	}
 
 	return values;
 }
+
+void CXercesUtils::DumpTree (DOMNode *tree, std::string &tmp)
+{
+  tabs+="\t";
+  if (tree != NULL)
+    {
+		if (tree->getNodeType () != DOMNode::ELEMENT_NODE)
+			goto leave;
+		DOMElement*  e = (DOMElement* ) tree;
+		std::string el_name =  XMLString::transcode(tree->getNodeName());
+
+		std::string el_value;
+		if(e->getTextContent () && e->getChildElementCount() == (XMLSize_t) 0)
+			el_value = XMLString::transcode(e->getTextContent ());
+
+		tmp+=  tabs + "<"+  el_name + ">" + el_value +  "\n";
+
+      for (DOMNode* child = tree->getFirstChild();
+           child != NULL; child = child->getNextSibling())
+      {
+    	  DumpTree(child, tmp);
+      }
+		tmp+=  tabs + "</" + el_name + ">\n";
+    }
+  leave:
+  tabs+=tabs.substr(1);
+ }
 
 #if 0
 #include <xqilla/xqilla-simple.hpp>

@@ -50,15 +50,14 @@ public:
 	CXercesUtils(void);
 	~CXercesUtils(void);
 
-
+	std::string tabs;
 	std::vector<std::string> GetXpathResults(xercesc::DOMElement* root, std::string querystr);
+	void DumpTree(xercesc::DOMNode *tree, std::string &tmp );
 	std::string GetElementName(xercesc::DOMElement* e );
 	std::string GetElementValue(xercesc::DOMElement* e );
 	std::string GetSubElementValues(xercesc::DOMElement* e , std::vector<std::string> &excludes) ;
 	void NagivateParseTree(xercesc::DOMElement* p, std::string tabs="");
 	xercesc::DOMElement*  FindChildElementName(xercesc::DOMElement* e , std::string name) ;
-	//std::string GenerateFAIRRepor1(DOMElement* e );
-	//std::string GenerateFAIRRepor3(DOMElement* e );
 	template<typename T>
 	std::vector<T *> GetXpathAsStructs(xercesc::DOMElement* root, std::string querystr)
 	{

@@ -1,0 +1,1205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This document is part of QIF 2.0, an open, industry-wide standard -->
+<!-- established by the Dimensional Metrology Standards Consortium.    -->
+<!-- This document shall not be used in any manner to claim any        -->
+<!-- proprietary rights to such information, such as rights to a       -->
+<!-- patent, trademark, or copyright.                                  -->
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://qifstandards.org/xsd/qif2"
+  xmlns:t="http://qifstandards.org/xsd/qif2"
+  targetNamespace="http://qifstandards.org/xsd/qif2"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="2.0.0">
+
+  <xs:include schemaLocation="../QIFLibrary/Primitives.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      The PrimitiveTypes.xsd schema file defines a large number of
+      miscellaneous types used in other schema files.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="RectangularUnitAreaType">
+    <xs:annotation>
+      <xs:documentation>
+        The RectangularUnitAreaType defines a rectangular region.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="RectangularUnitAreaLength"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The RectangularUnitAreaLength element is the length in linear
+            units of the rectangular region.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RectangularUnitAreaWidth"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The RectangularUnitAreaWidth element is the width in linear
+            units of the rectangular region.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RectangularUnitAreaOrientation"
+        type="UnitVectorType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional RectangularUnitAreaOrientation element is the
+            direction of the rectangle's axis along the length of the
+            rectangle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CircularUnitAreaType">
+    <xs:annotation>
+      <xs:documentation>
+        The CircularUnitAreaType defines a circular region.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CircularUnitAreaDiameter"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The CircularUnitAreaDiameter element is the length in linear
+            units of the diameter of the circular region.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActualZoneAxisType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualZoneAxisType defines an actual axis with a length.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="AxisType">
+        <xs:sequence>
+          <xs:element name="Length"
+            type="ActualLinearValueType">
+            <xs:annotation>
+              <xs:documentation>
+                The Length element is the length of an axis or line. A
+                positive value means in the direction of the associated
+                vector and a negative value means in the opposite
+                direction.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="BottomEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The BottomEnumType enumerates values that describe the bottom type
+        for a 3D internal feature type, a feature created by removing
+        material.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="BLIND"/>
+      <xs:enumeration value="THROUGH"/>
+      <xs:enumeration value="UNDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="BottomType">
+    <xs:annotation>
+      <xs:documentation>
+        The BottomType defines the bottom type for a 3D internal feature
+        type, a feature created by removing material.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="BottomEnum"
+        type="BottomEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The BottomEnum element describes an often-used bottom type for
+            a 3D internal feature type.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherBottom"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherBottom element describes the bottom type for a 3D
+            internal feature type in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="BoundingBoxType">
+    <xs:annotation>
+      <xs:documentation>
+        The BoundingBoxType defines the dimensions of a box that
+        usually bounds a shape object.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Length"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Length element gives the length of the box.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Width"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Width element gives the width of the box.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Height"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Height element gives the height of the box.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="ShapeClassEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The ShapeClassEnumType enumerates values that describe the shape
+        class of a part. FREEFORM includes curved shapes such as turbine
+        blades. PRISMATIC parts are non-rotational. THINWALLED is also
+        known as sheet metal.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="GEAR"/>
+      <xs:enumeration value="FREEFORM"/>
+      <xs:enumeration value="PRISMATIC"/>
+      <xs:enumeration value="ROTATIONAL"/>
+      <xs:enumeration value="THINWALLED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ShapeClassType">
+    <xs:annotation>
+      <xs:documentation>
+        The ShapeClassType defines the shape class of a part.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="ShapeClassEnum"
+        type="ShapeClassEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The ShapeClassEnum element describes an often-used shape class.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherShapeClass"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherShapeClass element describes a shape class in
+            natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="ManufacturingMethodEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The ManufacturingMethodEnumType enumerates values that describe the
+        methods of manufacturing a part. ADDITIVE means additive
+        manufacturing. COMPOSITE manufacturing includes lay-up and filament
+        winding. FABRICATION fabricates existing components. FORMING
+        includes forging, rolling, extrusion, pressing, bending, and
+        shearing. JOINING includes welding, brazing, sintering, bonding,
+        fastening, and press fitting. MACHINING includes all operations
+        that may be done on a machining center or other machine that
+        subtracts material such as milling, turning, drilling, reaming,
+        boring, sawing, hobbing, and electron beam machining. MOLDING
+        includes injection molding.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="ADDITIVE"/>
+      <xs:enumeration value="CASTING"/>
+      <xs:enumeration value="COMPOSITE"/>
+      <xs:enumeration value="FABRICATION"/>
+      <xs:enumeration value="FORMING"/>
+      <xs:enumeration value="JOINING"/>
+      <xs:enumeration value="MACHINING"/>
+      <xs:enumeration value="MOLDING"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ManufacturingMethodType">
+    <xs:annotation>
+      <xs:documentation>
+        The ManufacturingMethodType defines a manufacturing method for a
+        part.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="ManufacturingMethodEnum"
+        type="ManufacturingMethodEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The ManufacturingMethodEnum element describes an often-used
+            manufacturing method.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherManufacturingMethod"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherManufacturingMethod element describes a manufacturing
+            method in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="InternalExternalEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The InternalExternalEnumType enumerates values that describe
+        whether a feature is inside or outside of material.
+          INTERNAL = feature is inside of material, e.g., surface of a
+             cylindrical hole
+          EXTERNAL = feature is outside of material, e.g., surface of a
+             cylindrical peg
+          NOT_APPLICABLE = the concept of internal or external does not
+             apply, e.g., a plane
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="INTERNAL"/>
+      <xs:enumeration value="EXTERNAL"/>
+      <xs:enumeration value="NOT_APPLICABLE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DimensionCountEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The DimensionCountEnumType enumerates values that describe whether
+        a feature or a characteristic is two dimensional or three
+        dimensional.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="TWODIMENSIONAL"/>
+      <xs:enumeration value="THREEDIMENSIONAL"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CoordinateEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The CoordinateEnumType enumerates values that describe a
+        coordinate system.
+          CARTESIAN_2D is a two dimensional Cartesian coordinate system
+            with orthogonal X and Y axes.
+          POLAR_2D is a two dimensional polar coordinate system with a
+            radius from the origin and an angle from a starting direction.
+          CARTESIAN_3D is a three dimensional right handed Cartesian
+            coordinate system with orthogonal X, Y, and Z axes.
+          CYLINDRICAL_3D is a three dimensional cylindrical coordinate
+            system with a polar coordinate system where the XY Cartesian
+            plane would be plus height.
+          SPHERICAL_3D is a three dimensional spherical coordinate system
+            with an axis perpendicular to a plane at the origin. It has a
+            radius extending from the origin, an angle that is the angle
+            between the radius and the axis, and an angle that is the angle
+            between a starting direction in the plane and the projection of
+            the radius on the plane.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="CARTESIAN_2D"/>
+      <xs:enumeration value="POLAR_2D"/>
+      <xs:enumeration value="CARTESIAN_3D"/>
+      <xs:enumeration value="CYLINDRICAL_3D"/>
+      <xs:enumeration value="SPHERICAL_3D"/>
+      <xs:enumeration value="UNDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="TypeOfCoordinatesType">
+    <xs:annotation>
+      <xs:documentation>
+        The TypeOfCoordinatesType defines a coordinate system type.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="CoordinateEnum"
+        type="CoordinateEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The CoordinateEnum element describes an often-used coordinate
+            system type.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherCoordinate"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherCoordinate element describes a coordinate system type
+            in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="RectangleType">
+    <xs:annotation>
+      <xs:documentation>
+        The RectangleType defines a rectangle to be used as a datum target
+        or a rectangular zone limit. It is not a feature. ASME Y14.5 - 2009
+        Section 3.3.3.3, Figure 3-6
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Length"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Length element is the length of the rectangle. One of the
+            two sides of the rectangle whose length is Length proceeds from
+            the CornerPoint in the direction of the LengthDirection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CornerPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The CornerPoint element is the location of a corner of the
+            rectangle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Width"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Width element is the width of the rectangle. One of the two
+            sides of the rectangle whose length is Width proceeds from the
+            CornerPoint in the direction of the WidthDirection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="WidthDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The WidthDirection element is a unit vector that gives the
+            direction of the width of the rectangle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LengthDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The LengthDirection element is a unit vector that gives the
+            direction of the length of the rectangle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CircleType">
+    <xs:annotation>
+      <xs:documentation>
+        The CircleType defines a circle to be used as a circular
+        DatumTarget or a circular zone limit. It is not a feature. ASME
+        Y14.5 - 2009 Section 3.3.3.3, Figure 3-6, Figure 3-9
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CenterPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The CenterPoint element is the center of the circle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Diameter"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Diameter element is the diameter of the circle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Normal"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The Normal element is the unit vector that gives the normal to
+            the plane of the circle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CylinderType">
+    <xs:annotation>
+      <xs:documentation>
+        The CylinderType defines a cylinder to be used as a cylindrical
+        area DatumTarget. It is not a feature.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CenterPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The CenterPoint element is the center of the cylinder
+            at one end.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Diameter"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Diameter element is the diameter of the cylinder.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Axis"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The Axis element is the unit vector that gives the axis of the
+            cylinder pointing from the end at which the center point is
+            defined to the other end.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Length"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Length element is the length of the cylinder along its axis
+            vector.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SphereType">
+    <xs:annotation>
+      <xs:documentation>
+        The SphereType defines a sphere to be used as a spherical
+        DatumTarget. It is not a feature.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CenterPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The CenterPoint element is the center of the sphere.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Diameter"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The Diameter element is the diameter of the sphere.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PointAndVectorType">
+    <xs:annotation>
+      <xs:documentation>
+        The PointAndVectorType defines a line by its starting point and
+        direction vector.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="StartPoint"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The StartPoint element is the starting point of the line.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Vector"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The Vector element is a unit vector giving the direction of the
+            line.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActualPointAndVectorType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualPointAndVectorType defines a line by its starting point
+        and direction vector.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="StartPoint"
+        type="ActualPointType">
+        <xs:annotation>
+          <xs:documentation>
+            The StartPoint element is the actual starting point of the line.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Vector"
+        type="ActualUnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The Vector element is a unit vector giving the actual direction
+            of the line.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SlotEndEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The SlotEndEnumType enumerates values that describe whether a slot
+        has a round, flat (square), or open end.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="ROUND"/>
+      <xs:enumeration value="FLAT"/>
+      <xs:enumeration value="OPEN"/>
+      <xs:enumeration value="UNDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="EndRadiusType">
+    <xs:annotation>
+      <xs:documentation>
+        The EndRadiusType defines the radius of the end of a slot.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="EndRadius"
+        type="LinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The EndRadius element describes the end radius of the slot.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Expanded"
+        type="xs:boolean"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Expanded element when set to "true" indicates that
+            the round end of a slot expands to be larger than the width
+            like the end of a dumbbell.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActualEndRadiusType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualEndRadiusType defines the actual radius of the end of a
+        slot.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="EndRadius"
+        type="ActualLinearValueType">
+        <xs:annotation>
+          <xs:documentation>
+            The EndRadius element describes the actual end radius of the
+            slot.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Expanded"
+        type="xs:boolean"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Expanded element when set to "true" indicates that
+            the round end of a slot expands to be larger than the width
+            like the end of a dumbbell.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SlotEndType">
+    <xs:annotation>
+      <xs:documentation>
+        The SlotEndType defines the shape of the end of a slot.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="SlotEndEnum"
+        type="SlotEndEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The SlotEndEnum element describes an often-used shape of the
+            end of a slot.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherSlotEnd"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherSlotEnd element describes the shape of the end of a
+            slot in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="ThreadSeriesEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The ThreadSeriesEnumType enumerates values that describe a standard
+        thread series. Thread series enumerations are designated in ASME
+        B1.7-2006, Table 3 - Thread Series Designations and Table 4 - ISO
+        Thread Series Designations. Note: Table 4 references ISO 228-1, ISO
+        7-1, ISO/R1501, ISO 2901, ISO 2902, ISO 2903, and ISO 2904.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="ACME"/>
+      <xs:enumeration value="ACME_C"/>
+      <xs:enumeration value="ACME_G"/>
+      <xs:enumeration value="AMO"/>
+      <xs:enumeration value="ANPT"/>
+      <xs:enumeration value="BUTT"/>
+      <xs:enumeration value="PUSH_BUTT"/>
+      <xs:enumeration value="F_PTF"/>
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="MJ"/>
+      <xs:enumeration value="MJS"/>
+      <xs:enumeration value="NC5_HF"/>
+      <xs:enumeration value="NC5_CSF"/>
+      <xs:enumeration value="NC5_ONF"/>
+      <xs:enumeration value="NC5_IF"/>
+      <xs:enumeration value="NC5_INF"/>
+      <xs:enumeration value="NGO"/>
+      <xs:enumeration value="NGS"/>
+      <xs:enumeration value="NGT"/>
+      <xs:enumeration value="NH"/>
+      <xs:enumeration value="NHR"/>
+      <xs:enumeration value="NPSC"/>
+      <xs:enumeration value="NPSF"/>
+      <xs:enumeration value="NPSH"/>
+      <xs:enumeration value="NPSI"/>
+      <xs:enumeration value="NPSL"/>
+      <xs:enumeration value="NPSM"/>
+      <xs:enumeration value="NPT"/>
+      <xs:enumeration value="NPTF"/>
+      <xs:enumeration value="PTF_SAE_SHORT"/>
+      <xs:enumeration value="PTF_SPL_SHORT"/>
+      <xs:enumeration value="PTF_SPL_EXTRA_SHORT"/>
+      <xs:enumeration value="SGT"/>
+      <xs:enumeration value="SPL_PTF"/>
+      <xs:enumeration value="STUB_ACME"/>
+      <xs:enumeration value="UN"/>
+      <xs:enumeration value="UNC"/>
+      <xs:enumeration value="UNF"/>
+      <xs:enumeration value="UNEF"/>
+      <xs:enumeration value="UNJ"/>
+      <xs:enumeration value="UNJC"/>
+      <xs:enumeration value="UNJF"/>
+      <xs:enumeration value="UNJEF"/>
+      <xs:enumeration value="UNR"/>
+      <xs:enumeration value="UNRC"/>
+      <xs:enumeration value="UNRF"/>
+      <xs:enumeration value="UNREF"/>
+      <xs:enumeration value="UNM"/>
+      <xs:enumeration value="UNS"/>
+      <xs:enumeration value="G"/>
+      <xs:enumeration value="R"/>
+      <xs:enumeration value="RC"/>
+      <xs:enumeration value="RP"/>
+      <xs:enumeration value="S"/>
+      <xs:enumeration value="TR"/>
+      <xs:enumeration value="UNDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ThreadSeriesType">
+    <xs:annotation>
+      <xs:documentation>
+        The ThreadSeriesType defines a thread series.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="ThreadSeriesEnum"
+        type="ThreadSeriesEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The ThreadSeriesEnum element describes an often-used thread
+            series.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherThreadSeries"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherThreadSeries element describes a thread series in
+            natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="ThreadClassType">
+    <xs:annotation>
+      <xs:documentation>
+        The ThreadClassType defines a thread class.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="ThreadClassEnum"
+        type="ThreadClassEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The ThreadClassEnum element describes an often-used thread
+            class.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherThreadClass"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherThreadClass element describes a thread class in
+            natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="ThreadClassEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The ThreadClassEnumType enumerates values that describe a standard
+        thread class or a thread tolerance class for the thread fit. Thread
+        tolerance class enumerations are designated in ASME B1.1-2003,
+        Section 4.1 and ISO 965-1. ISO external thread tolerance classes
+        such as "3e" are implemented as "EXT_3E" in QIF.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="1A"/>
+      <xs:enumeration value="1B"/>
+      <xs:enumeration value="2A"/>
+      <xs:enumeration value="2AG"/>
+      <xs:enumeration value="2B"/>
+      <xs:enumeration value="3A"/>
+      <xs:enumeration value="3B"/>
+      <xs:enumeration value="EXT_3E"/>
+      <xs:enumeration value="EXT_3F"/>
+      <xs:enumeration value="EXT_3G"/>
+      <xs:enumeration value="EXT_3H"/>
+      <xs:enumeration value="EXT_4E"/>
+      <xs:enumeration value="EXT_4F"/>
+      <xs:enumeration value="EXT_4G"/>
+      <xs:enumeration value="EXT_4H"/>
+      <xs:enumeration value="4G"/>
+      <xs:enumeration value="4H"/>
+      <xs:enumeration value="EXT_5E"/>
+      <xs:enumeration value="EXT_5F"/>
+      <xs:enumeration value="EXT_5G"/>
+      <xs:enumeration value="EXT_5H"/>
+      <xs:enumeration value="5G"/>
+      <xs:enumeration value="5H"/>
+      <xs:enumeration value="EXT_6E"/>
+      <xs:enumeration value="EXT_6F"/>
+      <xs:enumeration value="EXT_6G"/>
+      <xs:enumeration value="EXT_6H"/>
+      <xs:enumeration value="6G"/>
+      <xs:enumeration value="6H"/>
+      <xs:enumeration value="EXT_7E"/>
+      <xs:enumeration value="EXT_7F"/>
+      <xs:enumeration value="EXT_7G"/>
+      <xs:enumeration value="EXT_7H"/>
+      <xs:enumeration value="7G"/>
+      <xs:enumeration value="7H"/>
+      <xs:enumeration value="EXT_8E"/>
+      <xs:enumeration value="EXT_8F"/>
+      <xs:enumeration value="EXT_8G"/>
+      <xs:enumeration value="EXT_8H"/>
+      <xs:enumeration value="8G"/>
+      <xs:enumeration value="8H"/>
+      <xs:enumeration value="EXT_9E"/>
+      <xs:enumeration value="EXT_9F"/>
+      <xs:enumeration value="EXT_9G"/>
+      <xs:enumeration value="EXT_9H"/>
+      <xs:enumeration value="INT"/>
+      <xs:enumeration value="EXT"/>
+      <xs:enumeration value="SE"/>
+      <xs:enumeration value="G"/>
+      <xs:enumeration value="UNDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SecurityClassificationEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The SecurityClassificationEnumType enumerates values that describe
+        various government and corporate classifications used to protect
+        sensitive information from being improperly disseminated. Security
+        Classification Enumerations for various countries are designated in
+        a table at www.wikipedia.org/wiki/Classified_information
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="NONE"/>
+      <xs:enumeration value="UNCLASSIFIED"/>
+      <xs:enumeration value="RESTRICTED"/>
+      <xs:enumeration value="EU_RESTRICTED"/>
+      <xs:enumeration value="WEU_RESTRICTED"/>
+      <xs:enumeration value="FOR_OFFICIAL_USE_ONLY"/>
+      <xs:enumeration value="PROTECTED"/>
+      <xs:enumeration value="PROTECTED_A"/>
+      <xs:enumeration value="PROTECTED_B"/>
+      <xs:enumeration value="PROTECTED_C"/>
+      <xs:enumeration value="CONFIDENTIAL"/>
+      <xs:enumeration value="EU_CONFIDENTIAL"/>
+      <xs:enumeration value="WEU_CONFIDENTIAL"/>
+      <xs:enumeration value="SECRET"/>
+      <xs:enumeration value="SECRET_NATIONAL_SECURITY_INFORMATION"/>
+      <xs:enumeration value="SECRET_FORMERLY_RESTRICTED_DATA"/>
+      <xs:enumeration value="SECRET_RESTRICTED_DATA"/>
+      <xs:enumeration value="EU_SECRET"/>
+      <xs:enumeration value="WEU_SECRET"/>
+      <xs:enumeration value="TOP_SECRET_NATIONAL_SECURITY_INFORMATION"/>
+      <xs:enumeration value="TOP_SECRET_FORMERLY_RESTRICTED_DATA"/>
+      <xs:enumeration value="TOP_SECRET_RESTRICTED_DATA"/>
+      <xs:enumeration value="EU_TOP_SECRET"/>
+      <xs:enumeration value="FOCAL_TOP_SECRET"/>
+      <xs:enumeration value="COMPANY_CONFIDENTIAL"/>
+      <xs:enumeration value="OFFICAL_USE_ONLY"/>
+      <xs:enumeration value="TRADE_SECRET"/>
+      <xs:enumeration value="TRADEMARK"/>
+      <xs:enumeration value="REGISTERED_TRADEMARK"/>
+      <xs:enumeration value="PATENT"/>
+      <xs:enumeration value="UNDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SecurityClassificationType">
+    <xs:annotation>
+      <xs:documentation>
+        The SecurityClassificationType defines a security classification.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="SecurityClassificationEnum"
+        type="SecurityClassificationEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The SecurityClassificationEnum element describes an often-used
+            security classification.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherSecurityClassification"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherSecurityClassification element describes a security
+            classification in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="DigitalModelFormatEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The DigitalModelFormatEnumType enumerates values that describe the
+        format of a digital model.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="STEPAP203"/>
+      <xs:enumeration value="STEPAP203E2"/>
+      <xs:enumeration value="STEPAP214"/>
+      <xs:enumeration value="STEPAP242"/>
+      <xs:enumeration value="JTOPEN"/>
+      <xs:enumeration value="RPC"/>
+      <xs:enumeration value="PDPMI"/>
+      <xs:enumeration value="ACIS"/>
+      <xs:enumeration value="PARASOLID"/>
+      <xs:enumeration value="AUTODESK"/>
+      <xs:enumeration value="PTC"/>
+      <xs:enumeration value="NX"/>
+      <xs:enumeration value="SOLIDWORKS"/>
+      <xs:enumeration value="CATIA"/>
+      <xs:enumeration value="NOTDEFINED"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="DigitalModelFormatType">
+    <xs:annotation>
+      <xs:documentation>
+        The DigitalModelFormatType defines the format of a digital model.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="DigitalModelFormatEnum"
+        type="DigitalModelFormatEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The DigitalModelFormatEnum element describes an often-used
+            format of a digital model.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherDigitalModelFormat"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherDigitalModelFormat element describes the format of a
+            digital model in natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="UniformScaleType">
+    <xs:annotation>
+      <xs:documentation>
+        The UniformScaleType defines a scale factor applied uniformly in
+        all directions.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ScaleFactor"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The ScaleFactor element is the scale factor, a scale factor of
+            1.0 indicates no change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RadialDifferentialScaleType">
+    <xs:annotation>
+      <xs:documentation>
+        The RadialDifferentialScaleType defines two scale factors applied
+        parallel and perpendicular to a specified direction.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="PerpendicularScaleFactor"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The PerpendicularScaleFactor element is the scale factor
+            applied perpendicular to the specified direction, a scale
+            factor of 1.0 indicates no change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ParallelScaleFactor"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The ParallelScaleFactor element is the scale factor applied
+            parallel to the specified direction, a scale factor of 1.0
+            indicates no change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Direction"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The Direction element specifies the direction for the
+            differential scaling.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AxialDifferentialScaleType">
+    <xs:annotation>
+      <xs:documentation>
+        The AxialDifferentialScaleType defines three scale factors applied
+        along three specified orthogonal directions.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="XScaleFactor"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The XScaleFactor element is the scale factor applied in the
+            specified X direction, a scale factor of 1.0 indicates no
+            change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="XaxisDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The XaxisDirection element specifies the direction of the X
+            axis for differential scaling.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="YScaleFactor"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The YScaleFactor element is the scale factor applied in the
+            specified Y direction, a scale factor of 1.0 indicates no
+            change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="YaxisDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The YaxisDirection element specifies the direction of the Y
+            axis for differential scaling.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZScaleFactor"
+        type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>
+            The ZScaleFactor element is the scale factor applied in the
+            specified Z direction, a scale factor of 1.0 indicates no
+            change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ZaxisDirection"
+        type="UnitVectorType">
+        <xs:annotation>
+          <xs:documentation>
+            The ZaxisDirection element specifies the direction of the Z
+            axis for differential scaling.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ScaleType">
+    <xs:annotation>
+      <xs:documentation>
+        The ScaleType defines scaling about an origin point.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Origin"
+        type="PointType">
+        <xs:annotation>
+          <xs:documentation>
+            The Origin element is the origin for the scaling.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="UniformScale"
+          type="UniformScaleType">
+          <xs:annotation>
+            <xs:documentation>
+              The UniformScale element signifies uniform scaling about the
+              origin point.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="RadialDifferentialScale"
+          type="RadialDifferentialScaleType">
+          <xs:annotation>
+            <xs:documentation>
+              The RadialDifferentialScale element signifies radial
+              differential scaling about the origin point
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="AxialDifferentialScale"
+          type="AxialDifferentialScaleType">
+          <xs:annotation>
+            <xs:documentation>
+              The AxialDifferentialScale element signifies axial
+              differential scaling about the origin point
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,12 @@
+//
+//
+//
+
+#pragma once
+
+// GCC compiler modifications
+ #pragma message "Compiling " __FILE__ " on " __DATE__ " at " __TIME__
+#pragma GCC diagnostic ignored "-Wcomment"
+#pragma GCC diagnostic ignored "-Wunused-function"
+
+

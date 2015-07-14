@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This document is part of QIF 2.0, an open, industry-wide standard -->
+<!-- established by the Dimensional Metrology Standards Consortium.    -->
+<!-- This document shall not be used in any manner to claim any        -->
+<!-- proprietary rights to such information, such as rights to a       -->
+<!-- patent, trademark, or copyright.                                  -->
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://qifstandards.org/xsd/qif2"
+  xmlns:t="http://qifstandards.org/xsd/qif2"
+  targetNamespace="http://qifstandards.org/xsd/qif2"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="2.0.0">
+  
+  <xs:include schemaLocation="../QIFLibrary/Traceability.xsd"/>
+  <xs:include schemaLocation="../QIFLibrary/Characteristics.xsd"/>
+  <xs:include schemaLocation="../QIFLibrary/Features.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      The QIFResults.xsd schema file defines the global MeasurementResults
+      element, which is the root of a measurement results tree. The schema
+      file also contains the definitions of some of the types used in a
+      MeasurementResults tree and a number of key/keyref pairs that
+      constrain references used in MeasurmentResults. In all keys, the
+      items that are collected must be unique within the collection.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="MeasurementResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The MeasurementResultsType defines information about measurement
+        results.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="InspectionTraceability"
+        type="InspectionTraceabilityType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionTraceability element gives traceability
+            information that applies this set of measurement results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ThisResultsInstanceQPId"
+        type="QPIdType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ThisResultsInstanceQPId element uniquely
+            identifies the measurement results. Different versions of the
+            file must have different ThisResultsInstanceQPId elements.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ExternalFileReference"
+        type="ExternalFileReferenceType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional ExternalFileReference element is a reference to
+            an additional file created in the measurement process, e.g. a
+            photo.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="MeasuredFeatures"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasuredFeatures element gives information about
+            the features used in the measurement results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="MeasuredCharacteristics"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasuredCharacteristics element gives information
+            about the characteristics used in the measurement results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="CoordinateSystemActualTransforms"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CoordinateSystemActualTransforms element gives
+            information about the coordinate system actual transforms used
+            in the measurement results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionStatus"
+        type="InspectionStatusType">
+        <xs:annotation>
+          <xs:documentation>
+            The InspectionStatus element reports the status of the
+            MeasurementResults.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ActualComponentIds"
+        type="ArrayReferenceType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The ActualComponentIds element is the list of actual component
+            QIF ids.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="MeasurementsResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The MeasurementsResultsType defines a list of one or more
+        measurement results.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Version"
+        type="VersionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Version element gives version information about
+            the measurements results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MeasurementResults"
+        type="MeasurementResultsType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each MeasurementResults element is a measurement results in the
+            list.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="ActualComponentSet"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional ActualComponentSet element is a collection
+            of data associated with the actual components of a single
+            manufactured product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionTraceability"
+        type="InspectionTraceabilityType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionTraceability element gives traceability
+            information that applies to all measurement results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActualComponentSetType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualComponentSetType describes the container for
+        storing data of actual components.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="ActualComponent"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each ActualComponent element is an actual component.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="N"
+      type="NaturalType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The N attribute shows how many objects are present in this set.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="ActualComponentType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualComponentType defines data of an actual component.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SerialNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SerialNumber element is a label of a specific
+            actual component of a given type. Components with the same
+            ModelNumber have different SerialNumbers. The combination of
+            ModelNumber and SerialNumber should differentiate a given
+            actual component from all other actual components in a QIF
+            application instance file.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AdditionalChanges"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional AdditionalChanges element is a record of any
+            changes to the product beyond what is recorded in the product
+            model. The information recorded here may be used for the
+            Additional Changes field of an AS9102A form.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Status"
+        type="InspectionStatusType">
+        <xs:annotation>
+          <xs:documentation>
+            The Status element gives the inspection status of the actual
+            component.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Traceability"
+        type="ActualProductTraceabilityType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Traceability element gives traceability
+            information for an actual component.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AsmPathId"
+        type="QIFReferenceType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional AsmPathId element is the id of the assembly path
+            of this component.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the actual component data, used
+          for referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="MeasurementsResults"
+    type="MeasurementsResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The global MeasurementsResults element is a list of measurement
+        results.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:key name="ActualComponentIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ActualComponentIdKey collects all QIF ids of
+          ActualComponent/s.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:ActualComponentSet/t:ActualComponent"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ActualComponentKeyref"
+      refer="ActualComponentIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ActualComponentKeyref requires that actual component ids
+          located anywhere be the id of ActualComponent.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:MeasurementResults/t:ActualComponentIds/t:Id
+             | t:MeasurementResults/t:MeasuredCharacteristics/t:CharacteristicActuals/t:*/t:ActualComponentId
+             | t:MeasurementResults/t:MeasuredFeatures/t:FeatureActuals/t:*/t:ActualComponentId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+  </xs:element>
+
+  <xs:element name="ActualComponentSet"
+    type="ActualComponentSetType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualComponentSet element is a collection of data associated
+        with the actual components of a single manufactured product.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="ActualComponent"
+    type="ActualComponentType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualComponent element is the data of an actual component.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+</xs:schema>

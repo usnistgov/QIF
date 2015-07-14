@@ -1,0 +1,20 @@
+xsd cxx-tree  --root-element QIFDocument --generate-serialization --generate-polymorphic Auxiliary.xsd 
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic Features.xsd  
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic IntermediatesPMI.xsd  
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  PrimitivesPMI.xsd 
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Topology.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Visualization.xsd  
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic Characteristics.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  GenericExpressions.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Merged4MSXSD.xsd 
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Primitives.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Traceability.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Expressions.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Geometry.xsd 
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic PrimitivesPD.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Statistics.xsd
+xsd cxx-tree --root-element QIFDocument --generate-serialization --generate-polymorphic  Units.xsd
+
+                         
+           
+                           

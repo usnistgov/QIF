@@ -220,6 +220,7 @@ public:
 };
 
 //EXP_DECLARE_SMARTPOINTER(ISymbol);
+//EXP_DECLARE_SMARTPOINTER(ISymbol);
 inline	bool operator==(const ISymbolPtr& left, const ISymbolPtr& right)
 {
 	return strcasecmp(left->Name().c_str() , right->Name().c_str())==0;

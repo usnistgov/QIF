@@ -187,11 +187,8 @@ static void ListPostgresables()
 }
 
 int main(int argc, char *argv[]) {
-	//
-	// Extract folder where exe is located
 	std::string path = ExtractDirectory(argv[0]);
-	//
-	// Log console error output to debug.txt in folder with exe
+
 	std::freopen((path + "debug.txt").c_str(), "w", stderr);
 	SetupSignalHandler();
 

@@ -1,0 +1,1403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This document is part of QIF 2.0, an open, industry-wide standard -->
+<!-- established by the Dimensional Metrology Standards Consortium.    -->
+<!-- This document shall not be used in any manner to claim any        -->
+<!-- proprietary rights to such information, such as rights to a       -->
+<!-- patent, trademark, or copyright.                                  -->
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://qifstandards.org/xsd/qif2"
+  xmlns:t="http://qifstandards.org/xsd/qif2"
+  targetNamespace="http://qifstandards.org/xsd/qif2"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="2.0.0">
+
+  <xs:include schemaLocation="../QIFLibrary/IntermediatesPMI.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      The Traceability.xsd schema file defines types that describe the
+      circumstances of a quality measurement.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="InspectionProgramType">
+    <xs:annotation>
+      <xs:documentation>
+        The InspectionProgramType defines the inspection program.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="File"
+        type="FileType">
+        <xs:annotation>
+          <xs:documentation>
+            The File element is information about the inspection program
+            file, include its name, version, and format.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Description element is a description of the file.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FormalStandard"
+        type="FormalStandardType">
+        <xs:annotation>
+          <xs:documentation>
+            The FormalStandard element is the standard against which the
+            inspection characteristics are to be evaluated.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Author"
+        type="EmployeeType">
+        <xs:annotation>
+          <xs:documentation>
+            The Author element gives information about the author of the
+            inspection program.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionSoftwareItemsType">
+    <xs:annotation>
+      <xs:documentation>
+        The InspectionSoftwareItemsType defines information about software
+        used to create the product model, to analyze data and/or to perform
+        the product inspection.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="InspectionProgramGenerationSoftware"
+        type="SoftwareType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional InspectionProgramGenerationSoftware element gives
+            information about software used to generate the program used to
+            perform the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionProgramExecutionSoftware"
+        type="SoftwareType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional InspectionProgramExecutionSoftware element gives
+            information about software used to perform the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AnalysisSoftware"
+        type="SoftwareType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional AnalysisSoftware element gives information about
+            software used for inspection data analysis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CADSoftware"
+        type="SoftwareType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional CADSoftware element gives information about the
+            CAD software used to create the product model.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DMESoftware"
+        type="SoftwareType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional DMESoftware element gives information about the
+            software running on the DME.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EnvironmentType">
+    <xs:annotation>
+      <xs:documentation>
+        The EnvironmentType defines information about the temperature
+        and/or humidity at a particular time during a measurement process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ObjectTemperature"
+        type="ActualTemperatureValueType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ObjectTemperature element is the temperature of
+            the product or feature to which an environment instance is
+            attached.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AmbientTemperature"
+        type="ActualTemperatureValueType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional AmbientTemperature element is the temperature of
+            the air in the area in which the inspection is performed.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RelativeHumidity"
+        type="ActualDecimalType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional RelativeHumidity element is the relative humidity
+            of the air in the area in which the inspection is performed.
+            The RelativeHumidity value must be between 0 and 100.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DateAndTime"
+        type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>
+            The DateandTime element gives the date and time at which the
+            environment data is recorded.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TimeDescription"
+        type="TimeDescriptionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional TimeDescription element gives the time, relative
+            to the inspection, at which the environment data is measured.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EnvironmentsType">
+    <xs:annotation>
+      <xs:documentation>
+        The EnvironmentsType defines a list of environment instances.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Environment"
+        type="EnvironmentType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Environment element gives information about an environment
+            record instance.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InspectionTraceabilityType">
+    <xs:annotation>
+      <xs:documentation>
+        The InspectionTraceabilityType defines information to support
+        traceability of the inspection report.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="InspectingOrganization"
+        type="OrganizationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectingOrganization element gives information
+            about the organization that generated the data in the report.
+            The name of the inspecting organization is the 'Organization
+            Name' required by AS9102A.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CustomerOrganization"
+        type="CustomerOrganizationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CustomerOrganization element gives information
+            about the organization that is the customer for the data in the
+            report.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SupplierCode"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SupplierCode element is a number given by the
+            Customer to the organization that generated the XML file in
+            which this information appears. From the customer's point of
+            view, the supplier code identifies a specific supplier.
+            Supplier code is sometimes called Vendor Code, Vendor
+            Identification Number, Supplier Number, etc.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PurchaseOrderNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PurchaseOrderNumber element is an identifier
+            assigned by the customer to a purchase order. A purchase order
+            is a contract between the supplier and the customer that
+            commits the customer and supplier to specific prices for
+            specific goods (and possibly specific amounts of goods). A
+            purchase order may be a standing agreement under which a number
+            of specific orders are made over a period of time.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OrderNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional OrderNumber element is an identifier assigned by
+            the customer to an order. Where there is a standing purchase
+            order, there may be several order numbers for specific
+            purchases over a period of time.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReportNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportNumber element is the number assigned to the
+            report corresponding to the reported data. If AS9102A forms are
+            being used, this may be used as the value of the FAI (First
+            Article Inspection) Report Number field.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionScope"
+        type="InspectionScopeEnumType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional, enumerated InspectionScope element is the scope
+            of a first article inspection as used in AS9102A.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionMode"
+        type="InspectionModeEnumType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional, enumerated InspectionMode element is the mode of
+            a first article inspection as used in AS9102A.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PartialInspection"
+        type="PartialInspectionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PartialInspection element gives the rationale for
+            a partial inspection. It should be used if the value of the
+            InspectionMode element is FAI_Partial and may be used for any
+            other partial inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NotableEvents"
+        type="NotableEventsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional NotableEvents element is a list of notable events
+            associated with the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NotedEvents"
+        type="NotedEventsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional NotedEvents element is a list of noted events
+            associated with the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionStart"
+        type="xs:dateTime"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionStart element is the date and time in
+            GMT (not local time) when the inspection started.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionEnd"
+        type="xs:dateTime"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionEnd element is the date and time in GMT
+            (not local time) when the inspection completed. For systems
+            that do both inspection and analysis, it would imply completion
+            of both inspection and the analysis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionSoftwareItems"
+        type="InspectionSoftwareItemsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionSoftwateItems element is a list of
+            information describing the software used in model creation,
+            inspection and data analysis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionProgram"
+        type="InspectionProgramType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionProgram element gives information about
+            a program (such as a CMM program) used or to be used to in the
+            inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionOperator"
+        type="EmployeeType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionOperator element gives information about
+            the person who operated the inspection device that gathered the
+            data being reported.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReportPreparer"
+        type="EmployeeType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportPreparer element gives information about the
+            person who prepared the inspection report (an AS9102A first
+            article inspection report, for example).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReportPreparationDate"
+        type="xs:dateTime"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportPreparationDate element is the date and time
+            in GMT (not local time) when the report was completed.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReportType"
+        type="xs:token"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportType element is the type of inspection
+            report.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SecurityClassification"
+        type="SecurityClassificationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SecurityClassification element gives the security
+            classification of the inspection report.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PlantLocation"
+        type="LocationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PlantLocation element gives information about the
+            location of the plant where the inspection was performed.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            This optional compositor allows a choice between identifying a
+            plan in a separate file that was used in preparing this file or
+            identifying the plan in this file as the one that was used in
+            preparing this file. This is relevant if the file contains
+            results.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="ReferencedQIFPlanInstance"
+          type="QPIdFullReferenceType">
+          <xs:annotation>
+            <xs:documentation>
+              The ReferencedQIFPlanInstance element identifies the
+              plan that was used in preparing this file.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ReferencedQIFPlan"
+          type="xs:NMTOKEN"
+          fixed="ThisFile">
+          <xs:annotation>
+            <xs:documentation>
+              The ReferencedQIFPlan element indicates that the QIF Plans
+              file that was used in preparing this file is the one in this
+              file.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="Errors"
+        type="ErrorsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The Errors element is a list of any errors that occurred during
+            the measurement process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PreInspectionTraceabilityType">
+    <xs:annotation>
+      <xs:documentation>
+        The PreInspectionTraceabilityType defines information to support
+        traceability of the inspection report.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="InspectingOrganization"
+        type="OrganizationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectingOrganization element gives information
+            about the organization that generated the data in the report.
+            The name of the inspecting organization is the 'Organization
+            Name' required by AS9102A.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CustomerOrganization"
+        type="CustomerOrganizationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CustomerOrganization element gives information
+            about the organization that is the customer for the data in the
+            report.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SupplierCode"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SupplierCode element is a number given by the
+            Customer to the organization that generated the XML file in
+            which this information appears. From the customer's point of
+            view, the supplier code identifies a specific supplier.
+            Supplier code is sometimes called Vendor Code, Vendor
+            Identification Number, Supplier Number, etc.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PurchaseOrderNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PurchaseOrderNumber element is an identifier
+            assigned by the customer to a purchase order. A purchase order
+            is a contract between the supplier and the customer that
+            commits the customer and supplier to specific prices for
+            specific goods (and possibly specific amounts of goods). A
+            purchase order may be a standing agreement under which a number
+            of specific orders are made over a period of time.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OrderNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional OrderNumber element is an identifier assigned by
+            the customer to an order. Where there is a standing purchase
+            order, there may be several order numbers for specific
+            purchases over a period of time.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AsmPathIds"
+        type="ArrayReferenceType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional AsmPathIds element is the list of AsmPath QIF ids.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReportNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportNumber element is the number to be assigned
+            to the report corresponding to the reported data. If AS9102A
+            forms are being used, this may be used as the value of the FAI
+            (First Article Inspection) Report Number field.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionScope"
+        type="InspectionScopeEnumType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional, enumerated InspectionScope element is the scope
+            of a first article inspection as used in AS9102A.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionMode"
+        type="InspectionModeEnumType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional, enumerated InspectionMode element is the mode of
+            a first article inspection as used in AS9102A.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PartialInspection"
+        type="PartialInspectionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PartialInspection element gives the rationale for
+            a partial inspection. It should be used if the value of the
+            InspectionMode element is FAI_Partial and may be used for any
+            other partial inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NotableEvents"
+        type="NotableEventsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional NotableEvents element is a list of notable events
+            associated with the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionSoftwareItems"
+        type="InspectionSoftwareItemsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionSoftwateItems element is a list of
+            information describing the software to be used in model
+            creation, inspection and data analysis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionProgram"
+        type="InspectionProgramType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionProgram element gives information about
+            a program (such as a CMM program) to be used to in the
+            inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SecurityClassification"
+        type="SecurityClassificationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SecurityClassification element gives the security
+            classification of the inspection report.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PlantLocation"
+        type="LocationType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PlantLocation element gives information about the
+            location of the plant where the inspection was performed.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            This optional compositor allows a choice between identifying a
+            separate file containing the QIF Plans file that was used in
+            preparing this file or identifying the plan in this file as the
+            one that was used in preparing this file. This is relevant if
+            the file contains results.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="ReferencedQIFPlanInstance"
+          type="QPIdFullReferenceType">
+          <xs:annotation>
+            <xs:documentation>
+              The ReferencedQIFPlanInstance element identifies the
+              plan that was used in preparing this file.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ReferencedQIFPlan"
+          type="xs:NMTOKEN"
+          fixed="ThisFile">
+          <xs:annotation>
+            <xs:documentation>
+              The ReferencedQIFPlan element indicates that the QIF Plans
+              file that was used in preparing this file is the one in this
+              file.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="FormalStandard"
+        type="FormalStandardType">
+        <xs:annotation>
+          <xs:documentation>
+            The FormalStandard element is the standard against which the
+            inspection characteristics are to be evaluated.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ProductTraceabilityType">
+    <xs:annotation>
+      <xs:documentation>
+        The ProductTraceabilityType defines traceability information for a
+        part or assembly.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ReportNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportNumber element is the number to be assigned
+            to the report corresponding to the reported data. If AS9102A
+            forms are being used, this may be used as the value of the FAI
+            (First Article Inspection) Report Number field.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ManufacturingProcessId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ManufacturingProcessId element is a reference to
+            the traceability information for the manufacturing process to
+            be used to create the product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FixtureId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional FixtureId element is a QIF reference to a fixture
+            defined to be used in the setup of a measurement plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NotableEventIds"
+        type="ArrayReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional NotableEventIds element is a list of QIF ids of
+            notable events.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionSoftwareItems"
+        type="InspectionSoftwareItemsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionSoftwareItems element is a list of
+            software to be used in the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionProgram"
+        type="InspectionProgramType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionProgram element gives information about
+            a program (such as a CMM program) to be used to inspect the
+            product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MeasurementDeviceIds"
+        type="ArrayReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasurementDeviceIds element is a list of
+            references to the measurement devices to be used in the
+            inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActualProductTraceabilityType">
+    <xs:annotation>
+      <xs:documentation>
+        The ActualProductTraceabilityType defines traceability information
+        for a part or assembly.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="SampleNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional SampleNumber element is the number assigned to a
+            product with less restriction than Serial Number. e.g. in a
+            Factorial Designed Experiment each product will be assigned a
+            'run number'.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LotNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional LotNumber element is the number of the lot from
+            which the sample is drawn.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReportNumber"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ReportNumber element is the number assigned to the
+            report corresponding to the reported data. If AS9102A forms are
+            being used, this may be used as the value of the FAI (First
+            Article Inspection) Report Number field.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ManufacturingProcessId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ManufacturingProcessId element is a reference to
+            the traceability information for the manufacturing process used
+            to create the product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FixtureId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional FixtureId element is a QIF reference to a fixture
+            defined in the setup of a measurement plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NotableEventIds"
+        type="ArrayReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional NotableEventIds element is a list of QIF ids of
+            notable events.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NotedEventIds"
+        type="ArrayReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional NotedEventIds element is a list of QIF ids of
+            noted events.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionStart"
+        type="xs:dateTime"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionStart element is the date and time in
+            GMT (not local time) when the inspection started.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionEnd"
+        type="xs:dateTime"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionEnd element is the date and time in GMT
+            (not local time) when the inspection of the product completed.
+            For systems that do both inspection and analysis, it would
+            imply completion of both inspection and the analysis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionSoftwareItems"
+        type="InspectionSoftwareItemsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionSoftwareItems element is a list of
+            software used in the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionProgram"
+        type="InspectionProgramType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionProgram element gives information about
+            a program (such as a CMM program) used or to be used to inspect
+            the product.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionOperator"
+        type="EmployeeType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionOperator element gives information about
+            the person who operated the inspection device that gathered the
+            data being reported.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MeasurementDeviceIds"
+        type="ArrayReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MeasurementDeviceIds element is a list of
+            references to the measurement devices used in the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ProductEnvironments"
+        type="EnvironmentsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ProductEnvironments element is a list of
+            environments recorded during the inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Errors"
+        type="ErrorsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The Errors element is a list of any errors that occurred during
+            the measurement process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ProcessParameterType">
+    <xs:annotation>
+      <xs:documentation>
+        The ProcessParameterType defines the type and value of a process
+        parameter.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ParameterType"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The ParameterType defines the type of the process parameter.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ParameterValue"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The ParameterValue is the value of the process parameter.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ManufacturingProcessTraceabilityType">
+    <xs:annotation>
+      <xs:documentation>
+        The ManufacturingProcessTraceabilityType defines traceability
+        information for a manufacturing process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Description element gives the manufacturing
+            process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Job"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Job element is the job number for the
+            manufacturing process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Revision"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Revision element is the revision number of the
+            manufacturing process (NC cutter tape for example).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PreviousOperationId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PreviousOperationId element identifies an instance
+            of ManufacturingProcessTraceabilityType giving the
+            manufacturing process traceability information for the previous
+            manufacturing operation.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Path"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Path element gives the physical route used in a
+            manufacturing process, eg "Line 3/Drilling machine #7/Spindle
+            #2".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MachineManufacturerName"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MachineManufacturerName element is the name of the
+            company manufacturing the machine tool used in the process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MachineIdentifier"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional MachineIdentifier element is the identifier for
+            the machine tool used in the process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OperatorIdentifier"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional OperatorIdentifier element gives an identifier for
+            the person operating the machine tool used in the process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Shift"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Shift element gives the shift in which this
+            manufacturing process took place.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Department"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Department element is a the name of department
+            undertaking the manufacturing process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ResponsibilityIdentifier"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ResponsibilityIdentifier element gives an
+            identifier for the entity responsible for this manufacturing
+            process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PlantSector"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PlantSector element is a the plant sector in which
+            the manufacturing process takes place.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ProcessParameter"
+        type="ProcessParameterType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional ProcessParameter element gives the type and value
+            of a process parameter used in the manufacturing process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AssociatedTraceabilityId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional AssociatedTraceabilityId element identifies an
+            instance of ManufacturingProcessTraceabilityType giving
+            manufacturing process traceability information associated with
+            this manufacturing operation. Some traceability information
+            like Department and PlantSector can apply to many items; this
+            sort of data can be stored in one instance and referenced by
+            other traceability instances.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the manufacturing process
+          traceability, used for referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="ManufacturingProcessTraceabilitiesType">
+    <xs:annotation>
+      <xs:documentation>
+        The ManufacturingProcessTraceabilitiesType defines a list of
+        manufacturing traceabilities that can be referenced by their QIF
+        Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ManufacturingProcessTraceability"
+        type="ManufacturingProcessTraceabilityType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each ManufacturingProcessTraceability element gives
+            traceability information for a manufacturing process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="ManufacturingProcessTraceabilities"
+    type="ManufacturingProcessTraceabilitiesType">
+    <xs:annotation>
+      <xs:documentation>
+        The global ManufacturingProcessTraceabilities element contains a
+        list of manufacturing process traceability information which can be
+        referenced by QIF id.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:key name="ManufacturingProcessTraceabilityKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ManufacturingProcessTraceabilityKey collects all QIF ids of
+          instances of ManufacturingProcessTraceabilityType.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:ManufacturingProcessTraceability"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="ManufacturingProcessTraceabilityKeyref"
+      refer="ManufacturingProcessTraceabilityKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ManufacturingProcessTraceabilityKeyref requires that every
+          reference intended to be a reference to an instance of
+          ManufacturingProcessTraceabilityType be the QIF id of an instance
+          of ManufacturingProcessTraceabilityType.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:ManufacturingProcessTraceability/t:AssociatedTraceabilityId
+             | t:ManufacturingProcessTraceability/t:PreviousOperationId"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+  </xs:element>
+
+  <xs:complexType name="ErrorsType">
+    <xs:annotation>
+      <xs:documentation>
+        The ErrorsType defines a list of errors that occurred during the
+        measurement process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Error"
+        type="xs:string"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each Error element describes an error that occurred during the
+            measurement process.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PartialInspectionType">
+    <xs:annotation>
+      <xs:documentation>
+        The PartialInspectionType defines the rationale for a partial
+        inspection.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="BaselineProductNumber"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The BaselineProductNumber element gives an identifier of a
+            product that has had a previous inspection (such as FAI) and is
+            of the same type as the one being subjected to partial
+            inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BaselineProductVersion"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional BaselineProductVersion element is the version of
+            the product that had a previous inspection.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReasonForPartialInspection"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The ReasonForPartialInspection element is the reason for a
+            partial inspection, for example, changes in design, process,
+            manufacturing location, etc.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="TimeDescriptionEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The TimeDescriptionEnumType enumerates values that describe the
+        time, relative to the inspection, at which the environment data are
+        measured. INTERMEDIATE means between INSPECTION_START and
+        INSPECTION_END.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="INSPECTION_START"/>
+      <xs:enumeration value="INSPECTION_END"/>
+      <xs:enumeration value="INTERMEDIATE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="TimeDescriptionType">
+    <xs:annotation>
+      <xs:documentation>
+        The TimeDescriptionType defines the time, relative to the
+        inspection, at which the environment data are measured.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="TimeDescriptionEnum"
+        type="TimeDescriptionEnumType">
+        <xs:annotation>
+          <xs:documentation>
+            The TimeDescriptionEnum element describes an often-used
+            relative time.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OtherTimeDescription"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The OtherTimeDescription element gives a relative time in
+            natural language.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="InspectionModeEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The InspectionModeEnumType enumerates values that describe the
+        first article inspection mode. For an AS9102A application,
+        allowable values are FAI_Full for a full first article inspection
+        or FAI_Partial for a partial first article inspection.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FAI_Full"/>
+      <xs:enumeration value="FAI_Partial"/>
+      <xs:enumeration value="100Percent"/>
+      <xs:enumeration value="APQP"/>
+      <xs:enumeration value="KPC"/>
+      <xs:enumeration value="PPAP"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="InspectionScopeEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The InspectionScopeEnumType enumerates values that describe the
+        first article inspection scope. For an AS9102A application,
+        allowable values are DETAIL and ASSEMBLY.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="DETAIL"/>
+      <xs:enumeration value="ASSEMBLY"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

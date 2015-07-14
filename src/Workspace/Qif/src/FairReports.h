@@ -29,9 +29,6 @@ public:
 	//
 	// Utilities here - so as not to collide with windows and xerces
 	bool ChromeExists();
-	static std::string StdStringFormat(const char* format, ...);
-	void SaveReport(std::string filename, std::string &report);
-	static std::string ExeDirectory();
 	////////////////////////////////////////////////////////////////////////
 	// Part 1 fields
 	std::vector<std::string> part_names;

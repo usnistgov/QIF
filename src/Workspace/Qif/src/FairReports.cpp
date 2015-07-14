@@ -26,8 +26,18 @@ using namespace xsd;
 using namespace qif2;
 using namespace std;
 
+#define SAFESTART\
+	try {
+
+#define SAFEEND\
+	} catch(...) {\
+		printf("Bad END!");\
+	}
 #define SAFESTORE(X,Y,Z) \
-	try { X=Y; } catch(...) { X=Z;}
+	try { X=Y; } catch(...) {\
+		printf("Bad store!");\
+		X=Z;\
+	}
 
 
 static std::string GetStrDateTimestamp(xsd::cxx::tree::optional<xsd::qif2::NotedEventType::TimeOccurred_type> & ts)
@@ -123,6 +133,16 @@ std::string CFairReports::GenerateFAIRRepor3(xercesc::DOMElement* e )
 		for(size_t k=0; k< cis.size(); k++)
 		{
 			CFairReports::CharacteristicInfo ci;
+#if 0
+			xsd::qif2::CharacteristicItemBaseType* ct = cis[k];
+			std::cerr << "=================================================== "  << "\n";
+			SAFESTART std::cerr << "Name " << ct->Name() << "\n"; SAFEEND;
+			SAFESTART std::cerr << "Id " << ConvertToString(ct->id()) << "\n"; SAFEEND;
+			SAFESTART std::cerr << "KeyCharacteristic " << ct->KeyCharacteristic()->Criticality() << "\n"; SAFEEND;
+			SAFESTART std::cerr << "SheetNumber " << ct->LocationOnDrawing()->SheetNumber() << "\n"; SAFEEND;
+			SAFESTART std::cerr << "DrawingZone " << ct->LocationOnDrawing()->DrawingZone() << "\n"; SAFEEND;
+			SAFESTART std::cerr << "DrawingId " << ct->LocationOnDrawing()->DrawingId() << "\n"; SAFEEND;
+#endif
 			std::string tooling_id;
 			std::string ci_id;
 			SAFESTORE(ci.Name,cis[k]->Name(),"");
@@ -131,6 +151,13 @@ std::string CFairReports::GenerateFAIRRepor3(xercesc::DOMElement* e )
 			SAFESTORE(ci.drawing_zone,*(cis[k]->LocationOnDrawing()->DrawingZone()),"");
 
 			SAFESTORE(ci_id,cis[k]->id(),"");
+#if 0
+			std::cerr << "=================================================== "  << "\n";
+			std::cerr << "Name: " << ci.Name << "\n";
+			std::cerr << "Id: " << ConvertToString(ci_id) << "\n";
+			std::cerr << "characteristic_designator: "<< ci.characteristic_designator << "\n";
+#endif
+
 			ci.id = GetIdFromString(ci_id);
 
 			ci.optional= utils.GetElementName(static_cast<xercesc::DOMElement*> ((*cis[k])._node ()));
@@ -296,33 +323,7 @@ std::string CFairReports::GenerateFAIRRepor3(xercesc::DOMElement* e )
 	return "";
 }
 
-void CFairReports::SaveReport(std::string filename, std::string &report)
-{
-	std::ofstream out(filename.c_str()); 
-	out << report <<std::endl;
-	out.close();
-}
-std::string CFairReports::StdStringFormat(const char* format, ...)
-{
-	va_list ap;
-	va_start(ap, format);
 
-	int m;
-	int n= strlen(format) + 1028;
-	std::string tmp(n,'0');	
-
-
-	// Kind of a bogus way to insure that we don't
-	// exceed the limit of our buffer
-	while((m=vsnprintf(&tmp[0], n-1, format, ap))<0)
-	{
-		n=n+1028;
-		tmp.resize(n,'0');
-	}
-	va_end(ap);
-	return tmp.substr(0,m);
-
-}
 
 bool CFairReports::ChromeExists()
 {

@@ -56,7 +56,7 @@ public:
 			ExecutePostgreSQLStatement("DROP DATABASE \"QIF\"");
 		ExecutePostgreSQLStatement(ddl);
 	}
-	void ExecutePostgreSQLStatement(std::string stmt);
+	std::string ExecutePostgreSQLStatement(std::string stmt);
 	void ExecutePostgreSQLStatement(std::vector<std::string> stmts);
 
 protected:

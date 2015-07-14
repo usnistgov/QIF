@@ -1,0 +1,149 @@
+Generate the SQL tables: (QIF database must exist!)
+		/*
+		Run.bat:
+		"C:\Program Files\PostgreSQL\9.4\bin\psql.exe" -dQIF -Upostgres -f"C:\Users\michalos\Documents\GitHub\QIF\src\MSVCQIF\MSVCQIF\Win32\Debug\QifSql.sql"
+		pause
+		*/
+
+
+
+		XMLPlatformUtils::Initialize();
+		CXsdParser parser;
+
+		parser.XsdParse("C:\\Users\\michalos\\Documents\\GitHub\\QIF\\xsd\\MSVC QIF_2.0_XMLSchemaFiles\\QIFApplications\\QIFDocument.xsd"); 
+		//parser.XsdParse(  "D:\\michalos\\My Work\\QIF\\xsd\\MSVC QIF_2.0_XMLSchemaFiles\\QIFApplications\\QIFDocument.xsd");
+
+		UnitTest1(parser);
+		UnitTest2(parser);
+		UnitTest3(parser);
+		UnitTest4(parser);
+		UnitTest5(parser);
+		UnitTest6(parser);
+		UnitTest8(parser);
+	XMLPlatformUtils::Terminate ();
+
+		//xercesc::XercesDOMParser parser = new xercesc::XercesDOMParser();
+		//xercesc::MemBufInputSource UnitTest5xml_buf(UnitTest5Xml().c_str(), UnitTest5Xml().size(),  "UnitTest5Xml (in memory)");
+		//parser->parse(UnitTest5xml_buf);
+		//parser->getDocument(); // From here on I can access all nodes and do whatever i want
+
+
+		//{
+		//	UnitTest5(parser);
+		//	XSElementDeclaration * xsElement= parser.FindXsdElement("QIFDocument");
+		//	parser.BuildXsdElement(xsElement);
+
+		//	std::istringstream iss (UnitTest5Xml());
+
+		//	std::auto_ptr<QIFDocumentType> qiftest (
+		//		QIFDocument (iss, xml_schema::flags::dont_initialize|xml_schema::flags::dont_validate|xml_schema::flags::keep_dom)
+		//		);
+		//	DOMElement* e = static_cast<DOMElement*> ((*qiftest)._node ());
+		//	std::string  sql;
+		//	sqlhandler.ParseQifDocument(e, sql);
+		//	fair.SaveReport(CFairReports::ExeDirectory()+ "UnitTests\\InsertUnitTest5.txt", sql);
+		//}
+
+//
+// Test FAIR report generation
+//
+
+#if 0
+		//
+		// Parse QIF XML and generate FAIR reports
+		std::string filename=::ExeDirectory() + "\\QIF_Results_Sample.xml";
+
+		std::auto_ptr<QIFDocumentType> qif (
+			QIFDocument (filename, xml_schema::flags::dont_initialize|xml_schema::flags::dont_validate|xml_schema::flags::keep_dom)
+			);
+
+		DOMElement* e = static_cast<DOMElement*> ((*qif)._node ());
+
+		//
+		// Generate FAIR Form 1
+		std::string report1 = fair.GenerateFAIRRepor1(e);
+		SaveReport(ExeDirectory()+ "FairReport1.html", report1);
+
+		//
+		// Generate FAIR Form 3
+		std::string report3 = fair.GenerateFAIRRepor3(e);
+		SaveReport(ExeDirectory()+ "FairReport3.html", report3);
+#endif
+
+
+//
+// Test QIF XSD parse - generate SQL tables
+//
+		std::string str;
+		CXsdParser parser;
+		parser.XsdParse("C:\\Users\\michalos\\Documents\\GitHub\\QIF\\xsd\\MSVC QIF_2.0_XMLSchemaFiles\\QIFApplications\\QIFDocument.xsd"); 
+		//parser.XsdParse(  "D:\\michalos\\My Work\\QIF\\xsd\\MSVC QIF_2.0_XMLSchemaFiles\\QIFApplications\\QIFDocument.xsd");
+		//DOMDocument * document = parser.getDocument();
+		//DOMElement * root = document->getDocumentElement();
+
+
+		std::cout << "********** Building XSD Type information from Schema **********" << "\n";
+		parser.BuildXsdTypes();
+		std::cout << "********** Building XSD Element information from Schema **********" << "\n";
+		parser.BuildXsdElements();
+		std::cout << "********** Building Resolve Parent Hierarchy information from Schema **********" << "\n";
+		parser.ResolveParentHierarchy();
+		std::cout << "********** Building Build Substitution Group Aliasing information from Schema **********" << "\n";
+		parser.BuildSubstitutionGroupAliasing();
+#ifdef DEBUG
+		str = parser._symbols.DumpElements();
+		SaveReport(::ExeDirectory()+ "Elements.txt", str);
+
+		str =  parser._symbols.DumpSubstitutions();
+		SaveReport(::ExeDirectory()+ "Substitutions.txt", str);
+
+		str =  parser._symbols.DumpSubstitutionAliases();
+		SaveReport(::ExeDirectory()+ "SubstitutionAliases.txt", str);
+		
+		str =  parser._symbols.DumpTypes(StringVector());
+		SaveReport(::ExeDirectory()+ "Types.txt", str);
+#endif
+
+		
+		//Open data base
+		OdbcArchiver db;
+		db.Open("PostgreSQL30", "postgres", "jlmcbm1984");
+		// db.CreatePostgresDB("QIF");  // Too messy
+		//int num= db.sizeTable("QIF", "QIFDocument");
+
+		CXmlAndSql sqlhandler(parser._symbols, db);
+		str.clear();
+
+		// Generate enumeration types and sql tables, save to qifsql.sql file
+		str=sqlhandler.CreateSqlEnumerationTypes();
+		std::vector<std::string> lines = Tokenizer(str,";", true);
+		db.ExecutePostgreSQLStatement( lines  );
+
+		str=sqlhandler.CreateSqlTablesFromAllTypes(StringVector ());
+		lines = Tokenizer(str,";", true);
+		db.ExecutePostgreSQLStatement( lines );
+
+		db.Close();
+
+
+//
+// Test QIF XSD parse - insert QIF XML into SQL tables
+//
+		CXmlAndSql sqlhandler(parser._symbols, db);
+		std::cout << "********** Parsing XML File **********" << "\n";
+		parser.XsdParse("C:\\Users\\michalos\\Documents\\GitHub\\QIF\\xsd\\MSVC QIF_2.0_XMLSchemaFiles\\QIFApplications\\QIFDocument.xsd"); 
+		//parser.XsdParse(  "D:\\michalos\\My Work\\QIF\\xsd\\MSVC QIF_2.0_XMLSchemaFiles\\QIFApplications\\QIFDocument.xsd");
+
+
+		// Parse QIF XML and insert records into Postgres DB
+		std::string filename=::ExeDirectory() + "\\QIF_Results_Sample.xml";
+		std::auto_ptr<QIFDocumentType> qif (
+			QIFDocument (filename, xml_schema::flags::dont_initialize|xml_schema::flags::dont_validate|xml_schema::flags::keep_dom)
+			);
+
+		DOMElement* e = static_cast<DOMElement*> ((*qif)._node ());
+		std::string  sql;
+		sqlhandler.ParseQifDocument(e, sql);
+		SaveReport(ExeDirectory()+ "Insert.sql", sql);
+
+

@@ -228,7 +228,7 @@ bool ISymbol::IsArray()
 
 CVarDefPtr CVarDef::FindVarDef(IXmlNodePtr pNode, std::string &name )
 {
-	if(pNode==NULL)
+	if(pNode.get() == NULL)
 		return NULL;
 	CVarDefPtr vardef;
 	for(size_t j=0; j< pNode->vars.size(); j++)

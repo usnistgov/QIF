@@ -1,0 +1,3129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This document is part of QIF 2.0, an open, industry-wide standard -->
+<!-- established by the Dimensional Metrology Standards Consortium.    -->
+<!-- This document shall not be used in any manner to claim any        -->
+<!-- proprietary rights to such information, such as rights to a       -->
+<!-- patent, trademark, or copyright.                                  -->
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://qifstandards.org/xsd/qif2"
+  xmlns:t="http://qifstandards.org/xsd/qif2"
+  targetNamespace="http://qifstandards.org/xsd/qif2"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="2.0.0">
+
+  <xs:include schemaLocation="../QIFLibrary/IntermediatesPMI.xsd"/>
+  <xs:include schemaLocation="../QIFLibrary/Features.xsd"/>
+  <xs:include schemaLocation="../QIFLibrary/Traceability.xsd"/>
+  <xs:include schemaLocation="../QIFLibrary/Statistics.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      The QIFStatistics.xsd schema file defines types that describe plans
+      for statistical studies and the results from statistical studies.
+    </xs:documentation>
+  </xs:annotation>
+
+<!--  BEGIN STATISTICAL STUDY PLAN TYPES -->
+
+  <xs:complexType name="StatisticalStudyPlanBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The StatisticalStudyPlanBaseType is the abstract base type that
+        defines information common to all statistical study plans.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ThisStatisticalStudyPlanInstanceQPId"
+        type="QPIdType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ThisStatisticalStudyPlanInstanceQPId element
+            uniquely identifies the statistical study plan. Different
+            versions of the plan must have different
+            ThisStatisticalStudyPlanInstanceQPId elements.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:sequence
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional compositor defines the feature items
+            to be used in the study and whether to accumulate an
+            average feature representation.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="FeatureItemIds"
+          type="ArrayReferenceFullType">
+          <xs:annotation>
+            <xs:documentation>
+              The FeatureItemIds element is the list of feature items to be
+              included in this statistical study.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="CalculateAverageFeatures"
+          type="xs:boolean"
+          minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              The optional CalculateAverageFeatures element when
+              present and set true signifies that average features are
+              to be calculated in this statistical study.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:sequence
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional compositor defines the characteristic items
+            to be used in the study and the statistical values to be
+            accumulated for them.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="CharacteristicItemIds"
+          type="ArrayReferenceFullType">
+          <xs:annotation>
+            <xs:documentation>
+              The CharacteristicItemIds element is the list of
+              characteristic items to be included in this statistical
+              study.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="StatsValuesPerChar"
+          type="ListAccumulatedStatsValuesType"
+          minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              The optional StatsValuesPerChar element identifies the
+              various statistical values to be accumulated on a
+              per-characteristic basis in this statistical study plan. For
+              example, the Cpk of each characteristic might be accumulated.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="StatsValuesPerSubgroup"
+          type="ListSubgroupStatsValuesType"
+          minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              The optional StatsValuesPerSubgroup element identifies
+              the various statistical values to be accumulated on a
+              per-subgroup basis for this statistical study plan. For
+              example, the average value of each characteristic might
+              be accumulated for each subgroup.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:element name="StatsValuesSummary"
+        type="SummaryStatsValuesType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each StatsValuesSummary element identifies a statistical
+            value to be summarized over all characteristics in this
+            statistical study plan. For example, the Cpk value over
+            all characteristics might be summarized.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PreInspectionTraceability"
+        type="PreInspectionTraceabilityType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PreInspectionTraceability element gives
+            traceability information that applies to the statistical study.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Name"
+        type="xs:token"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Name element is the name identifying the
+            statistical study.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Description element is a description of the
+            statistical study.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PlanId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PlanId element is the QIF id of the associated
+            measurement plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectiveActionPlanId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CorrectiveActionPlanId element is the QIF id of a
+            corrective action plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the statistical study, used for
+          referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="LinearityStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The LinearityStudyPlanType defines information that is related to a
+        linearity statistical study where an artifact or artifacts are
+        measured to determine the linearity of a measurement system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of
+                the ids of one or more measurement devices in the
+                measurement system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="GoodnessOfFitThreshold"
+            type="xs:decimal"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional GoodnessOfFitThreshold element is the minimum
+                goodness of fit (R-squared) that must be achieved for the
+                measurement device to pass.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice>
+            <xs:sequence>
+              <xs:element name="LinearAbsoluteLinearityMinimum"
+                type="LinearValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional LinearAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring a linear characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="AngularAbsoluteLinearityMinimum"
+                type="AngularValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional AngularAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring an angular characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="AreaAbsoluteLinearityMinimum"
+                type="AreaValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional AreaAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring an area characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="ForceAbsoluteLinearityMinimum"
+                type="ForceValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional ForceAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring a force characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MassAbsoluteLinearityMinimum"
+                type="MassValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MassAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring a mass characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="PressureAbsoluteLinearityMinimum"
+                type="PressureValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional PressureAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring a pressure characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="SpeedAbsoluteLinearityMinimum"
+                type="SpeedValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional SpeedAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring a speed characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="TemperatureAbsoluteLinearityMinimum"
+                type="TemperatureValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional TemperatureAbsoluteLinearityMinimum
+                    element defines the minimum allowable linearity a
+                    device measuring a temperature characteristic must
+                    achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="TimeAbsoluteLinearityMinimum"
+                type="TimeValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional TimeAbsoluteLinearityMinimum element
+                    defines the minimum allowable linearity a device
+                    measuring a time characteristic must achieve.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="UserDefinedUnitAbsoluteLinearityMinimum"
+                type="UserDefinedUnitValueType"
+                minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Each optional UserDefinedUnitAbsoluteLinearityMinimum
+                    element defines the minimum allowable linearity a
+                    device measuring a user-defined unit characteristic
+                    must achieve. This element is not to be used to define
+                    a minimum with units available in another element. In
+                    particular this element is not to be used to define a
+                    minimum with linear units, angular units, or units of
+                    temperature, area, force, mass, pressure, speed, or
+                    time.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="RelativeLinearityMinimum"
+              type="xs:decimal">
+              <xs:annotation>
+                <xs:documentation>
+                  The RelativeLinearityMinimum element defines the
+                  minimum allowable relative linearity must achieve.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="StabilityStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The StabilityStudyPlanType defines information that is related to a
+        stability statistical study where the same part or artifact is
+        measured over time to assess the stability of a measurement system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of
+                the ids of one or more measurement devices in the
+                measurement system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SampleSize"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The SampleSize element specifies the number of samples
+                n to be used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SampleFrequency"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The SampleFrequency element specifies the sampling
+                frequency n, n parts are measured in each sampling
+                interval.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SamplingInterval"
+            type="SamplingIntervalType">
+            <xs:annotation>
+              <xs:documentation>
+                The SamplingInterval element specifies the sampling
+                interval.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="BiasStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The BiasStudyPlanType defines information that is related to a
+        bias statistical study where the bias (measured value versus
+        actual value) of a measurement system is determined.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of
+                the ids of one or more measurement devices in the
+                measurement system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FirstArticleStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The FirstArticleStudyPlanType defines information that is
+        related to a first article statistical study where the number
+        and severity of non- conforming characteristics determines
+        product acceptance.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="InSpecRatio"
+            type="xs:decimal">
+            <xs:annotation>
+              <xs:documentation>
+                The InSpecRatio element specifies the fraction of inspected
+                characteristics which must be within specification limits
+                for the product to pass expressed as a number between 0 and
+                1.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice>
+            <xs:annotation>
+              <xs:documentation>
+                The compositor chooses between the two methods (absolute
+                and relative) used to determine maximum allowed deviation.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+              <xs:element name="LinearAbsoluteMaximum"
+                type="LinearValueType">
+                <xs:annotation>
+                  <xs:documentation>
+                    The LinearAbsoluteMaximum element defines the maximum
+                    allowable absolute deviation from nominal for
+                    out-of-specification linear characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="AngularAbsoluteMaximum"
+                type="AngularValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional AngularAbsoluteMaximum element defines the
+                    maximum allowable absolute deviation from nominal for
+                    out-of-specification angular characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="AreaAbsoluteMaximum"
+                type="AreaValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional AreaAbsoluteMaximum element defines the
+                    maximum allowable absolute deviation from nominal for
+                    out-of-specification area characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="ForceAbsoluteMaximum"
+                type="ForceValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional ForceAbsoluteMaximum element defines the
+                    maximum allowable absolute deviation from nominal for
+                    out-of-specification force characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MassAbsoluteMaximum"
+                type="MassValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MassAbsoluteMaximum element defines the
+                    maximum allowable absolute deviation from nominal for
+                    out-of-specification mass characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="PressureAbsoluteMaximum"
+                type="PressureValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional PressureAbsoluteMaximum element defines
+                    the maximum allowable absolute deviation from nominal
+                    for out-of-specification pressure characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="SpeedAbsoluteMaximum"
+                type="SpeedValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional SpeedAbsoluteMaximum element defines the
+                    maximum allowable absolute deviation from nominal for
+                    out-of-specification speed characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="TemperatureAbsoluteMaximum"
+                type="TemperatureValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional TemperatureAbsoluteMaximum element defines
+                    the maximum allowable absolute deviation from nominal
+                    for out-of-specification temperature characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="TimeAbsoluteMaximum"
+                type="TimeValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional TimeAbsoluteMaximum element defines the
+                    maximum allowable absolute deviation from nominal for
+                    out-of-specification time characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="UserDefinedUnitAbsoluteMaximum"
+                type="UserDefinedUnitValueType"
+                minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Each optional UserDefinedUnitAbsoluteMaximum element
+                    defines the maximum allowable absolute deviation from
+                    nominal for out-of-specification user defined unit
+                    characteristics. This element is not to be used to
+                    define a maximum with units available in another
+                    element. In particular this element is not to be used
+                    to define a maximum with linear units, angular units,
+                    or units of temperature, area, force, mass, pressure,
+                    speed, or time.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="RelativeMaximum"
+              type="xs:decimal">
+              <xs:annotation>
+                <xs:documentation>
+                  The RelativeMaximum element defines the maximum allowable
+                  deviation for out of specification characteristics as a
+                  multiple of the tolerance zone.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ProcessDifferenceStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The ProcessDifferenceStudyPlanType defines information that is
+        related to a difference statistical study where the same part is
+        measured before and after a manufacturing process to determine any
+        part distortion caused by that process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="NumberOfSamples"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfSamples element specifies the number of samples
+                to be used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SubgroupSize"
+            type="xs:positiveInteger"
+            fixed="2">
+            <xs:annotation>
+              <xs:documentation>
+                The SubgroupSize element fixes the size of each subgroup to
+                2. The first item in each subgroup is the result of
+                measurement before the manufacturing process and the second
+                item is the result of measurement after the process.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ManufacturingProcessId"
+            type="QIFReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ManufacturingProcessId element is a reference
+                to the traceability information for the process on which
+                the study is to be based.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice>
+            <xs:annotation>
+              <xs:documentation>
+                The compositor chooses between the two methods (absolute
+                and relative) used to determine maximum allowed deviation.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+              <xs:element name="LinearAbsoluteDifference"
+                type="LinearValueType">
+                <xs:annotation>
+                  <xs:documentation>
+                    The LinearAbsoluteDifference element defines the
+                    maximum allowable absolute difference between before
+                    and after for linear characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="AngularAbsoluteDifference"
+                type="AngularValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional AngularAbsoluteDifference element defines
+                    the maximum allowable absolute difference between
+                    before and after for angular characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="AreaAbsoluteDifference"
+                type="AreaValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional AreaAbsoluteDifference element defines the
+                    maximum allowable absolute difference between before
+                    and after for area characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="ForceAbsoluteDifference"
+                type="ForceValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional ForceAbsoluteDifference element defines
+                    the maximum allowable absolute difference between
+                    before and after for force characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MassAbsoluteDifference"
+                type="MassValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MassAbsoluteDifference element defines the
+                    maximum allowable absolute difference between before
+                    and after for mass characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="PressureAbsoluteDifference"
+                type="PressureValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional PressureAbsoluteDifference element defines
+                    the maximum allowable absolute difference between
+                    before and after for pressure characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="SpeedAbsoluteDifference"
+                type="SpeedValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional SpeedAbsoluteDifference element defines
+                    the maximum allowable absolute difference between
+                    before and after for speed characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="TemperatureAbsoluteDifference"
+                type="TemperatureValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional TemperatureAbsoluteDifference element
+                    defines the maximum allowable absolute difference
+                    between before and after for temperature
+                    characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="TimeAbsoluteDifference"
+                type="TimeValueType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional TimeAbsoluteDifference element defines the
+                    maximum allowable absolute difference between before
+                    and after for time characteristics.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="UserDefinedUnitAbsoluteDifference"
+                type="UserDefinedUnitValueType"
+                minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Each optional UserDefinedUnitAbsoluteDifference element
+                    defines the maximum allowable absolute difference
+                    between before and after for user defined unit
+                    characteristics. This element is not to be used to
+                    define a maximum with units available in another
+                    element. In particular this element is not to be used
+                    to define a maximum with linear units, angular units,
+                    or units of temperature, area, force, mass, pressure,
+                    speed, or time.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="RelativeDifference"
+              type="xs:decimal">
+              <xs:annotation>
+                <xs:documentation>
+                  The RelativeMaximum element defines the maximum allowable
+                  difference between before and after for characteristics
+                  as a multiple of the tolerance zone.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MultipleProductInstanceStudyPlanBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The MultipleProductInstanceStudyPlanBaseType is the abstract
+        base type that defines information common to all statistical
+        studies involving multiple part measurements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="NumberOfSamples"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfSamples element specifies the number of samples
+                to be used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SubgroupSize"
+            type="xs:positiveInteger"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional SubgroupSize element defines the size of each
+                subgroup. The number of subgroups is determined by dividing
+                the number of samples by the subgroup size. The subgroup
+                size must be specified if control limits, Cp, Cpk or the
+                estimated standard deviation are to be calculated.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SimpleStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The SimpleStudyPlanType defines information that is related to a
+        simple statistical study where multiple samples are measured for
+        the purpose of averaging features for process adjustment or reverse
+        engineering.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyPlanBaseType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CapabilityStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The CapabilityStudyPlanType defines information that is related to
+        a capability statistical study where a number of part samples are
+        measured to establish the capability of a manufacturing process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyPlanBaseType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:annotation>
+              <xs:documentation>
+                The compositor chooses between the two values used to
+                determine process capability: Cpk or Ppk.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:element name="CpkThreshold"
+              type="CriterionDecimalType">
+              <xs:annotation>
+                <xs:documentation>
+                  The CpkThreshold element defines the minimum Cpk value
+                  that must be achieved for a process to be considered
+                  capable.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="PpkThreshold"
+              type="CriterionDecimalType">
+              <xs:annotation>
+                <xs:documentation>
+                  The PpkThreshold element defines the minimum Ppk value
+                  that must be achieved for a process to be considered
+                  capable.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="GageRandRStudyEnumType">
+    <xs:annotation>
+      <xs:documentation>
+        The GageRandRStudyEnumType enumerates the various gage RandR study
+        types.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="RANGE"/>
+      <xs:enumeration value="AVGANDRANGE"/>
+      <xs:enumeration value="ANOVA"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="GageRandRStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The GageRandRStudyPlanType defines information that is related to a
+        gage repeatability and reproducibility statistical study where a
+        number of part samples are repeatedly measured by two or more
+        appraisers to establish the repeatability and reproducibility of a
+        measurement process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of the
+                ids of one or more measurement devices in the measurement
+                system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RandRStudyType"
+            type="GageRandRStudyEnumType">
+            <xs:annotation>
+              <xs:documentation>
+                The RandRStudyType element defines the type of the gage
+                RandR study type.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfAppraisers"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfAppraisers element defines the number of
+                appraisers taking part in the study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfParts"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfParts element defines the number of parts to be
+                used in the study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfTrials"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfTrials element defines the number of times each
+                part is to be measured by each appraiser.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                This optional compositor chooses between relative and
+                absolute maximum appraiser variation criteria.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:element name="MaximumRelativeAppraiserVariation"
+              type="CriterionDecimalType">
+              <xs:annotation>
+                <xs:documentation>
+                  The MinimumRelativeAppraiserVariation element defines the
+                  maximum appraiser variation allowed for the gage RandR
+                  study to pass.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:sequence>
+              <xs:element name="MaximumAbsoluteLinearAppraiserVariation"
+                type="CriterionLinearType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteLinearAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for linear characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteAngularAppraiserVariation"
+                type="CriterionAngularType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteAngularAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for angular characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteAreaAppraiserVariation"
+                type="CriterionAreaType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteAreaAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for area characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteForceAppraiserVariation"
+                type="CriterionForceType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteForceAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for force characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteMassAppraiserVariation"
+                type="CriterionMassType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteMassAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for mass characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsolutePressureAppraiserVariation"
+                type="CriterionPressureType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsolutePressureAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for pressure characteristics for the gage RandR study
+                    to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteSpeedAppraiserVariation"
+                type="CriterionSpeedType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteSpeedAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for speed characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteTemperatureAppraiserVariation"
+                type="CriterionTemperatureType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional
+                    MaximumAbsoluteTemperatureAppraiserVariation element
+                    defines the maximum appraiser variation allowed for
+                    temperature characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteTimeAppraiserVariation"
+                type="CriterionTimeType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteTimeAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for time characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteUserDefinedUnitAppraiserVariation"
+                type="CriterionUserDefinedUnitType"
+                minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Each optional
+                    MaximumAbsoluteUserDefinedUnitAppraiserVariation
+                    element defines the maximum appraiser variation allowed
+                    for user defined unit characteristics for the gage
+                    RandR study to pass. This element is not to be used to
+                    define a maximum with units available in another
+                    element. In particular this element is not to be used
+                    to define a maximum with linear units, angular units,
+                    or units of temperature, area, force, mass, pressure,
+                    speed, or time.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:choice>
+          <xs:choice
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                This optional compositor chooses between relative and
+                absolute maximum equipment variation criteria.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:element name="MaximumRelativeEquipmentVariation"
+              type="CriterionDecimalType">
+              <xs:annotation>
+                <xs:documentation>
+                  The MinimumRelativeEquipmentVariation element defines the
+                  maximum equipment variation allowed for the gage RandR
+                  study to pass.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:sequence>
+              <xs:element name="MaximumAbsoluteLinearEquipmentVariation"
+                type="CriterionLinearType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteLinearEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for linear characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteAngularEquipmentVariation"
+                type="CriterionAngularType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteAngularEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for angular characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteAreaEquipmentVariation"
+                type="CriterionAreaType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteAreaEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for area characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteForceEquipmentVariation"
+                type="CriterionForceType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteForceEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for force characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteMassEquipmentVariation"
+                type="CriterionMassType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteMassEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for mass characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsolutePressureEquipmentVariation"
+                type="CriterionPressureType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsolutePressureEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for pressure characteristics for the gage RandR study
+                    to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteSpeedEquipmentVariation"
+                type="CriterionSpeedType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteSpeedEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for speed characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteTemperatureEquipmentVariation"
+                type="CriterionTemperatureType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional
+                    MaximumAbsoluteTemperatureEquipmentVariation element
+                    defines the maximum equipment variation allowed for
+                    temperature characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteTimeEquipmentVariation"
+                type="CriterionTimeType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteTimeEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for time characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteUserDefinedUnitEquipmentVariation"
+                type="CriterionUserDefinedUnitType"
+                minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Each optional
+                    MaximumAbsoluteUserDefinedUnitEquipmentVariation
+                    element defines the maximum equipment variation allowed
+                    for user defined unit characteristics for the gage
+                    RandR study to pass. This element is not to be used to
+                    define a maximum with units available in another
+                    element. In particular this element is not to be used
+                    to define a maximum with linear units, angular units,
+                    or units of temperature, area, force, mass, pressure,
+                    speed, or time.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:choice>
+          <xs:choice
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                This optional compositor chooses between relative and
+                absolute maximum total RandR criteria.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:element name="MaximumRelativeTotalRandR"
+              type="CriterionDecimalType">
+              <xs:annotation>
+                <xs:documentation>
+                  The MinimumRelativeTotalRandR element defines the maximum
+                  total RandR allowed for the gage RandR study to pass.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:sequence>
+              <xs:element name="MaximumAbsoluteLinearTotalRandR"
+                type="CriterionLinearType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteLinearTotalRandR
+                    element defines the maximum total RandR allowed for
+                    linear characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteAngularTotalRandR"
+                type="CriterionAngularType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteAngularTotalRandR element
+                    defines the maximum total RandR allowed for angular
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteAreaTotalRandR"
+                type="CriterionAreaType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteAreaTotalRandR element
+                    defines the maximum total RandR allowed for area
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteForceTotalRandR"
+                type="CriterionForceType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteForceTotalRandR element
+                    defines the maximum total RandR allowed for force
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteMassTotalRandR"
+                type="CriterionMassType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteMassTotalRandR element
+                    defines the maximum total RandR allowed for mass
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsolutePressureTotalRandR"
+                type="CriterionPressureType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsolutePressureTotalRandR element
+                    defines the maximum total RandR allowed for pressure
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteSpeedTotalRandR"
+                type="CriterionSpeedType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteSpeedTotalRandR element
+                    defines the maximum total RandR allowed for speed
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteTemperatureTotalRandR"
+                type="CriterionTemperatureType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteTemperatureTotalRandR
+                    element defines the maximum total RandR allowed for
+                    temperature characteristics for the gage RandR study to
+                    pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteTimeTotalRandR"
+                type="CriterionTimeType"
+                minOccurs="0">
+                <xs:annotation>
+                  <xs:documentation>
+                    The optional MaximumAbsoluteTimeTotalRandR element
+                    defines the maximum total RandR allowed for time
+                    characteristics for the gage RandR study to pass.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MaximumAbsoluteUserDefinedUnitTotalRandR"
+                type="CriterionUserDefinedUnitType"
+                minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Each optional MaximumAbsoluteUserDefinedUnitTotalRandR
+                    element defines the maximum total RandR allowed for
+                    user defined unit characteristics for the gage RandR
+                    study to pass. This element is not to be used to define
+                    a maximum with units available in another element. In
+                    particular this element is not to be used to define a
+                    maximum with linear units, angular units, or units of
+                    temperature, area, force, mass, pressure, speed, or
+                    time.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ControlMethodType">
+    <xs:annotation>
+      <xs:documentation>
+        The ControlMethodType defines the control method for detecting
+        statistical process control issues.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AssignableCauseId"
+        type="QIFReferenceFullType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional AssignableCauseId element is the QIF id of a
+            possible assignable cause for this control issue.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="NumOutOfTolerance"
+          type="CriterionIntegerType">
+          <xs:annotation>
+            <xs:documentation>
+              The NumOutOfTolerance element defines the number of
+              characteristic values that must exceed upper or lower
+              specification limit for a control issue to exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="CpThreshold"
+          type="CriterionDecimalType">
+          <xs:annotation>
+            <xs:documentation>
+              The CpThreshold element defines the Cp threshold below which
+              a control issue might exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="CpkThreshold"
+          type="CriterionDecimalType">
+          <xs:annotation>
+            <xs:documentation>
+              The CpkThreshold element defines the Cpk threshold below
+              which a control issue might exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="PpThreshold"
+          type="CriterionDecimalType">
+          <xs:annotation>
+            <xs:documentation>
+              The PpThreshold element defines the Pp threshold below which
+              a control issue might exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="PpkThreshold"
+          type="CriterionDecimalType">
+          <xs:annotation>
+            <xs:documentation>
+              The PpkThreshold element defines the Ppk threshold below
+              which a control issue might exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="NumOutOfControl"
+          type="CriterionIntegerType">
+          <xs:annotation>
+            <xs:documentation>
+              The NumOutOfControl element defines the number of
+              characteristic values that must exceed upper or lower control
+              limits for a control issue to exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="TrendGrouping"
+          type="CriterionIntegerType">
+          <xs:annotation>
+            <xs:documentation>
+              The TrendGrouping element defines the number of adjacent
+              characteristic measurements that must be trending either up
+              or down as a group for a control issue to exist. Common
+              practice is to flag a control issue when 6 or more
+              measurements are trending.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="SkewGrouping"
+          type="CriterionIntegerType">
+          <xs:annotation>
+            <xs:documentation>
+              The SkewGrouping element defines the number of adjacent
+              characteristic measurements that must be grouped on one side
+              of the mean for a control issue to exist. Common practice is
+              to flag a control issue when 8 or more measurements are
+              skewed to one side of the mean.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="OneThirdGrouping"
+          type="CriterionOutOfType">
+          <xs:annotation>
+            <xs:documentation>
+              The OneThirdGrouping element defines the fraction of adjacent
+              characteristic measurements that must deviate from the mean
+              by one third or more of the difference between a control
+              limit and the mean and all on the same side of the mean for a
+              control issue to exist. Common practice is to flag a control
+              issue when 4 or more out of 5 measurements are one third or
+              more of the way from the mean to the control limit and on one
+              side of the mean.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="TwoThirdsGrouping"
+          type="CriterionOutOfType">
+          <xs:annotation>
+            <xs:documentation>
+              The TwoThirdsGrouping element defines the fraction of
+              adjacent characteristic measurements that must deviate from
+              the mean by two thirds or more of the difference between a
+              control limit and the mean and all on the same side of the
+              mean for a control issue to exist. Common practice is to flag
+              a control issue when 2 or more out of 3 measurements are two
+              thirds or more of the way from the mean to the control limit
+              and on one side of the mean.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Oscillation"
+          type="CriterionOutOfType">
+          <xs:annotation>
+            <xs:documentation>
+              The Oscillation element defines the fraction of adjacent
+              characteristic measurements that must deviate alternately
+              from the one side of the mean to the other side of the mean
+              for an oscillation control issue to exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Stratification"
+          type="CriterionOutOfType">
+          <xs:annotation>
+            <xs:documentation>
+              The Stratification element defines the fraction of adjacent
+              characteristic measurements that must deviate from the mean
+              by one third or more of the difference between a control
+              limit and the mean and on either side of the mean for a
+              control issue to exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="NumOutOfControlRng"
+          type="CriterionIntegerType">
+          <xs:annotation>
+            <xs:documentation>
+              The NumOutOfControlRnd element defines the number of
+              characteristic subgroup ranges that must exceed upper or
+              lower control range limits for a control issue to exist.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the control method, used for
+          referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="ProductionStudyPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The ProductionStudyPlanType defines information that is related to
+        an ongoing production statistical study where samples are measured
+        for statistical process control to ensure the ongoing stability or
+        capability of a manufacturing process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyPlanBaseType">
+        <xs:sequence>
+          <xs:element name="SamplingMethod"
+            type="SamplingMethodType">
+            <xs:annotation>
+              <xs:documentation>
+                The SamplingMethod element defines a method of sample
+                selection.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ControlMethod"
+            type="ControlMethodType"
+            maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                Each ControlMethod element defines a method to detect
+                process instability or lack of capability.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+<!-- BEGIN SUBSTITUTION GROUP FOR STATISTICAL STUDY PLANS -->
+
+  <xs:element name="StatisticalStudyPlan"
+    type="StatisticalStudyPlanBaseType">
+    <xs:annotation>
+      <xs:documentation>
+        The global StatisticalStudyPlan element is the head of a
+        substitution group. Any element that is a member of the group may
+        be substituted for the StatisticalStudyPlan element anywhere the
+        StatisticalStudyPlan element may be used in an instance file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="FirstArticleStudyPlan"
+    type="FirstArticleStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global FirstArticleStudyPlan element gives information about a
+        first article inspection statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="LinearityStudyPlan"
+    type="LinearityStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global LinearityStudyPlan element gives information about a
+        linearity statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="SimpleStudyPlan"
+    type="SimpleStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global SimpleStudyPlan element gives information about a simple
+        multi-part statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="BiasStudyPlan"
+    type="BiasStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global BiasStudyPlan element gives information about a bias
+        statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="StabilityStudyPlan"
+    type="StabilityStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global StabilityStudyPlan element gives information about a
+        stability statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="ProcessDifferenceStudyPlan"
+    type="ProcessDifferenceStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global ProcessDifferenceStudyPlan element gives information
+        about a difference statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="CapabilityStudyPlan"
+    type="CapabilityStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global CapabilityStudyPlan element gives information about a
+        capability statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="GageRandRStudyPlan"
+    type="GageRandRStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global GageRandRStudyPlan element gives information about a
+        gage repeatability and reproducibility statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="ProductionStudyPlan"
+    type="ProductionStudyPlanType"
+    substitutionGroup="StatisticalStudyPlan">
+    <xs:annotation>
+      <xs:documentation>
+        The global ProductionStudyPlan element gives information about a
+        production statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+<!-- END SUBSTITUTION GROUP FOR STATISTICAL STUDIES -->
+
+<!--  BEGIN STATISTICAL STUDY RESULTS TYPES -->
+
+  <xs:complexType name="StatisticalStudyResultsBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The StatisticalStudyResultsBaseType is the abstract base type that
+        defines information common to all statistical study results.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Attributes"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Attributes element contains user defined
+            attributes (typified, binary array, or XML structured).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ThisStatisticalStudyResultsInstanceQPId"
+        type="QPIdType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional ThisStatisticalStudyResultsInstanceQPId element
+            uniquely identifies the statistical study results. Different
+            versions of the results must have different
+            ThisStatisticalStudyResultsInstanceQPId elements.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Status"
+        type="StatsEvalStatusType">
+        <xs:annotation>
+          <xs:documentation>
+            The Status element is the overall status of the statistical
+            study.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StudyIssue"
+        type="StudyIssueType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional StudyIssue element provides details about any
+            issues encountered in the study.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InspectionTraceability"
+        type="InspectionTraceabilityType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional InspectionTraceability element gives traceability
+            information that applies to the statistical study results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Name"
+        type="xs:token"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Name element is the name identifying the
+            statistical study results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description"
+        type="xs:string"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Description element is a description of the
+            statistical study results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StudyId"
+        type="QIFReferenceFullType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional StudyId element is the QIF id of the associated
+            statistical study plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            This optional compositor chooses among various sources of
+            measurement results defined internally or externally.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:element name="ResultsId"
+          type="QIFReferenceFullType"
+          maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>
+              Each ResultsId element is the QIF id of a measurement results
+              internal to this QIF document.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ResultsQPId"
+          type="QPIdFullReferenceType"
+          maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>
+              Each ResultsQPId element identifies a measurement results
+              in a QIF document external to this QIF document.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ResultsFile"
+          type="ExternalFileReferenceType"
+          maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation>
+              Each ResultsFile element contains information about
+              an external measurement results file.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element ref="AverageFeature"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional AverageFeature element is the result of an average
+            feature calculation.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element ref="CharacteristicsStats"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional CharacteristicsStats element contains the results
+            of a statistical analysis for a characteristic.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LinearStatsSummary"
+        type="SummaryStatisticsLinearType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional LinearStatsSummary element contains the results of
+            a statistical summary for a characteristic statistic with
+            linear units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AngularStatsSummary"
+        type="SummaryStatisticsAngularType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional AngularStatsSummary element contains the results
+            of a statistical summary for a characteristic statistic with
+            angular units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AreaStatsSummary"
+        type="SummaryStatisticsAreaType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional AreaStatsSummary element contains the results of
+            a statistical summary for a characteristic statistic with
+            area units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ForceStatsSummary"
+        type="SummaryStatisticsForceType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional ForceStatsSummary element contains the results of
+            a statistical summary for a characteristic statistic with
+            force units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MassStatsSummary"
+        type="SummaryStatisticsMassType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional MassStatsSummary element contains the results of
+            a statistical summary for a characteristic statistic with
+            mass units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PressureStatsSummary"
+        type="SummaryStatisticsPressureType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional PressureStatsSummary element contains the results
+            of a statistical summary for a characteristic statistic with
+            pressure units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SpeedStatsSummary"
+        type="SummaryStatisticsSpeedType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional SpeedStatsSummary element contains the results of
+            a statistical summary for a characteristic statistic with
+            speed units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TemperatureStatsSummary"
+        type="SummaryStatisticsTemperatureType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional TemperatureStatsSummary element contains the
+            results of a statistical summary for a characteristic statistic
+            with temperature units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TimeStatsSummary"
+        type="SummaryStatisticsTimeType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional TimeStatsSummary element contains the results of
+            a statistical summary for a characteristic statistic with
+            time units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UserDefinedUnitStatsSummary"
+        type="SummaryStatisticsUserDefinedUnitType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional UserDefinedUnitStatsSummary element contains the
+            results of a statistical summary for a characteristic statistic
+            with user-defined units. This element is not to be used to
+            define a summary with units available in another element. In
+            particular this element is not to be used to define a summary
+            with linear units, angular units, or units of temperature,
+            area, force, mass, pressure, speed, or time.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StatsSummary"
+        type="SummaryStatisticsType"
+        minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each optional StatsSummary element contains the results of a
+            statistical summary for a characteristic statistic with
+            dimensionless units.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the statistical study results,
+          used for referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="LinearityStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The LinearityStudyResultsType defines the results from a linearity
+        statistical study where an artifact or artifacts were measured to
+        determine the linearity of a measurement device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="SampleSize"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The SampleSize element specifies the number of samples n
+                used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of the
+                ids of one or more measurement devices in the measurement
+                system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="GoodnessOfFit"
+            type="ActualDecimalType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional GoodnessOfFit element is the goodness of fit
+                (R-squared) achieved by the measurement device.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:choice
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                This optional compositor chooses the absolute linearity
+                results for the measurement device.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:element name="LinearAbsoluteLinearity"
+              type="ActualLinearValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional LinearAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  linear characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="AngularAbsoluteLinearity"
+              type="ActualAngularValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional AngularAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring an
+                  angular characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="AreaAbsoluteLinearity"
+              type="ActualAreaValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional AreaAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring an
+                  area characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="ForceAbsoluteLinearity"
+              type="ActualForceValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional ForceAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  force characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="MassAbsoluteLinearity"
+              type="ActualMassValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional MassAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  mass characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="PressureAbsoluteLinearity"
+              type="ActualPressureValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional PressureAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  pressure characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="SpeedAbsoluteLinearity"
+              type="ActualSpeedValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional SpeedAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  speed characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="TemperatureAbsoluteLinearity"
+              type="ActualTemperatureValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional TemperatureAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  temperature characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="TimeAbsoluteLinearity"
+              type="ActualTimeValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional TimeAbsoluteLinearity element is the
+                  linearity achieved by the measurement device measuring a
+                  time characteristic.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="UserDefinedUnitAbsoluteLinearity"
+              type="ActualUserDefinedUnitValueType">
+              <xs:annotation>
+                <xs:documentation>
+                  The optional UserDefinedUnitAbsoluteLinearity element is
+                  the linearity achieved by the measurement device
+                  measuring an user-defined unit characteristic. This
+                  element is not to be used to define an actual with units
+                  available in another element. In particular this element
+                  is not to be used to define an actual with linear units,
+                  angular units, or units of temperature, area, force,
+                  mass, pressure, speed, or time.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="RelativeLinearity"
+            type="ActualDecimalType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional RelativeLinearity element is relative
+                linearity achieved by the measurement device.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="StabilityStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The StabilityStudyResultsType defines the results from a stability
+        statistical study where the same part or artifact was measured over
+        time to assess the stability of a measurement device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="SampleSize"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The SampleSize element specifies the number of samples n
+                used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of the
+                ids of one or more measurement devices in the measurement
+                system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="BiasStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The BiasStudyResultsType defines the results from a bias
+        statistical study where the bias (measured value versus actual
+        value) of a measurement device was determined.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="SampleSize"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The SampleSize element specifies the number of samples n
+                used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of the
+                ids of one or more measurement devices in the measurement
+                system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FirstArticleStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The FirstArticleStudyResultsType defines information that is
+        related the to the results of a first article statistical study
+        where the number and severity of non-conforming characteristics
+        determined product acceptance.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="InSpecRatio"
+            type="xs:decimal"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional InSpecRatio element is the fraction of
+                inspected characteristics which were within specification
+                limits expressed as a number between 0 and 1.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LinearAbsoluteMaximum"
+            type="ActualLinearValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional LinearAbsoluteMaximum element defines the
+                worst absolute linear deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AngularAbsoluteMaximum"
+            type="ActualAngularValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional AngularAbsoluteMaximum element defines the
+                worst absolute angular deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AreaAbsoluteMaximum"
+            type="ActualAreaValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional AreaAbsoluteMaximum element defines the worst
+                absolute area deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ForceAbsoluteMaximum"
+            type="ActualForceValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ForceAbsoluteMaximum element defines the worst
+                absolute force deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MassAbsoluteMaximum"
+            type="ActualMassValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MassAbsoluteMaximum element defines the worst
+                absolute mass deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="PressureAbsoluteMaximum"
+            type="ActualPressureValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional PressureAbsoluteMaximum element defines the
+                worst absolute pressure deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SpeedAbsoluteMaximum"
+            type="ActualSpeedValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional SpeedAbsoluteMaximum element defines the worst
+                absolute speed deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="TemperatureAbsoluteMaximum"
+            type="ActualTemperatureValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional TemperatureAbsoluteMaximum element defines the
+                worst absolute temperature deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="TimeAbsoluteMaximum"
+            type="ActualTimeValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional TimeAbsoluteMaximum element defines the worst
+                absolute time deviation from nominal over all
+                characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="UserDefinedUnitAbsoluteMaximum"
+            type="ActualUserDefinedUnitValueType"
+            minOccurs="0"
+            maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                Each optional UserDefinedUnitAbsoluteMaximum element is the
+                worst1 absolute deviation from nominal over all
+                user-defined unit characteristics with a particular set of
+                units. This element is not to be used to define an actual
+                with units available in another element. In particular this
+                element is not to be used to define an actual with linear
+                units, angular units, or units of temperature, area, force,
+                mass, pressure, speed, or time.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RelativeMaximum"
+            type="ActualDecimalType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional RelativeMaximum element is the worst relative
+                deviation from nominal over all characteristics
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ProcessDifferenceStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The ProcessDifferenceStudyResultsType defines information that is
+        related the to the results of a difference statistical study where
+        the same part was measured before and after a manufacturing process
+        to determine any part distortion caused by that process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="NumberOfSamples"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfSamples element specifies the number of samples
+                used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SubgroupSize"
+            type="xs:positiveInteger"
+            fixed="2">
+            <xs:annotation>
+              <xs:documentation>
+                The SubgroupSize element fixed the size of each subgroup
+                used in the difference statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ManufacturingProcessId"
+            type="QIFReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ManufacturingProcessId element is a reference
+                to the traceability information for the process on which
+                the study was based.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="LinearAbsoluteDifference"
+            type="ActualLinearValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional LinearAbsoluteDifference element defines the
+                worst absolute linear difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AngularAbsoluteDifference"
+            type="ActualAngularValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional AngularAbsoluteDifference element defines the
+                worst absolute angular difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="AreaAbsoluteDifference"
+            type="ActualAreaValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional AreaAbsoluteDifference element defines the
+                worst absolute area difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ForceAbsoluteDifference"
+            type="ActualForceValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional ForceAbsoluteDifference element defines
+                the worst absolute force difference between before and
+                after over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="MassAbsoluteDifference"
+            type="ActualMassValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MassAbsoluteDifference element defines the
+                worst absolute mass difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="PressureAbsoluteDifference"
+            type="ActualPressureValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional PressureAbsoluteDifference element defines the
+                worst absolute pressure difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SpeedAbsoluteDifference"
+            type="ActualSpeedValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional SpeedAbsoluteDifference element defines the
+                worst absolute speed difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="TemperatureAbsoluteDifference"
+            type="ActualTemperatureValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional TemperatureAbsoluteDifference element defines
+                the worst absolute temperature difference between before
+                and after over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="TimeAbsoluteDifference"
+            type="ActualTimeValueType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional TimeAbsoluteDifference element defines the
+                worst absolute time difference between before and after
+                over all characteristics.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="UserDefinedUnitAbsoluteDifference"
+            type="ActualUserDefinedUnitValueType"
+            minOccurs="0"
+            maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                Each optional UserDefinedUnitAbsoluteDifference element is
+                the worst absolute deviation between before and after over
+                all user-defined unit characteristics with a particular set
+                of units. This element is not to be used to define an
+                actual with units available in another element. In
+                particular this element is not to be used to define an
+                actual with linear units, angular units, or units of
+                temperature, area, force, mass, pressure, speed, or time.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="RelativeDifference"
+            type="ActualDecimalType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional RelativeDifference element is the worst
+                relative deviation between before and after over all
+                characteristics
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MultipleProductInstanceStudyResultsBaseType"
+    abstract="true">
+    <xs:annotation>
+      <xs:documentation>
+        The MultipleProductInstanceStudyResultsBaseType is the abstract
+        base type that defines information common to the results of all
+        statistical studies involving multiple part measurements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="NumberOfSamples"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfSamples element specifies the number of samples
+                used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="SubgroupSize"
+            type="xs:positiveInteger"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional SubgroupSize element is the size of each
+                subgroup used in the statistical study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SimpleStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The SimpleStudyResultsType defines information that is related to
+        the results of a simple statistical study where multiple samples
+        were measured for the purpose of averaging features for process
+        adjustment or reverse engineering.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyResultsBaseType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="CapabilityStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The CapabilityStudyResultsType defines information that is related
+        to the results of a capability statistical study where a number of
+        part samples were measured to establish the capability of a
+        manufacturing process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyResultsBaseType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="GageRandRStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The GageRandRStudyPlanType defines information that is related to
+        the results of a gage repeatability and reproducibility statistical
+        study where a number of part samples were repeatedly measured by
+        two or more appraisers to establish the repeatability and
+        reproducibility of a measurement process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="StatisticalStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="MeasurementDeviceIds"
+            type="ArrayReferenceFullType"
+            minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                The optional MeasurementDeviceIds element is a list of the
+                ids of one or more measurement devices in the measurement
+                system to be studied.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfAppraisers"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfAppraisers element defines the number of
+                appraisers that took part in the study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfParts"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfParts element defines the number of parts used
+                in the study.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="NumberOfTrials"
+            type="xs:positiveInteger">
+            <xs:annotation>
+              <xs:documentation>
+                The NumberOfTrials element defines the number of times each
+                part was measured by each appraiser.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ProductionStudyResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The ProductionStudyResultsType defines information that is related
+        to the results of an ongoing production statistical study where
+        samples are measured for statistical process control to ensure the
+        ongoing stability or capability of a manufacturing process.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="MultipleProductInstanceStudyResultsBaseType">
+        <xs:sequence>
+          <xs:element name="ControlIssueDetails"
+            type="ControlIssueDetailsType"
+            minOccurs="0"
+            maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>
+                Each optional ControlIssueDetails element defines the
+                details of a control issue that was encountered.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+<!-- BEGIN SUBSTITUTION GROUP FOR STATISTICAL STUDY RESULTS -->
+
+  <xs:element name="StatisticalStudyResults"
+    type="StatisticalStudyResultsBaseType">
+    <xs:annotation>
+      <xs:documentation>
+        The global StatisticalStudyResults element is the head of a
+        substitution group. Any element that is a member of the group may
+        be substituted for the StatisticalStudyResults element anywhere the
+        StatisticalStudyResults element may be used in an instance file.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="FirstArticleStudyResults"
+    type="FirstArticleStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global FirstArticleStudyResults element gives information about
+        the results of a first article inspection statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="LinearityStudyResults"
+    type="LinearityStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global LinearityStudyResults element gives information about
+        the results of a linearity statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="SimpleStudyResults"
+    type="SimpleStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global SimpleStudyResults element gives information about the
+        results of a simple multi-part statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="BiasStudyResults"
+    type="BiasStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global BiasStudyResults element gives information about the
+        results of a bias statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="StabilityStudyResults"
+    type="StabilityStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global StabilityStudyResults element gives information about
+        the results of a stability statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="CapabilityStudyResults"
+    type="CapabilityStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global CapabilityStudyResults element gives information about
+        the results of a capability statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="ProcessDifferenceStudyResults"
+    type="ProcessDifferenceStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global ProcessDifferenceStudyResults element gives information
+        about the results of a difference statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="GageRandRStudyResults"
+    type="GageRandRStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global GageRandRStudyResults element gives information about
+        the results of a gage repeatability and reproducibility statistical
+        study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="ProductionStudyResults"
+    type="ProductionStudyResultsType"
+    substitutionGroup="StatisticalStudyResults">
+    <xs:annotation>
+      <xs:documentation>
+        The global ProductionStudyResults element gives information about
+        the results of a production statistical study.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+<!-- END SUBSTITUTION GROUP FOR STATISTICAL RESULTS -->
+
+<!-- GLOBAL STATISTICS ELEMENTS -->
+
+  <xs:complexType name="StatisticalStudyPlansType">
+    <xs:annotation>
+      <xs:documentation>
+        The StatisticalStudyPlansType defines a list of statistical study
+        plans.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="StatisticalStudyPlan"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each StatisticalStudyPlan element gives information about a
+            statistical study plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="StatisticalStudiesResultsType">
+    <xs:annotation>
+      <xs:documentation>
+        The StatisticalStudiesResultsType defines a list of statistical
+        study results.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="StatisticalStudyResults"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each StatisticalStudyResults element gives information about the
+            results of a statistical study.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CorrectiveActionPlanType">
+    <xs:annotation>
+      <xs:documentation>
+        The CorrectiveActionPlanType defines a corrective action plan as
+        lists of assignable causes and corrective actions.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="AssignableCauses"
+        type="AssignableCausesType">
+        <xs:annotation>
+          <xs:documentation>
+            The AssignableCauses element defines one or more
+            assignable causes.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectiveActions"
+        type="CorrectiveActionsType">
+        <xs:annotation>
+          <xs:documentation>
+            The CorrectiveActions element defines one or more corrective
+            actions.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id"
+      type="QIFIdType"
+      use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The id attribute is the QIF id of the corrective action plan,
+          used for referencing.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="CorrectiveActionPlansType">
+    <xs:annotation>
+      <xs:documentation>
+        The CorrectiveActionPlansType defines a list of corrective action
+        plans.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CorrectiveActionPlan"
+        type="CorrectiveActionPlanType"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            Each CorrectiveActionPlan element defines a corrective action
+            plan.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="StatisticsType">
+    <xs:annotation>
+      <xs:documentation>
+        The StatisticsType defines the container element that holds all
+        statistical plan and/or results.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Version"
+        type="VersionType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional Version element gives version information about
+            the statistics.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StatisticalStudyPlans"
+        type="StatisticalStudyPlansType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional StatisticalStudyPlans element defines one or more
+            statistical study plans.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StatisticalStudiesResults"
+        type="StatisticalStudiesResultsType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional StatisticalStudiesResults element defines one or
+            more statistical study results.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectiveActionPlans"
+        type="CorrectiveActionPlansType"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The optional CorrectiveActionPlans element defines one or more
+            corrective action plans.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="Statistics"
+    type="StatisticsType">
+    <xs:annotation>
+      <xs:documentation>
+        The global Statistics element holds all statistical plan and/or
+        results.
+      </xs:documentation>
+    </xs:annotation>
+
+<!-- start key and one keyref for QIF ids of corrective actions -->
+
+    <xs:key name="CorrectiveActionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CorrectiveActionIdKey collects all QIF ids of
+          CorrectiveActions.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:CorrectiveActionPlans/t:CorrectiveActionPlan/t:CorrectiveActions/t:CorrectiveAction"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="CorrectiveActionIdKeyref"
+      refer="CorrectiveActionIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The CorrectiveActionIdKeyref requires that every id intended to
+          reference an CorrectiveAction be the id of a CorrectiveAction.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:CorrectiveActionPlans/t:CorrectiveActionPlan/t:AssignableCauses/t:AssignableCause/t:CorrectiveActionIds/Id"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+
+<!-- start key and one keyref for QIF ids of assignable causes -->
+
+    <xs:key name="AssignableCauseIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The AssignableCauseIdKey collects all QIF ids of
+          AssignableCauses.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:CorrectiveActionPlans/t:CorrectiveActionPlan/t:AssignableCauses/t:AssignableCause"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- start key and one keyref for QIF ids of control methods -->
+
+    <xs:key name="ControlMethodIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The ControlMethodIdKey collects all QIF ids of ControlMethods.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector
+        xpath="t:StatisticalStudyPlans/t:ProductionStudyPlan/t:ControlMethod"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+<!-- start key and one keyref for QIF ids of study plans -->
+
+    <xs:key name="StudyPlanIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The StudyPlanIdKey collects all QIF ids of statistical study
+          plans.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:StatisticalStudyPlans/t:*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+
+    <xs:keyref name="StudyPlanIdKeyref"
+      refer="StudyPlanIdKey">
+      <xs:annotation>
+        <xs:documentation>
+          The StudyPlanIdKeyref requires that the Id of a
+          StatisticalStudyResults be the id of a statistical study plan.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="t:StatisticalStudiesResults/t:*"/>
+      <xs:field xpath="t:StudyId"/>
+    </xs:keyref>
+  </xs:element>
+
+</xs:schema>

@@ -9,6 +9,8 @@
 #pragma once
 
 #include <stdafx.h>
+#include <string>
+#include <fstream>      // std::ofstream
 
 #ifdef WINDOWS
 #pragma warning(disable : 4996)
@@ -70,6 +72,20 @@
 		(facet_) (LastID)
 
 #define DEBUGBREAK() _asm int 3;
+
+
+inline void SaveReport(std::string filename, const std::string &report)
+{
+	std::ofstream out(filename.c_str());
+	out << report <<std::endl;
+	out.close();
+}
+inline std::string ExeDirectory()
+{
+//	extern const char *__progname;
+//	return __progname;
+	return "/home/michalos/workspace/Qif/Debug/";
+}
 
 namespace XercesAdditions
 {

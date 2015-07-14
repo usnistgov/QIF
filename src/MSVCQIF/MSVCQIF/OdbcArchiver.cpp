@@ -579,9 +579,10 @@ void  OdbcArchiver::InsertStatement(std::string stmt)
 	}
 	SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
 }
-void OdbcArchiver::ExecutePostgreSQLStatement(std::string stmt)
+std::string OdbcArchiver::ExecutePostgreSQLStatement(std::string stmt)
 {
 	SQLHANDLE hStmt ;
+	std::string data;
 
 	CHECK(SQLAllocHandle(SQL_HANDLE_STMT, obdc->_hConn, &hStmt),SQL_HANDLE_DBC, obdc->_hConn, "open SQLAllocHandle Statement Handle"); 
 	SQLRETURN rc=SQLExecDirect(hStmt, (SQLCHAR *) stmt.c_str(), SQL_NTS); // ), SQL_HANDLE_STMT, _hStmt, "SQLExecDirect OdbcArchiver::updateTimeTable");
@@ -589,8 +590,23 @@ void OdbcArchiver::ExecutePostgreSQLStatement(std::string stmt)
 	{
 		obdc->status(SQL_HANDLE_STMT, hStmt, 0);
 	}
+	if((rc=SQLFetch(hStmt))==SQL_NO_DATA)
+	{
+		SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+		return 0;
+	}
+	data=obdc->GetData( hStmt,1);
+	if(data.empty())
+	//if(this->GetColData(1,data)!= SQL_SUCCESS)
+	{
+		obdc->status(SQL_HANDLE_STMT,obdc->_hStmt, 0);
+		SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+		return "";
+	}
 	SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+	return data;
 }
+
 int OdbcArchiver::SizeTable(std::string schema, std::string table)
 {
 	std::string data;

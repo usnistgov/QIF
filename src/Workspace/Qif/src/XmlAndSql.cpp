@@ -14,7 +14,23 @@
 #include "XercesUtils.h"
 #include <xercesc/util/PlatformUtils.hpp>
 using namespace xercesc;
-
+static std::string CreatePGTable(const std::string str)
+{
+	return MakeLower(str);
+}
+static std::string PGTable(const std::string str)
+{
+#ifdef WINDOWS
+	return str;
+#endif
+	return StrFormat("%c%s%c",0x22,MakeLower(str).c_str(), 0x22); //"+str+"\"";
+	//return  MakeLower(str); //"+str+"\"";
+}
+static std::string PGField(const std::string str)
+{
+	return  MakeLower(str);
+	//return str;
+}
 static std::string ToStr( const XMLCh* toTranscode ) 
 {  
 	if(toTranscode==NULL) return "";
@@ -309,7 +325,7 @@ std::string CXmlAndSql::CreateSqlEnumerationTypes()
 	for(size_t i=0; i< _symbols.Enumerations().size(); i++)
 	{
 		ISymbolPtr symbol=_symbols.Enumerations().at(i);
-		tmp+=StrFormat("CREATE TYPE %s AS ENUM (", DemangleName(symbol->Name()).c_str());
+		tmp+=StrFormat("CREATE TYPE %s AS ENUM (", PGField(DemangleName(symbol->Name())).c_str());
 
 		for(size_t j=0; j< symbol->Enumerations().size(); j++)
 		{
@@ -322,6 +338,7 @@ std::string CXmlAndSql::CreateSqlEnumerationTypes()
 }
 static void GetElementMinMax(ISymbolPtr s2,  int &min, int &max, bool & bOptional )
 {
+	assert(s2.get()!=NULL);
 	if(s2->LowerBounds().size()>0) 
 	{
 		bOptional=s2->LowerBounds().at(0)==0;
@@ -338,7 +355,7 @@ static void GetElementMinMax(ISymbolPtr s2,  int &min, int &max, bool & bOptiona
 void CXmlAndSql::CreateSimpleContent( IXmlNode * type, std::string rawname, std::string &tmp, std::string &keys, std::string &constraints)
 {
 	std::string stypename = ConvertXsd2SqlDataType(type->PrimitiveType(), NULL);
-	std::string name = DemangleName(SqlDemangleType(rawname));
+	std::string name = PGField(DemangleName(SqlDemangleType(rawname)));
 
 	std::string comment=StrFormat("-- element of %s ", stypename.c_str());;
 	if(type->ListSize()>1) comment = StrFormat("-- list of %s ", stypename.c_str());
@@ -383,7 +400,7 @@ void CXmlAndSql::CreateIndexContent(IXmlNode * outernode, IXmlNode * substitutio
 		sqltype=sqltype+"[]";
 	}
 
-	tmp+=StrFormat("\t%s %s, %s\n", sqlname.c_str() , sqltype.c_str(), comment.c_str());
+	tmp+=StrFormat("\t%s %s, %s\n", PGField(sqlname).c_str() , sqltype.c_str(), comment.c_str());
 
 	keys+=StrFormat("\tKEY _%s (_%s),\n", sqlname.c_str(), sqlname.c_str());
 	constraints+=StrFormat("\tCONSTRAINT xxxx%s FOREIGN KEY (_%s) REFERENCES %s(id),\n", sqlname.c_str(),sqlname.c_str(),sqlname.c_str());
@@ -409,7 +426,7 @@ void CXmlAndSql::CreateSqlField(IXmlNode * node, std::string &tmp, std::string &
 			// elem2 is the IXmlNode pointer of the variable definition
 			// Type should be the same for s2 or elem2 since they are now copies of each other.
 			CVarDefPtr s2 = node->vars[j];
-			assert(s2!=NULL);
+			assert(s2.get()!=NULL);
 
 			///////////////////////////////////////////////////////////////////////////////////
 			// Choices have been "removed". Unfortunately combining choices can lead to duplicate names. 
@@ -452,7 +469,7 @@ void CXmlAndSql::CreateSqlField(IXmlNode * node, std::string &tmp, std::string &
 			{
 				// assuming all attributes are simple?
 				std::string comment = "-- attribute";
-				std::string name = DemangleName(s2->Name());
+				std::string name = PGField(DemangleName(s2->Name()));
 				tmp+=StrFormat("\t%s %s%s,%s\n", 
 					name.c_str(), 
 					ConvertXsd2SqlDataType(s2->TypeName(), NULL).c_str(),
@@ -465,7 +482,7 @@ void CXmlAndSql::CreateSqlField(IXmlNode * node, std::string &tmp, std::string &
 			}
 			else if(s2->IsSimpleType() || s2->IsSimpleContent())  
 			{
-				std::string sqlname = DemangleName(s2->Name());
+				std::string sqlname = PGField(DemangleName(s2->Name()));
 				std::string stypename = s2->TypeName();
 				s2->SqlType()=ConvertXsd2SqlDataType(stypename, s2.get());
 				//tmp+=StrFormat("\t%s %s%s, \n", 
@@ -497,7 +514,7 @@ void CXmlAndSql::CreateSqlField(IXmlNode * node, std::string &tmp, std::string &
 				if(head && head->IsSubstitutionHead())
 				{
 					supers.insert(s2->Name()); // FIXME: check if abstract? Cant its an element
-					// if substitution, isnert all supers as it could be any one of these "derived" types
+					// if substitution, insert all supers as it could be any one of these "derived" types
 					supers.insert(head->SubstitutionList().begin(), head->SubstitutionList().end());
 				}		
 
@@ -543,7 +560,7 @@ void CXmlAndSql::CreateSqlTableFromType(IXmlNodePtr def, std::string &sql, std::
 	{
 		//tmp+=StrFormat("DROP TABLE IF EXISTS %s;\n", name.c_str());
 		std::cout << StrFormat("CREATE TABLE %s \n", DemangleName(name).c_str());
-		tmp+=StrFormat("CREATE TABLE %s (\n", DemangleName(name).c_str());
+		tmp+=StrFormat("CREATE TABLE %s (\n",CreatePGTable(DemangleName(name)).c_str());
 
 		//
 		// Primary key in all table for indexing
@@ -576,7 +593,7 @@ std::string CXmlAndSql::CreateSqlTablesFromAllTypes(StringVector excludetypes)
 	for(size_t i=0; i< _symbols.Types().size(); i++)
 	{
 		IXmlNodePtr type = _symbols.Types().at(i);
-		if(type==NULL)
+		if(type.get()==NULL)
 			continue;
 		if(std::find(excludetypes.begin(), excludetypes.end(), type->Name()) != excludetypes.end())
 		{
@@ -603,7 +620,7 @@ std::string CXmlAndSql::CreateSqlTablesFromTypes(StringVector types)
 	for(size_t i=0; i< types.size(); i++)
 	{
 		IXmlNodePtr type = _symbols.FindTypeNode(types[i]);
-		assert(type!=NULL);
+		assert(type.get()!=NULL);
 		if(!type->Abstract())
 			CreateSqlTableFromType(type, tmp, constraints, keys);
 	}
@@ -622,7 +639,7 @@ std::string CXmlAndSql::CreateSqlTablesFromGlobalElements()
 		if(elem->Global()==true)
 		{
 			IXmlNodePtr type = _symbols.FindTypeNode(elem->TypeName());
-			assert(type!=NULL);
+			assert(type.get()!=NULL);
 			tmp+=StrFormat("DROP TABLE IF EXISTS %s;\n", elem->Name().c_str());
 			std::cout << StrFormat("CREATE TABLE %s \n", elem->Name().c_str());
 			tmp+=StrFormat("CREATE TABLE %s (\n", elem->Name().c_str());
@@ -681,8 +698,10 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 
 		//
 		// type names better be unique ...
-		tmp+="INSERT INTO " + SqlDemangleType(nodetypename) + " ";
-		vals=cols="";
+		tmp+="INSERT INTO " + PGTable(SqlDemangleType(nodetypename)) + " ";
+
+		vals="";
+		cols="";
 
 		//
 		// Handle all the attributes
@@ -698,7 +717,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 				// check if non null, if null, maybe optional
 				if(attr!=NULL)
 				{
-					cols+=symbol->Name()+",";
+					cols+=PGField(symbol->Name())+",";
 					//vals+= ToStr(attr->getNodeValue()) + ",";
 					const XMLCh * val = attr->getNodeValue();
 					if( val == NULL)  val= attr-> getFirstChild()->getNodeValue();
@@ -721,7 +740,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 		typedef std::multimap<std::string, xercesc::DOMNode*> MapType;
 		typedef std::multimap<std::string, xercesc::DOMNode*>::iterator ChildMapIterator;
 
-		// First place XML elments into sorted map, in case array of elements
+		// First place XML elements into sorted map, in case array of elements
 		// This assumes order is NOT important
 		for( XMLSize_t ix = 0 ; ix < nodeCount ; ++ix )
 		{
@@ -744,12 +763,12 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 			//}
 
 			ISymbolPtr varentity = _symbols.FindNamedEntity(childname,nodename); // nodename type as node element can vary
-			if(varentity==(ISymbolPtr)NULL && _symbols.IsSubstitutionGroupElement(childname))
+			if(varentity.get()==NULL && _symbols.IsSubstitutionGroupElement(childname))
 				varentity = _symbols.FindNamedEntity(childname); // outer definition
 
-			if(varentity==(ISymbolPtr)NULL)
+			if(varentity.get()==NULL)
 				varentity = _symbols.FindNamedEntityInType(childname, nodetypename ); // outer TYPE definition
-			assert(varentity!=NULL);
+			assert(varentity.get()!=NULL);
 
 			typeptr = _symbols.FindTypeNode(varentity->TypeName()).get();
 			assert(typeptr!=NULL);
@@ -760,7 +779,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 			if(!baseelementname.empty())
 			{
 				elembase = _symbols.FindNamedEntity(baseelementname, nodename); // substitution group always outer element
-				if(elembase==(ISymbolPtr)NULL)
+				if(elembase.get()==NULL)
 				{
 					elembase = _symbols.FindNamedEntityInType(baseelementname, nodetypename);
 				}
@@ -769,7 +788,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 			if(varentity->IsArray()   && (typeptr->IsSimpleType() || typeptr->IsSimpleContent()) )
 			{
 				vals+="'{";
-				cols+= childname + ","; // arrays have two underscores in column name
+				cols+= PGField(childname) + ","; // arrays have two underscores in column name
 
 				while(it!= _childrenmap.end() && (*it).first == childname )
 				{
@@ -791,7 +810,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 			if(typeptr->IsSimpleType() ||typeptr->IsSimpleContent() )
 			{
 				// could be enum - ok wil just print out valuoe, FIXME: no type checking
-				cols+=childname + ",";
+				cols+=PGField(childname) + ",";
 
 				const XMLCh * val = childdomnode->getNodeValue();
 				if( val == NULL)  val= childdomnode-> getFirstChild()->getNodeValue();
@@ -816,7 +835,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 			else if(elembase->IsArray()) 
 			{
 				vals+="'{";
-				cols+="__" + childname + ","; // arrays have two underscores in column name
+				cols+=PGField("__" + childname) + ","; // arrays have two underscores in column name
 
 				while(it!= _childrenmap.end() && (*it).first == childname )
 				{
@@ -833,7 +852,7 @@ void CXmlAndSql::ParseQifDocument(xercesc::DOMElement* e,  std::string & sql, st
 			else // not array of indices - but one index into sql table
 			{
 				// may need enum to distinguish type - or just pointer to corresponding table
-				cols+="_" + childname + ",";
+				cols+=PGField("_" + childname) + ",";
 				ParseQifDocument((xercesc::DOMElement*) childdomnode,  tmp, nodetypename);
 
 				int index = odbc.SizeTable("QIF", SqlDemangleType(typeName));
@@ -848,8 +867,8 @@ cleanup:
 
 	// Fixme: check # , in cols = vals
 
-	if(!cols.empty())
-		tmp = tmp + "("+ cols + " values " + "(" + vals + ";\n" ;
+//	if(!cols.empty())
+//		tmp = tmp + "("+ cols + " values " + "(" + vals + ";\n" ;
 
 	//std::sqltablecnt = StrFormat("SELECT COUNT(*) FROM '%s' WITH (NOLOCK) ", nodename.c_str());
 	if(elem!=NULL)
@@ -857,7 +876,12 @@ cleanup:
 	tabs=tabs.substr(1);
 	if(!cols.empty())
 	{
-		std::cout << "Insert " << tmp << "\n";
+		cols="_index_,"+cols;
+		vals="DEFAULT,"+vals;
+		tmp = tmp + "("+ cols + " values " + "(" + vals + ";\n" ;
+		std::cerr << "Insert " << tmp << "\n";
+		std::string perm = "SELECT has_table_privilege('LinearTolerance', 'insert');";
+		//odbc.InsertStatement(perm);
 		odbc.InsertStatement(tmp);
 		sql=tmp+sql;
 	}

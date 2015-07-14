@@ -14,7 +14,9 @@
 #include <xercesc/framework/psvi/XSFacet.hpp>
 #include <xercesc/framework/psvi/XSModelGroupDefinition.hpp>
 
-#define CLEANFETCH(Y,X,Z) try{ Y=X; } catch(...) { Y=Z; }
+#define CLEANFETCH(Y,X,Z) try{ Y=X; } catch(...) { \
+		printf("Bad CLEANFETCH!");\
+	Y=Z; }
 static std::string GetText(const XMLCh* xstr)
 {
 	if (xstr==NULL) return "";
